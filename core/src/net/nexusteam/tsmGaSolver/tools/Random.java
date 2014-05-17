@@ -1,4 +1,4 @@
-package br.Tools;
+package net.nexusteam.tools;
 
 import com.badlogic.gdx.math.MathUtils;
 
