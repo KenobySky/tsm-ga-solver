@@ -1,0 +1,8 @@
+syntax: glob
+
+nbproject/
+build.xml
+manifest.mf
+.classpath
+.project
+.settings/
