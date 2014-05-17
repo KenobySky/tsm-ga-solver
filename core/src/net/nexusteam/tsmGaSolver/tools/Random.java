@@ -1,4 +1,4 @@
-package net.nexusteam.tools;
+package net.nexusteam.tsmGaSolver.tools;
 
 import com.badlogic.gdx.math.MathUtils;
 
@@ -8,23 +8,23 @@ import com.badlogic.gdx.math.MathUtils;
  */
 public class Random {
 
-    public static float getRandomFloat(float min, float max) {
-        return MathUtils.random(min, max);
-    }
-    
-    public static float getRandomFloat(float range)
-    {
-        return MathUtils.random(range);
-    }
-    
-    public static boolean getRandomBoolean()
-    {
-        return MathUtils.randomBoolean();
-    }
-    
-    public static float getRandomFloat()
-    {
-        return MathUtils.random();
-    }
+	public static float getRandomFloat(float min, float max) {
+		return MathUtils.random(min, max);
+	}
+
+	public static float getRandomFloat(float range)
+	{
+		return MathUtils.random(range);
+	}
+
+	public static boolean getRandomBoolean()
+	{
+		return MathUtils.randomBoolean();
+	}
+
+	public static float getRandomFloat()
+	{
+		return MathUtils.random();
+	}
 
 }

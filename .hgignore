@@ -1,11 +1,5 @@
 syntax: glob
 
-## Netbeans
-
-nbproject/
-build.xml
-manifest.mf
-
 ## Java
 
 *.class
@@ -54,7 +48,7 @@ local.properties
 *.launch
 
 ## NetBeans
-nbproject/private/
+nbproject/
 build/
 nbbuild/
 dist/
