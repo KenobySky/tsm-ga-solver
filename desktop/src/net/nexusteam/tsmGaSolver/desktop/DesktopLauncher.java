@@ -8,7 +8,7 @@ public class DesktopLauncher {
 
 	public static void main(String[] arg) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.width = 1280;
+		cfg.width = 800;
 		cfg.height = 600;
 		cfg.title = "TSP GA Solver 0.1a";
 
