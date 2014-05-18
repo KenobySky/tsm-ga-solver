@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
  *
  * @author AndreLopes
  */
-public class Random {
+public class Random { // TODO why do we need this? Just use MathUtils directly (dermetfan)
 
 	public static float getRandomFloat(float min, float max) {
 		return MathUtils.random(min, max);

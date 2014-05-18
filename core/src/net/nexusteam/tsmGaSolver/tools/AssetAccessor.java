@@ -1,13 +1,15 @@
 package net.nexusteam.tsmGaSolver.tools;
 
+import net.nexusteam.tsmGaSolver.Assets;
+
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Disposable;
 
-/**
- *
- * @author André Vinícius Lopes
- */
+/**	@author André Vinícius Lopes
+ * 	@deprecated replaced by {@link Assets} */
+
+@Deprecated
 public class AssetAccessor implements Disposable {
 
 	private static String atlasDirectory = "packed/resources.atlas";
