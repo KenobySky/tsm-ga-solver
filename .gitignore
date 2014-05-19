@@ -54,6 +54,9 @@ nbdist/
 nbactions.xml
 nb-configuration.xml
 
+## NetBeans Gradle Plugin
+.nb-gradle/
+
 ## Gradle
 
 .gradle
