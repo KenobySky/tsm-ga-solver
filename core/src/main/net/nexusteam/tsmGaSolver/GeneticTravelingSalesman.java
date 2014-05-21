@@ -1,4 +1,4 @@
-package main.net.nexusteam.tsmGaSolver;
+package net.nexusteam.tsmGaSolver;
 
 /**
  * Introduction to Neural Networks with Java, 2nd Edition Copyright 2008 by
@@ -10,15 +10,16 @@ package main.net.nexusteam.tsmGaSolver;
  * http://www.gnu.org/copyleft/lesser.html
  */
 
+import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
+import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
+import net.nexusteam.tsmGaSolver.ann.Waypoint;
+
 import java.awt.BorderLayout;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.text.NumberFormat;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import main.net.nexusteam.tsmGaSolver.ann.TSPChromosome;
-import main.net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
-import main.net.nexusteam.tsmGaSolver.ann.Waypoint;
 
 /**
  * Chapter 6: Training using a Genetic Algorithm
@@ -29,212 +30,211 @@ import main.net.nexusteam.tsmGaSolver.ann.Waypoint;
  * @author Jeff Heaton
  * @version 2.1
  */
-public class GeneticTravelingSalesman extends JFrame implements Runnable,
-        ComponentListener {
+public class GeneticTravelingSalesman extends JFrame implements Runnable, ComponentListener {
 
-    /**
-     * Serial id for this class.
-     */
-    private static final long serialVersionUID = 3849579247520213905L;
+	/**
+	 * Serial id for this class.
+	 */
+	private static final long serialVersionUID = 3849579247520213905L;
 
-    /**
-     * How many cities to use.
-     */
-    public static final int CITY_COUNT = 3;
+	/**
+	 * How many cities to use.
+	 */
+	public static final int CITY_COUNT = 3;
 
-    /**
-     * How many chromosomes to use.
-     */
-    public static final int POPULATION_SIZE = 1000;
+	/**
+	 * How many chromosomes to use.
+	 */
+	public static final int POPULATION_SIZE = 1000;
 
-    /**
-     * What percent of new-borns to mutate.
-     */
-    public static final double MUTATION_PERCENT = 0.10;
+	/**
+	 * What percent of new-borns to mutate.
+	 */
+	public static final double MUTATION_PERCENT = 0.10;
 
-    /**
-     * The main method.
-     *
-     * @param args Not used
-     */
-    public static void main(final String args[]) {
-        (new GeneticTravelingSalesman()).setVisible(true);
-    }
+	/**
+	 * The main method.
+	 *
+	 * @param args Not used
+	 */
+	public static void main(final String args[]) {
+		new GeneticTravelingSalesman().setVisible(true);
+	}
 
-    /**
-     * The part of the population eligable for mateing.
-     */
-    protected int matingPopulationSize = POPULATION_SIZE / 2;
+	/**
+	 * The part of the population eligable for mateing.
+	 */
+	protected int matingPopulationSize = POPULATION_SIZE / 2;
 
-    /**
-     * The part of the population favored for mating.
-     */
-    protected int favoredPopulationSize = this.matingPopulationSize / 2;
+	/**
+	 * The part of the population favored for mating.
+	 */
+	protected int favoredPopulationSize = matingPopulationSize / 2;
 
-    /**
-     * A Map object that will display the city map.
-     */
-    protected WorldMap map = null;
+	/**
+	 * A Map object that will display the city map.
+	 */
+	protected WorldMap map = null;
 
-    /**
-     * The current status. Used to display the current status to the user.
-     */
-    protected JLabel status;
+	/**
+	 * The current status. Used to display the current status to the user.
+	 */
+	protected JLabel status;
 
-    /**
-     * How much genetic material to take during a mating.
-     */
-    protected int cutLength = CITY_COUNT / 5;
+	/**
+	 * How much genetic material to take during a mating.
+	 */
+	protected int cutLength = CITY_COUNT / 5;
 
-    /**
-     * The current generation, or epoc.
-     */
-    protected int generation;
+	/**
+	 * The current generation, or epoc.
+	 */
+	protected int generation;
 
-    /**
-     * The background worker thread.
-     */
-    protected Thread worker = null;
+	/**
+	 * The background worker thread.
+	 */
+	protected Thread worker = null;
 
-    /**
-     * Is the thread started.
-     */
-    protected boolean started = false;
+	/**
+	 * Is the thread started.
+	 */
+	protected boolean started = false;
 
-    /**
-     * The list of cities.
-     */
-    protected Waypoint[] waypoints;
+	/**
+	 * The list of cities.
+	 */
+	protected Waypoint[] waypoints;
 
-    protected TSPGeneticAlgorithm genetic;
+	protected TSPGeneticAlgorithm genetic;
 
-    /**
-     * The constructor
-     */
-    public GeneticTravelingSalesman() {
-        addComponentListener(this);
-        setSize(300, 300);
-        setTitle("Traveling Salesman Problem");
-    }
+	/**
+	 * The constructor
+	 */
+	public GeneticTravelingSalesman() {
+		addComponentListener(this);
+		setSize(300, 300);
+		setTitle("Traveling Salesman Problem");
+	}
 
-    /**
-     * Not used, but required by Java.
-     *
-     * @param e The event.
-     */
-    public void componentHidden(final ComponentEvent e) {
-    }
+	/**
+	 * Not used, but required by Java.
+	 *
+	 * @param e The event.
+	 */
+	@Override
+	public void componentHidden(final ComponentEvent e) {}
 
-    /**
-     * Not used, but required by Java.
-     *
-     * @param e The event.
-     */
-    public void componentMoved(final ComponentEvent e) {
-    }
+	/**
+	 * Not used, but required by Java.
+	 *
+	 * @param e The event.
+	 */
+	@Override
+	public void componentMoved(final ComponentEvent e) {}
 
-    /**
-     * Not used, but required by Java.
-     *
-     * @param e The event.
-     */
-    public void componentResized(final ComponentEvent e) {
-    }
+	/**
+	 * Not used, but required by Java.
+	 *
+	 * @param e The event.
+	 */
+	@Override
+	public void componentResized(final ComponentEvent e) {}
 
-    /**
-     * Used to add necessary components.
-     *
-     * @param e The event.
-     */
-    public void componentShown(final ComponentEvent e) {
-        getContentPane().setLayout(new BorderLayout());
+	/**
+	 * Used to add necessary components.
+	 *
+	 * @param e The event.
+	 */
+	@Override
+	public void componentShown(final ComponentEvent e) {
+		getContentPane().setLayout(new BorderLayout());
 
-        if (this.map == null) {
-            this.map = new WorldMap(this);
-            getContentPane().add(this.map, "Center");
-            this.status = new JLabel("Starting up");
-            getContentPane().add(this.status, "South");
-        }
+		if(map == null) {
+			map = new WorldMap(this);
+			getContentPane().add(map, "Center");
+			status = new JLabel("Starting up");
+			getContentPane().add(status, "South");
+		}
 
-        // place the cities at random locations
-        final int height = getBounds().height - 50;
-        final int width = getBounds().width - 10;
-        this.waypoints = new Waypoint[GeneticTravelingSalesman.CITY_COUNT];
-        for (int i = 0; i < GeneticTravelingSalesman.CITY_COUNT; i++) {
-            this.waypoints[i] = new Waypoint((float) (Math.random() * width), (float) (Math.random() * height), "");
-        }
+		// place the cities at random locations
+		final int height = getBounds().height - 50;
+		final int width = getBounds().width - 10;
+		waypoints = new Waypoint[GeneticTravelingSalesman.CITY_COUNT];
+		for(int i = 0; i < GeneticTravelingSalesman.CITY_COUNT; i++)
+			waypoints[i] = new Waypoint((float) (Math.random() * width), (float) (Math.random() * height), "");
 
-        this.genetic = new TSPGeneticAlgorithm(this.waypoints,
-                GeneticTravelingSalesman.POPULATION_SIZE,
-                GeneticTravelingSalesman.MUTATION_PERCENT, 0.25, 0.5,
-                GeneticTravelingSalesman.CITY_COUNT / 5);
+		genetic = new TSPGeneticAlgorithm(waypoints,
+				GeneticTravelingSalesman.POPULATION_SIZE,
+				GeneticTravelingSalesman.MUTATION_PERCENT, 0.25, 0.5,
+				GeneticTravelingSalesman.CITY_COUNT / 5);
 
-        start();
+		start();
 
-    }
+	}
 
-    public TSPChromosome getTopChromosome() {
-        return this.genetic.getChromosome(0);
-    }
+	public TSPChromosome getTopChromosome() {
+		return genetic.getChromosome(0);
+	}
 
-    /**
-     * The main loop for the background thread. It is here that most of the work
-     * os orchestrated.
-     */
-    public void run() {
+	/**
+	 * The main loop for the background thread. It is here that most of the work
+	 * os orchestrated.
+	 */
+	@Override
+	public void run() {
 
-        double thisCost = 500.0;
-        double oldCost = 0.0;
-        int countSame = 0;
+		double thisCost = 500.0;
+		double oldCost = 0.0;
+		int countSame = 0;
 
-        this.map.update(this.map.getGraphics());
+		map.update(map.getGraphics());
 
-        final NumberFormat nf = NumberFormat.getInstance();
-        nf.setMinimumFractionDigits(2);
-        nf.setMinimumFractionDigits(2);
+		final NumberFormat nf = NumberFormat.getInstance();
+		nf.setMinimumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
 
-        while (countSame < 100) {
+		while(countSame < 100) {
 
-            this.generation++;
+			generation++;
 
-            this.status.setText("Generation " + this.generation + " Cost "
-                    + (int) thisCost + " Mutated " + nf.format(0) + "%");
+			status.setText("Generation " + generation + " Cost "
+					+ (int) thisCost + " Mutated " + nf.format(0) + "%");
 
-            this.genetic.iteration();
+			genetic.iteration();
 
-            thisCost = this.getTopChromosome().getCost();
+			thisCost = getTopChromosome().getCost();
 
-            if ((int) thisCost == (int) oldCost) {
-                countSame++;
-            } else {
-                countSame = 0;
-                oldCost = thisCost;
-            }
-            this.map.update(this.map.getGraphics());
+			if((int) thisCost == (int) oldCost)
+				countSame++;
+			else {
+				countSame = 0;
+				oldCost = thisCost;
+			}
+			map.update(map.getGraphics());
 
-        }
-        this.status.setText("Solution found after " + this.generation
-                + " generations.");
-    }
+		}
+		status.setText("Solution found after " + generation
+				+ " generations.");
+	}
 
-    /**
-     * Start the background thread.
-     */
-    public void start() {
+	/**
+	 * Start the background thread.
+	 */
+	public void start() {
 
 		// create the initial chromosomes
-        // start up the background thread
-        this.started = true;
-        this.map.update(this.map.getGraphics());
+		// start up the background thread
+		started = true;
+		map.update(map.getGraphics());
 
-        this.generation = 0;
+		generation = 0;
 
-        if (this.worker != null) {
-            this.worker = null;
-        }
-        this.worker = new Thread(this);
-        // worker.setPriority(Thread.MIN_PRIORITY);
-        this.worker.start();
-    }
+		if(worker != null)
+			worker = null;
+		worker = new Thread(this);
+		// worker.setPriority(Thread.MIN_PRIORITY);
+		worker.start();
+	}
 
 }

@@ -1,13 +1,13 @@
-package main.net.JeffHeatonCode;
+package net.JeffHeatonCode;
 
 /**
  * Introduction to Neural Networks with Java, 2nd Edition
- * Copyright 2008 by Heaton Research, Inc. 
+ * Copyright 2008 by Heaton Research, Inc.
  * http://www.heatonresearch.com/books/java-neural-2/
- * 
- * ISBN13: 978-1-60439-008-7  	 
+ *
+ * ISBN13: 978-1-60439-008-7
  * ISBN:   1-60439-008-5
- *   
+ *
  * This class is released under the:
  * GNU Lesser General Public License (LGPL)
  * http://www.gnu.org/copyleft/lesser.html
@@ -25,48 +25,48 @@ import java.util.concurrent.TimeUnit;
  * This is an abstract class.  Other classes are provided in this
  * book that use this base class to train neural networks or
  * provide an answer to the traveling salesman problem.
- * 
+ *
  * The genetic algorithm is also capable of using a thread pool
- * to speed execution.  
- *  
+ * to speed execution.
+ *
  * @author Jeff Heaton
  * @version 2.1
  * @param <CHROMOSOME_TYPE>
  */
 abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>> {
-	
+
 	/**
 	 * How many chromosomes should be created.
 	 */
 	private int populationSize;
-	
+
 	/**
 	 * The percent that should mutate.
 	 */
 	private double mutationPercent;
-	
+
 	/**
 	 * What percent should be chosen to mate. They will choose partners from the
 	 * entire mating population.
 	 */
 	private double percentToMate;
-	
+
 	/**
 	 * Percent of the population that the mating population chooses partners.
 	 * from.
 	 */
 	private double matingPopulation;
-	
+
 	/**
 	 * Should the same gene be prevented from repeating.
 	 */
 	private boolean preventRepeat;
-	
+
 	/**
 	 * How much genetic material should be cut when mating.
 	 */
 	private int cutLength;
-	
+
 	/**
 	 * An optional thread pool to use.
 	 */
@@ -153,7 +153,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 	/**
 	 * Modify the weight matrix and thresholds based on the last call to
 	 * calcError.
-	 * 
+	 *
 	 * @throws NeuralNetworkException
 	 */
 	public void iteration() throws NeuralNetworkError {
@@ -166,7 +166,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 		final Collection<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
 
 		// mate and form the next generation
-		for (int i = 0; i < countToMate; i++) {
+		for(int i = 0; i < countToMate; i++) {
 			final CHROMOSOME_TYPE mother = this.chromosomes[i];
 			final int fatherInt = (int) (Math.random() * matingPopulationSize);
 			final CHROMOSOME_TYPE father = this.chromosomes[fatherInt];
@@ -177,12 +177,11 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 					mother, father, child1, child2);
 
 			try {
-				if (this.pool != null) {
+				if(this.pool != null)
 					tasks.add(worker);
-				} else {
+				else
 					worker.call();
-				}
-			} catch (final Exception e) {
+			} catch(final Exception e) {
 				e.printStackTrace();
 			}
 
@@ -190,14 +189,13 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 			offspringIndex += 2;
 		}
 
-		if (this.pool != null) {
+		if(this.pool != null)
 			try {
 				this.pool.invokeAll(tasks, 120, TimeUnit.SECONDS);
-			} catch (final InterruptedException e) {
+			} catch(final InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
 
 		// sort the next generation
 		sortChromosomes();
@@ -279,12 +277,12 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 	}
 
 	public void sortChromosomes() {
-            try{
-		Arrays.sort(this.chromosomes);
-            }catch(Exception ex)
-            {
-                ex.printStackTrace();
-            }
+		try {
+			Arrays.sort(this.chromosomes);
+		} catch(Exception ex)
+		{
+			ex.printStackTrace();
+		}
 	}
 
 }

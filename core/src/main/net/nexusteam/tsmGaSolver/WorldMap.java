@@ -1,4 +1,4 @@
-package main.net.nexusteam.tsmGaSolver;
+package net.nexusteam.tsmGaSolver;
 
 /**
  * Introduction to Neural Networks with Java, 2nd Edition Copyright 2008 by
@@ -9,10 +9,11 @@ package main.net.nexusteam.tsmGaSolver;
  * This class is released under the: GNU Lesser General Public License (LGPL)
  * http://www.gnu.org/copyleft/lesser.html
  */
+import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;
-import main.net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 
 /**
  * Chapter 6: Training using a Genetic Algorithm
@@ -24,68 +25,67 @@ import main.net.nexusteam.tsmGaSolver.ann.TSPChromosome;
  */
 public class WorldMap extends JPanel {
 
-    /**
-     * Serial id for this class.
-     */
-    private static final long serialVersionUID = 6412464565412351889L;
-    /**
-     * The TravelingSalesman object that owns this object.
-     */
-    protected GeneticTravelingSalesman owner;
+	/**
+	 * Serial id for this class.
+	 */
+	private static final long serialVersionUID = 6412464565412351889L;
+	/**
+	 * The TravelingSalesman object that owns this object.
+	 */
+	protected GeneticTravelingSalesman owner;
 
-    /**
-     * Constructor.
-     *
-     * @param owner The TravelingSalesman object that owns this object.
-     */
-    WorldMap(final GeneticTravelingSalesman owner) {
-        this.owner = owner;
-    }
+	/**
+	 * Constructor.
+	 *
+	 * @param owner The TravelingSalesman object that owns this object.
+	 */
+	WorldMap(final GeneticTravelingSalesman owner) {
+		this.owner = owner;
+	}
 
-    /**
-     * Update the graphical display of the map.
-     *
-     * @param g The graphics object to use.
-     */
-    @Override
-    public void paint(final Graphics g) {
-        update(g);
-    }
+	/**
+	 * Update the graphical display of the map.
+	 *
+	 * @param g The graphics object to use.
+	 */
+	@Override
+	public void paint(final Graphics g) {
+		update(g);
+	}
 
-    /**
-     * Update the graphical display of the map.
-     *
-     * @param g The graphics object to use.
-     */
-    @Override
-    public void update(final Graphics g) {
-        final int width = getBounds().width;
-        final int height = getBounds().height;
+	/**
+	 * Update the graphical display of the map.
+	 *
+	 * @param g The graphics object to use.
+	 */
+	@Override
+	public void update(final Graphics g) {
+		final int width = getBounds().width;
+		final int height = getBounds().height;
 
-        g.setColor(Color.black);
-        g.fillRect(0, 0, width, height);
+		g.setColor(Color.black);
+		g.fillRect(0, 0, width, height);
 
-        if (!this.owner.started) {
-            return;
-        }
+		if(!owner.started)
+			return;
 
-        g.setColor(Color.green);
-        for (int i = 0; i < GeneticTravelingSalesman.CITY_COUNT; i++) {
-            final int xpos = (int) this.owner.waypoints[i].x;
-            final int ypos = (int) this.owner.waypoints[i].y;
-            g.fillOval(xpos - 5, ypos - 5, 10, 10);
-        }
+		g.setColor(Color.green);
+		for(int i = 0; i < GeneticTravelingSalesman.CITY_COUNT; i++) {
+			final int xpos = (int) owner.waypoints[i].x;
+			final int ypos = (int) owner.waypoints[i].y;
+			g.fillOval(xpos - 5, ypos - 5, 10, 10);
+		}
 
-        final TSPChromosome top = this.owner.getTopChromosome();
+		final TSPChromosome top = owner.getTopChromosome();
 
-        g.setColor(Color.white);
-        for (int i = 0; i < GeneticTravelingSalesman.CITY_COUNT - 1; i++) {
-            final int icity = top.getGene(i);
-            final int icity2 = top.getGene(i + 1);
+		g.setColor(Color.white);
+		for(int i = 0; i < GeneticTravelingSalesman.CITY_COUNT - 1; i++) {
+			final int icity = top.getGene(i);
+			final int icity2 = top.getGene(i + 1);
 
-            g.drawLine((int) this.owner.waypoints[icity].x, (int) this.owner.waypoints[icity].y, (int) this.owner.waypoints[icity2].x, (int) this.owner.waypoints[icity2].y);
+			g.drawLine((int) owner.waypoints[icity].x, (int) owner.waypoints[icity].y, (int) owner.waypoints[icity2].x, (int) owner.waypoints[icity2].y);
 
-        }
-    }
+		}
+	}
 
 }
