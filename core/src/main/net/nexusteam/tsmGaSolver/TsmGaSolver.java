@@ -19,99 +19,112 @@ import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-/**	@author dermetfan */
+/**
+ * @author dermetfan
+ */
 public class TsmGaSolver extends ApplicationAdapter {
 
-	ShapeRenderer renderer;
-	Stage stage;
-	Viewport viewport;
-	Rectangle bounds;
-	Array<Vector2> path = new Array<Vector2>();
-	Array<Vector2> optimum = new Array<Vector2>();
-	Label status, status2;
+    private ShapeRenderer renderer;
+    private Stage stage;
+    private Viewport viewport;
+    private Rectangle bounds;
+    private Array<Vector2> path = new Array<Vector2>();
+    private Array<Vector2> optimum = new Array<Vector2>();
+    private Label status, status2;
 
-	@Override
-	public void create() {
-		Assets.manager.load(Assets.class);
-		Assets.manager.finishLoading();
+    @Override
+    public void create() {
+        Assets.manager.load(Assets.class);
+        Assets.manager.finishLoading();
 
-		renderer = new ShapeRenderer();
-		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		stage = new Stage(viewport);
-		bounds = new Rectangle(0, 0, stage.getWidth(), stage.getHeight());
+        renderer = new ShapeRenderer();
+        viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        stage = new Stage(viewport);
+        bounds = new Rectangle(0, 0, stage.getWidth(), stage.getHeight());
 
-		// create UI
-		Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
+        // create UI
+        Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
 
-		Table table = new Table();
-		table.setFillParent(true);
-		stage.addActor(table);
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
 
-		status = new Label("[status message]", skin);
-		status.setAlignment(Align.center);
+        status = new Label("[status message]", skin);
+        status.setAlignment(Align.center);
 
-		status2 = new Label("[current optimum]", skin);
-		status2.setAlignment(Align.center);
+        status2 = new Label("[current optimum]", skin);
+        status2.setAlignment(Align.center);
 
-		table.add(status).bottom().expand().fillX();
-		table.add(status2).bottom().expand().fillX();
+        table.add(status).bottom().expand().fillX();
+        table.add(status2).bottom().expand().fillX();
 
-		// adjust bounds
-		bounds.y = status.getHeight();
-		bounds.height -= bounds.y;
+        // adjust bounds
+        bounds.y = status.getHeight();
+        bounds.height -= bounds.y;
 
-		populate(MathUtils.random(3, 15));
-	}
+        populate(MathUtils.random(3, 15));
+    }
 
-	@Override
-	public void resize(int width, int height) {
-		viewport.update(width, height, true);
-	}
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height, true);
+    }
 
-	@Override
-	public void render() {
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    @Override
+    public void render() {
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		renderer.setProjectionMatrix(viewport.getCamera().combined);
-		renderer.begin(ShapeType.Line);
-		renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
-		for(int i = 1; i < path.size; i++)
-			renderer.line(path.get(i - 1), path.get(i));
-		renderer.setColor(Color.GREEN);
-		for(int i = 1; i < optimum.size; i++)
-			renderer.line(optimum.get(i - 1), optimum.get(i));
-		renderer.setColor(Color.WHITE);
-		renderer.end();
+        renderer.setProjectionMatrix(viewport.getCamera().combined);
+        renderer.begin(ShapeType.Line);
+        renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+        
+        for (int i = 1; i < path.size; i++) {
+            renderer.line(path.get(i - 1), path.get(i));
+        }
+        
+        renderer.setColor(Color.GREEN);
+        
+        for (int i = 1; i < optimum.size; i++) {
+            renderer.line(optimum.get(i - 1), optimum.get(i));
+        }
+        
+        renderer.setColor(Color.WHITE);
+        renderer.end();
 
-		renderer.begin(ShapeType.Filled);
-		for(Vector2 city : path)
-			renderer.circle(city.x, city.y, 7);
-		renderer.end();
+        renderer.begin(ShapeType.Filled);
+        
+        for (Vector2 city : path) {
+            renderer.circle(city.x, city.y, 7);
+        }
+        
+        renderer.end();
 
-		stage.act(Gdx.graphics.getDeltaTime());
-		stage.draw();
-	}
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
+    }
 
-	private void populate(int count) {
-		Pools.freeAll(path, true);
-		path.clear();
-		for(; count > 0; count--) {
-			Vector2 city = Pools.obtain(Vector2.class);
-			city.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
-			path.add(city);
-		}
-		optimum.clear();
+    private void populate(int count) {
+        Pools.freeAll(path, true);
+        path.clear();
+        
+        for (; count > 0; count--) {
+            Vector2 waypoint = Pools.obtain(Vector2.class);
+            waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
+            path.add(waypoint);
+        }
+        
+        optimum.clear();
 
-		// TODO remove, this is just demo
-		optimum.addAll(path);
-		optimum.shuffle();
-	}
+        // TODO remove, this is just demo
+        optimum.addAll(path);
+        optimum.shuffle();
+    }
 
-	@Override
-	public void dispose() {
-		renderer.dispose();
-		stage.dispose();
-		Assets.manager.dispose();
-	}
+    @Override
+    public void dispose() {
+        renderer.dispose();
+        stage.dispose();
+        Assets.manager.dispose();
+    }
 
 }
