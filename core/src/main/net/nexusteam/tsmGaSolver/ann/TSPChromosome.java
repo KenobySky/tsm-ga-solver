@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver.Ann;
+package net.nexusteam.tsmGaSolver.ann;
 
 import net.JeffHeatonCode.Chromosome;
 import net.JeffHeatonCode.NeuralNetworkError;
@@ -9,14 +9,14 @@ import net.JeffHeatonCode.NeuralNetworkError;
  */
 public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 
-    protected Country[] countries;
+    protected Waypoint[] path;
 
-    public TSPChromosome(final TSPGeneticAlgorithm owner, final Country countries[]) {
+    public TSPChromosome(final TSPGeneticAlgorithm owner, final Waypoint path[]) {
         this.setGeneticAlgorithm(owner);
-        this.countries = countries;
+        this.path = path;
 
-        final Integer genes[] = new Integer[this.countries.length];
-        final boolean taken[] = new boolean[countries.length];
+        final Integer genes[] = new Integer[this.path.length];
+        final boolean taken[] = new boolean[path.length];
 
         for (int i = 0; i < genes.length; i++) {
             taken[i] = false;
@@ -44,8 +44,8 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
     @Override
     public void calculateCost() throws NeuralNetworkError {
         double cost = 0.0;
-        for (int i = 0; i < this.countries.length - 1; i++) {
-            final double dist = this.countries[getGene(i)].distance(this.countries[getGene(i + 1)]);
+        for (int i = 0; i < this.path.length - 1; i++) {
+            final double dist = this.path[getGene(i)].distance(this.path[getGene(i + 1)]);
             cost += dist;
         }
         setCost(cost);
