@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver.ann;
+package main.net.nexusteam.tsmGaSolver.ann;
 
 import com.badlogic.gdx.math.Vector2;
 

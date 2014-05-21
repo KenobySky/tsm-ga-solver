@@ -1,7 +1,7 @@
-package net.nexusteam.tsmGaSolver.ann;
+package main.net.nexusteam.tsmGaSolver.ann;
 
-import net.JeffHeatonCode.Chromosome;
-import net.JeffHeatonCode.NeuralNetworkError;
+import main.net.JeffHeatonCode.Chromosome;
+import main.net.JeffHeatonCode.NeuralNetworkError;
 
 /**
  *

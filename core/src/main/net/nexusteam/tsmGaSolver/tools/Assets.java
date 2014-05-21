@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver;
+package main.net.nexusteam.tsmGaSolver.tools;
 
 import net.dermetfan.utils.libgdx.AnnotationAssetManager;
 import net.dermetfan.utils.libgdx.AnnotationAssetManager.Asset;

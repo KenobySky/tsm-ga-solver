@@ -1,4 +1,4 @@
-package net.JeffHeatonCode;
+package main.net.JeffHeatonCode;
 
 /**
  * Introduction to Neural Networks with Java, 2nd Edition

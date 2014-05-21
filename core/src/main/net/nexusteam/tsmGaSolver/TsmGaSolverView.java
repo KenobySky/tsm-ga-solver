@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver;
+package main.net.nexusteam.tsmGaSolver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -18,11 +19,12 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import main.net.nexusteam.tsmGaSolver.tools.Assets;
 
 /**
  * @author dermetfan
  */
-public class TsmGaSolver extends ApplicationAdapter {
+public class TsmGaSolverView extends ApplicationAdapter {
 
     private ShapeRenderer renderer;
     private Stage stage;
@@ -31,6 +33,11 @@ public class TsmGaSolver extends ApplicationAdapter {
     private Array<Vector2> path = new Array<Vector2>();
     private Array<Vector2> optimum = new Array<Vector2>();
     private Label status, status2;
+    
+    //Need to add those buttons below the labels.
+    //It should be named Start
+    private Button start;
+    
 
     @Override
     public void create() {

@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver.tools;
+package main.net.nexusteam.tsmGaSolver.tools;
 
 import com.badlogic.gdx.math.MathUtils;
 
@@ -15,6 +15,14 @@ public class Random { // TODO why do we need this? Just use MathUtils directly (
         } else {
             return MathUtils.random() * -1;
         }
+
+    }
+
+    public static char getRandomLetter() {
+        String alphabet = "0123456789ABCDE";
+        int N = alphabet.length();
+
+        return alphabet.charAt(MathUtils.random(N));
 
     }
 

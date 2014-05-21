@@ -1,6 +1,6 @@
-package net.nexusteam.tsmGaSolver.tools;
+package main.net.nexusteam.tsmGaSolver.tools;
 
-import net.nexusteam.tsmGaSolver.Assets;
+
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
