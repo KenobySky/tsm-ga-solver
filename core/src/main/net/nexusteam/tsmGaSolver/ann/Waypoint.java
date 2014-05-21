@@ -4,40 +4,22 @@ import com.badlogic.gdx.math.Vector2;
 
 /**	represents a waypoint of the salesman
  * 	@author Andre V Lopes */
-public class Waypoint {
+@SuppressWarnings("serial")
+public class Waypoint extends Vector2 {
 
-	private float x, y;
-	private String name;
+	private final String name;
 
-	public Waypoint(float x, float y, String name) {
-		this.x = x;
-		this.y = y;
+	public Waypoint(String name) {
 		this.name = name;
 	}
 
-	public void setPosition(float x, float y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	public float getX() {
-		return x;
-	}
-
-	public float getY() {
-		return y;
+	public Waypoint(float x, float y, String name) {
+		super(x, y);
+		this.name = name;
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public float distance(Waypoint b) {
-		return Vector2.dst(x, y, b.x, b.y);
-	}
-
-	public static float distance(Waypoint a, Waypoint b) {
-		return a.distance(b);
 	}
 
 }
