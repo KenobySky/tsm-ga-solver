@@ -1,8 +1,9 @@
 package net.nexusteam.tsmGaSolver.desktop;
 
+import net.nexusteam.tsmGaSolver.TsmGaSolver;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import net.nexusteam.tsmGaSolver.TsmGaSolver;
 
 public class DesktopLauncher {
 
@@ -10,7 +11,7 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.width = 800;
 		cfg.height = 600;
-		cfg.title = "TSP GA Solver 0.1a";
+		cfg.title = "TSP GA Solver 0.3 Alpha";
 
 		new LwjglApplication(new TsmGaSolver(), cfg);
 	}
