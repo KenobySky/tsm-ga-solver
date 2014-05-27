@@ -62,7 +62,7 @@ public abstract class Settings {
 		if(override || !prefs.contains(MAXIMUM_GENERATORS))
 			prefs.putInteger(MAXIMUM_GENERATORS, 10);
 		if(override || !prefs.contains(MATING_PERCENTAGE))
-			prefs.putFloat(MATING_PERCENTAGE, .8f);
+			prefs.putFloat(MATING_PERCENTAGE, 80);
 		if(override || !prefs.contains(TOP_POPULATION))
 			prefs.putInteger(TOP_POPULATION, 25);
 		if(override || !prefs.contains(MAXIMUM_NON_CHANGE_GENERATORS))
@@ -70,7 +70,7 @@ public abstract class Settings {
 		if(override || !prefs.contains(CUT_LENGTH))
 			prefs.putFloat(CUT_LENGTH, 10);
 		if(override || !prefs.contains(MUTATION_PERCENTAGE))
-			prefs.putFloat(MUTATION_PERCENTAGE, .8f);
+			prefs.putFloat(MUTATION_PERCENTAGE, 80);
 		if(override || !prefs.contains(ADD_CITIES_MANUALLY))
 			prefs.putBoolean(ADD_CITIES_MANUALLY, false);
 	}
