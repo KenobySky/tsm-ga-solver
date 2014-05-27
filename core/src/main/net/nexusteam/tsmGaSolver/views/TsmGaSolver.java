@@ -1,4 +1,7 @@
-package net.nexusteam.tsmGaSolver;
+package net.nexusteam.tsmGaSolver.views;
+
+import net.nexusteam.tsmGaSolver.Assets;
+import net.nexusteam.tsmGaSolver.Controller;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -30,16 +33,23 @@ public class TsmGaSolver extends ApplicationAdapter {
 	private Array<Vector2> optimum = new Array<Vector2>();
 	private Label status, status2;
 
+	//
+	private Controller controller;
+	
 	@Override
 	public void create() {
 		Assets.manager.load(Assets.class);
 		Assets.manager.finishLoading();
 
+		
 		renderer = new ShapeRenderer();
 		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		stage = new Stage(viewport);
 		bounds = new Rectangle(0, 0, stage.getWidth(), stage.getHeight());
 
+
+		controller = new Controller(this, bounds.x - bounds.width,bounds.y - bounds.height);
+		
 		// create UI
 		Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
 
