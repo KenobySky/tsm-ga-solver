@@ -87,7 +87,8 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putInteger(WAYPOINT_QUANTITY, Integer.parseInt(waypointQuantityField.getText()));
+				String text = waypointQuantityField.getText();
+				prefs.putInteger(WAYPOINT_QUANTITY, Integer.parseInt(text));
 			}
 
 		});
@@ -100,7 +101,10 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putInteger(MAXIMUM_GENERATORS, Integer.parseInt(maximumGeneratorsField.getText()));
+				String text = maximumGeneratorsField.getText();
+				if(text.isEmpty())
+					text = "0";
+				prefs.putInteger(MAXIMUM_GENERATORS, Integer.parseInt(text));
 			}
 
 		});
@@ -139,7 +143,10 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putInteger(MAXIMUM_NON_CHANGE_GENERATORS, Integer.parseInt(maximumNonChangeGeneratorsField.getText()));
+				String text = maximumNonChangeGeneratorsField.getText();
+				if(text.isEmpty())
+					text = "0";
+				prefs.putInteger(MAXIMUM_NON_CHANGE_GENERATORS, Integer.parseInt(text));
 			}
 
 		});
@@ -152,7 +159,10 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putFloat(CUT_LENGTH, Float.parseFloat(cutLengthField.getText()));
+				String text = cutLengthField.getText();
+				if(text.isEmpty())
+					text = "0";
+				prefs.putFloat(CUT_LENGTH, Float.parseFloat(text));
 			}
 
 		});
