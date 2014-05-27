@@ -1,6 +1,7 @@
 package net.nexusteam.tsmGaSolver.android;
 
-import net.nexusteam.views.TsmGaSolver;
+import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
+
 import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;

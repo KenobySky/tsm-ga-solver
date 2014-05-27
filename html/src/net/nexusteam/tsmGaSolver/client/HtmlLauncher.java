@@ -1,20 +1,21 @@
 package net.nexusteam.tsmGaSolver.client;
 
+import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
 
-import net.nexusteam.views.TsmGaSolver;
-
 public class HtmlLauncher extends GwtApplication {
 
-        @Override
-        public GwtApplicationConfiguration getConfig () {
-                return new GwtApplicationConfiguration(480, 320);
-        }
+	@Override
+	public GwtApplicationConfiguration getConfig() {
+		return new GwtApplicationConfiguration(480, 320);
+	}
 
-        @Override
-        public ApplicationListener getApplicationListener () {
-                return new TsmGaSolver();
-        }
+	@Override
+	public ApplicationListener getApplicationListener() {
+		return new TsmGaSolver();
+	}
+
 }
