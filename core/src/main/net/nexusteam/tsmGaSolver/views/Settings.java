@@ -88,6 +88,8 @@ public abstract class Settings {
 			@Override
 			public void keyTyped(TextField textField, char c) {
 				String text = waypointQuantityField.getText();
+				if(text.isEmpty())
+					text = "0";
 				prefs.putInteger(WAYPOINT_QUANTITY, Integer.parseInt(text));
 			}
 
