@@ -4,6 +4,7 @@ import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
 import net.nexusteam.tsmGaSolver.ann.Waypoint;
 import net.nexusteam.tsmGaSolver.tools.Random;
+import net.nexusteam.views.TsmGaSolver;
 
 import com.badlogic.gdx.math.MathUtils;
 
@@ -118,6 +119,7 @@ public class Controller {
 
 	}
 
+	
 	private void start() {
 		started = true;
 		generation_count = 0;

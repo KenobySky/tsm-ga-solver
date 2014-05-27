@@ -1,6 +1,6 @@
 package net.nexusteam.tsmGaSolver.desktop;
 
-import net.nexusteam.tsmGaSolver.TsmGaSolver;
+import net.nexusteam.views.TsmGaSolver;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
