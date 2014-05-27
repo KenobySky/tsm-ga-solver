@@ -19,9 +19,7 @@ public class Random { // TODO why do we need this? Just use MathUtils directly (
 
 	public static char getRandomLetter() {
 		String alphabet = "0123456789ABCDE";
-		int N = alphabet.length();
-
-		return alphabet.charAt(MathUtils.random(N));
+		return alphabet.charAt(MathUtils.random(alphabet.length() - 1));
 
 	}
 
