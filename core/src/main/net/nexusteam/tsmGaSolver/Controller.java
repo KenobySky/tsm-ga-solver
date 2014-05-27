@@ -4,7 +4,7 @@ import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
 import net.nexusteam.tsmGaSolver.ann.Waypoint;
 import net.nexusteam.tsmGaSolver.tools.Random;
-import net.nexusteam.views.TsmGaSolver;
+import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
 import com.badlogic.gdx.math.MathUtils;
 

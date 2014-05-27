@@ -40,7 +40,6 @@ public class TsmGaSolver extends ApplicationAdapter {
 	public void create() {
 		Assets.manager.load(Assets.class);
 		Assets.manager.finishLoading();
-
 		
 		renderer = new ShapeRenderer();
 		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
