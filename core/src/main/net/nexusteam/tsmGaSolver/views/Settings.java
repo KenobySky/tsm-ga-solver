@@ -152,7 +152,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putFloat(CUT_LENGTH, Integer.parseInt(cutLengthField.getText()));
+				prefs.putFloat(CUT_LENGTH, Float.parseFloat(cutLengthField.getText()));
 			}
 
 		});
