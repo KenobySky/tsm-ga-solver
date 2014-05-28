@@ -271,4 +271,6 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 		return builder.toString();
 	}
 
+	
+
 }

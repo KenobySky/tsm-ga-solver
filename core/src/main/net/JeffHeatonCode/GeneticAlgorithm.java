@@ -278,6 +278,9 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 
 	public void sortChromosomes() {
 		try {
+			
+		
+			
 			Arrays.sort(this.chromosomes);
 		} catch(Exception ex)
 		{

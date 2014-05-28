@@ -120,9 +120,11 @@ public class Controller {
 	}
 
 	
-	private void start() {
+	public void start() {
 		started = true;
 		generation_count = 0;
+		
+		//Stop Current Thread
 		try {
 
 			if(worker != null) {
@@ -135,13 +137,112 @@ public class Controller {
 			ex.printStackTrace();
 		}
 
+		//Start New Thread
 		worker = new Thread(new WorkerThread(this));
 		worker.start();
 
 	}
 
+	
+	
+	
+	
+	//GETTERS AND SETTERS
+	
 	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
 	}
+
+	public int getCity_quantity() {
+		return city_quantity;
+	}
+
+	public void setCity_quantity(int city_quantity) {
+		this.city_quantity = city_quantity;
+	}
+
+	public int getChromosomes_quantity() {
+		return chromosomes_quantity;
+	}
+
+	public void setChromosomes_quantity(int chromosomes_quantity) {
+		this.chromosomes_quantity = chromosomes_quantity;
+	}
+
+	public float getMutation_percentage() {
+		return mutation_percentage;
+	}
+
+	public void setMutation_percentage(float mutation_percentage) {
+		this.mutation_percentage = mutation_percentage;
+	}
+
+	public int getMatingPopulationSize() {
+		return matingPopulationSize;
+	}
+
+	public void setMatingPopulationSize(int matingPopulationSize) {
+		this.matingPopulationSize = matingPopulationSize;
+	}
+
+	public int getFavoredPopulationSize() {
+		return favoredPopulationSize;
+	}
+
+	public void setFavoredPopulationSize(int favoredPopulationSize) {
+		this.favoredPopulationSize = favoredPopulationSize;
+	}
+
+	public int getCutLength() {
+		return cutLength;
+	}
+
+	public void setCutLength(int cutLength) {
+		this.cutLength = cutLength;
+	}
+
+	public int getGeneration_count() {
+		return generation_count;
+	}
+
+	public void setGeneration_count(int generation_count) {
+		this.generation_count = generation_count;
+	}
+
+	public boolean isStarted() {
+		return started;
+	}
+
+	public void setStarted(boolean started) {
+		this.started = started;
+	}
+
+	public boolean isStop() {
+		return stop;
+	}
+
+	public void setStop(boolean stop) {
+		this.stop = stop;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Waypoint[] getWaypoints() {
+		return waypoints;
+	}
+
+	public void setWaypoints(Waypoint[] waypoints) {
+		this.waypoints = waypoints;
+	}
+	
+	
+	
+	
 
 }

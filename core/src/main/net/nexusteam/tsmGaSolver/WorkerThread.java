@@ -20,6 +20,10 @@ public class WorkerThread implements Runnable {
 		float oldCost = 0.0f;
 		int countSame = 0;
 
+		//Not sure if this is correct
+		controller.status = "Current Cost : " + oldCost;
+		
+		
 		//render()?
 		final NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumFractionDigits(2);
@@ -42,6 +46,7 @@ public class WorkerThread implements Runnable {
 				oldCost = thisCost;
 			}
 
+			
 			//render() ?
 
 		}

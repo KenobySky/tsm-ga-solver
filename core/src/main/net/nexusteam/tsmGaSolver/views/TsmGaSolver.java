@@ -72,8 +72,14 @@ public class TsmGaSolver extends ApplicationAdapter {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				// TODO implement
-				status.setText("not yet implemented");
-				optimum.shuffle();
+				controller.start();
+				
+				//Status will get TExt from Controller.. I will make a method to keep it updated from there.
+				status.setText(controller.getStatus());
+				
+				//Commented
+				//optimum.shuffle();
+				
 			}
 
 		});
@@ -123,7 +129,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 	@Override
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+		
+		status.setText(controller.status);
+		
 		renderer.setProjectionMatrix(viewport.getCamera().combined);
 		renderer.begin(ShapeType.Line);
 		renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
