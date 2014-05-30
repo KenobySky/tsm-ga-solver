@@ -31,7 +31,7 @@ public class WorkerThread implements Runnable {
 
 		while(countSame < 100) {
 			controller.generation_count++;
-			controller.status = "Generation : " + controller.generation_count + "; Cost :" + thisCost + "Mutated " + nf.format(0) + "%";
+			controller.status = "Generation : " + controller.generation_count + "; Cost :" + thisCost +" "+"Mutated " + nf.format(0) + "%";
 
 			controller.genetic.iteration();
 
@@ -47,7 +47,7 @@ public class WorkerThread implements Runnable {
 
 			controller.view.update();
 		}
-
+		
 		controller.status = "Solution Found After " + controller.generation_count + " generations!";
 	}
 
