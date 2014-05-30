@@ -2,6 +2,8 @@ package net.nexusteam.tsmGaSolver.views;
 
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.Controller;
+import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -22,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -33,8 +36,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 	private Stage stage;
 	private Viewport viewport;
 	private Rectangle bounds;
-	private Array<Vector2> path = new Array<Vector2>();
-	private Array<Vector2> optimum = new Array<Vector2>();
+	private Array<Vector2> waypoints = new Array<Vector2>();
+	/** the indices of {@link #waypoints} that are currently the optimal solution */
+	private IntArray optimum = new IntArray();
 	private Label status, status2;
 
 	private Controller controller;
@@ -130,44 +134,44 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 	@Override
 	public void render() {
+		stage.act(Gdx.graphics.getDeltaTime());
+
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		status.setText(controller.status);
-
 		renderer.setProjectionMatrix(viewport.getCamera().combined);
+
+		// draw bounds
+		renderer.setColor(Color.WHITE);
 		renderer.begin(ShapeType.Line);
 		renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
+		renderer.end();
 
-		for(int i = 1; i < path.size; i++)
-			renderer.line(path.get(i - 1), path.get(i));
-
+		// draw optimum
 		renderer.setColor(Color.GREEN);
-
+		renderer.begin(ShapeType.Line);
 		for(int i = 1; i < optimum.size; i++)
-			renderer.line(optimum.get(i - 1), optimum.get(i));
+			renderer.line(waypoints.get(optimum.get(i - 1)), waypoints.get(optimum.get(i)));
 
+		renderer.end();
+
+		// draw cities
 		renderer.setColor(Color.WHITE);
-		renderer.end();
-
 		renderer.begin(ShapeType.Filled);
-
-		for(Vector2 city : path)
-			renderer.circle(city.x, city.y, 7);
-
+		for(Vector2 city : waypoints)
+			renderer.circle(city.x, city.y, 5);
 		renderer.end();
 
-		stage.act(Gdx.graphics.getDeltaTime());
 		stage.draw();
 	}
 
 	private void populate(int count) {
-		Pools.freeAll(path, true);
-		path.clear();
+		Pools.freeAll(waypoints, true);
+		waypoints.clear();
 
 		for(; count > 0; count--) {
 			Vector2 waypoint = Pools.obtain(Vector2.class);
 			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
-			path.add(waypoint);
+			waypoints.add(waypoint);
 		}
 
 		optimum.clear();
@@ -175,19 +179,11 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 	/** updates the view according to the {@link #controller} */
 	public void update() {
-		//		Waypoint[] newOptimum = controller.getTopChromosome().getPath();
-		//		boolean equal = optimum.size == newOptimum.length;
-		//		if(equal)
-		//			for(int i = 0; i < optimum.size; i++)
-		//				if(!(equal = optimum.get(i).equals(newOptimum[i])))
-		//					break;
-
-		//		if(!equal) {
+		status.setText(controller.status);
 		optimum.clear();
-		optimum.addAll(controller.getTopChromosome().getPath());
-		//			System.out.println("path differs optimum");
-		//		} else
-		//			System.out.println("path equals optimum");
+		TSPChromosome c = controller.getTopChromosome();
+		for(Integer gene : c.getGenes())
+			optimum.add(gene);
 	}
 
 	@Override
@@ -197,9 +193,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 		Assets.manager.dispose();
 	}
 
-	/** @return the {@link #path} */
+	/** @return the {@link #waypoints} */
 	public Array<Vector2> getPath() {
-		return path;
+		return waypoints;
 	}
 
 }

@@ -20,9 +20,7 @@ public class WorkerThread implements Runnable {
 		float oldCost = 0.0f;
 		int countSame = 0;
 
-		//Not sure if this is correct
-		controller.status = "Current Cost : " + oldCost;
-
+		controller.status = "Current cost: " + oldCost;
 		controller.view.update();
 
 		final NumberFormat nf = NumberFormat.getInstance();
@@ -31,7 +29,7 @@ public class WorkerThread implements Runnable {
 
 		while(countSame < 100) {
 			controller.generation_count++;
-			controller.status = "Generation : " + controller.generation_count + "; Cost :" + thisCost +" "+"Mutated " + nf.format(0) + "%";
+			controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + nf.format(0) + "%";
 
 			controller.genetic.iteration();
 
@@ -39,16 +37,16 @@ public class WorkerThread implements Runnable {
 
 			if((int) thisCost == (int) oldCost)
 				countSame++;
-			else
-			{
+			else {
 				countSame = 0;
 				oldCost = thisCost;
 			}
 
 			controller.view.update();
 		}
-		
-		controller.status = "Solution Found After " + controller.generation_count + " generations!";
+
+		controller.status = "Solution found after " + controller.generation_count + " generations!";
+		controller.view.update();
 	}
 
 }
