@@ -18,9 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 /** @author dermetfan */
 public abstract class Settings {
 
-	protected static Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
+	public static final Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
 
-	protected static final String WAYPOINT_QUANTITY = "waypoint quantity", MAXIMUM_GENERATORS = "maximum generators", MATING_PERCENTAGE = "mating percentage", TOP_POPULATION = "top population", MAXIMUM_NON_CHANGE_GENERATORS = "maximum non-change generators", CUT_LENGTH = "cut length", MUTATION_PERCENTAGE = "mutation percentage", ADD_CITIES_MANUALLY = "add cities manually", CHROMOSOME_QUANTITY = "chromosome quantity";
+	public static final String WAYPOINT_QUANTITY = "waypoint quantity", MAXIMUM_GENERATORS = "maximum generators", MATING_PERCENTAGE = "mating percentage", TOP_POPULATION = "top population", MAXIMUM_NON_CHANGE_GENERATORS = "maximum non-change generators", CUT_LENGTH = "cut length", MUTATION_PERCENTAGE = "mutation percentage", ADD_CITIES_MANUALLY = "add cities manually", CHROMOSOME_QUANTITY = "chromosome quantity";
 
 	/** @see #isNumeric(char) */
 	public static final TextFieldFilter numericFilter = new TextFieldFilter() {
@@ -39,6 +39,7 @@ public abstract class Settings {
 	/** @return if the given char represents a numeric value */
 	public static boolean isNumeric(char c) {
 		switch(c) {
+		case '0':
 		case '1':
 		case '2':
 		case '3':
@@ -56,7 +57,9 @@ public abstract class Settings {
 
 	/**	resets the prefs to the default values
 	 * 	@param if values should be set even if they already exist */
-	public static void reset(boolean override) {
+	public static void reset(boolean override) { // TODO André, choose sane defaults
+		if(override || !prefs.contains(CHROMOSOME_QUANTITY))
+			prefs.putInteger(CHROMOSOME_QUANTITY, 1000);
 		if(override || !prefs.contains(WAYPOINT_QUANTITY))
 			prefs.putInteger(WAYPOINT_QUANTITY, 10);
 		if(override || !prefs.contains(MAXIMUM_GENERATORS))
@@ -68,9 +71,9 @@ public abstract class Settings {
 		if(override || !prefs.contains(MAXIMUM_NON_CHANGE_GENERATORS))
 			prefs.putInteger(MAXIMUM_NON_CHANGE_GENERATORS, 5);
 		if(override || !prefs.contains(CUT_LENGTH))
-			prefs.putFloat(CUT_LENGTH, 10);
+			prefs.putInteger(CUT_LENGTH, 10);
 		if(override || !prefs.contains(MUTATION_PERCENTAGE))
-			prefs.putFloat(MUTATION_PERCENTAGE, 80);
+			prefs.putFloat(MUTATION_PERCENTAGE, .1f);
 		if(override || !prefs.contains(ADD_CITIES_MANUALLY))
 			prefs.putBoolean(ADD_CITIES_MANUALLY, false);
 	}
@@ -78,6 +81,22 @@ public abstract class Settings {
 	/** adds the settings widgets to the given {@link Table} */
 	public static void add(Table table) {
 		Skin skin = Assets.manager.get(Assets.uiskin);
+
+		// waypoint quantity
+		Label chromosomeQuantity = new Label("Chromosome Quantity", skin);
+		final TextField chromosomeQuantityField = new TextField(prefs.getString(CHROMOSOME_QUANTITY), skin);
+		chromosomeQuantityField.setTextFieldFilter(numericFilter);
+		chromosomeQuantityField.setTextFieldListener(new TextFieldListener() {
+
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				String text = chromosomeQuantityField.getText();
+				if(text.isEmpty())
+					text = "0";
+				prefs.putInteger(WAYPOINT_QUANTITY, Integer.parseInt(text));
+			}
+
+		});
 
 		// waypoint quantity
 		Label waypointQuantity = new Label("Waypoint Quantity", skin);
@@ -164,7 +183,7 @@ public abstract class Settings {
 				String text = cutLengthField.getText();
 				if(text.isEmpty())
 					text = "0";
-				prefs.putFloat(CUT_LENGTH, Float.parseFloat(text));
+				prefs.putInteger(CUT_LENGTH, Integer.parseInt(text));
 			}
 
 		});
@@ -195,6 +214,8 @@ public abstract class Settings {
 		});
 
 		table.defaults().fill();
+		table.add(chromosomeQuantity);
+		table.add(chromosomeQuantityField).row();
 		table.add(waypointQuantity);
 		table.add(waypointQuantityField).row();
 		table.add(maximumGenerators);

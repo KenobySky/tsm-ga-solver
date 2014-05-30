@@ -22,17 +22,16 @@ public class WorkerThread implements Runnable {
 
 		//Not sure if this is correct
 		controller.status = "Current Cost : " + oldCost;
-		
-		
-		//render()?
+
+		controller.view.update();
+
 		final NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumFractionDigits(2);
 		nf.setMinimumFractionDigits(2);
 
 		while(countSame < 100) {
 			controller.generation_count++;
-			controller.status =
-					"Generation : " + controller.generation_count + "; Cost :" + thisCost + "Mutated " + nf.format(0) + "%";
+			controller.status = "Generation : " + controller.generation_count + "; Cost :" + thisCost + "Mutated " + nf.format(0) + "%";
 
 			controller.genetic.iteration();
 
@@ -46,9 +45,7 @@ public class WorkerThread implements Runnable {
 				oldCost = thisCost;
 			}
 
-			
-			//render() ?
-
+			controller.view.update();
 		}
 
 		controller.status = "Solution Found After " + controller.generation_count + " generations!";

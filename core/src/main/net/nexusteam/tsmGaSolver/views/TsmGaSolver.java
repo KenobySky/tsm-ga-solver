@@ -2,7 +2,6 @@ package net.nexusteam.tsmGaSolver.views;
 
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.Controller;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -51,8 +50,6 @@ public class TsmGaSolver extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		bounds = new Rectangle(0, 0, stage.getWidth(), stage.getHeight());
 
-		controller = new Controller(this, bounds.x - bounds.width, bounds.y - bounds.height);
-
 		// create UI
 		final Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
 
@@ -71,15 +68,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				// TODO implement
+				controller.stop();
+				controller.configure();
+				controller.initialize(bounds.x - bounds.width, bounds.y - bounds.height);
 				controller.start();
-				
-				//Status will get TExt from Controller.. I will make a method to keep it updated from there.
-				status.setText(controller.getStatus());
-				
-				//Commented
-				//optimum.shuffle();
-				
 			}
 
 		});
@@ -89,6 +81,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 			public void clicked(InputEvent event, float x, float y) {
 				final Window window = new Window("Settings", skin);
 				Settings.add(window);
+				final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
+
 				Button close = new TextButton("close", skin);
 				close.addListener(new ClickListener() {
 
@@ -96,6 +90,13 @@ public class TsmGaSolver extends ApplicationAdapter {
 					public void clicked(InputEvent event, float x, float y) {
 						window.remove();
 						Settings.prefs.flush();
+						controller.stop();
+						controller.configure();
+
+						// repopulate if necessary
+						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
+						if(currentWaypointQuantity != waypointQuantity)
+							populate(waypointQuantity);
 					}
 
 				});
@@ -118,7 +119,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 		bounds.y = status.getHeight() + status2.getHeight();
 		bounds.height -= bounds.y;
 
-		populate(MathUtils.random(3, 15));
+		populate(Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY));
+		controller = new Controller(this, bounds.x - bounds.width, bounds.y - bounds.height);
 	}
 
 	@Override
@@ -129,9 +131,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 	@Override
 	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		status.setText(controller.status);
-		
+
 		renderer.setProjectionMatrix(viewport.getCamera().combined);
 		renderer.begin(ShapeType.Line);
 		renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -169,10 +171,23 @@ public class TsmGaSolver extends ApplicationAdapter {
 		}
 
 		optimum.clear();
+	}
 
-		// TODO remove, this is just demo
-		optimum.addAll(path);
-		optimum.shuffle();
+	/** updates the view according to the {@link #controller} */
+	public void update() {
+		//		Waypoint[] newOptimum = controller.getTopChromosome().getPath();
+		//		boolean equal = optimum.size == newOptimum.length;
+		//		if(equal)
+		//			for(int i = 0; i < optimum.size; i++)
+		//				if(!(equal = optimum.get(i).equals(newOptimum[i])))
+		//					break;
+
+		//		if(!equal) {
+		optimum.clear();
+		optimum.addAll(controller.getTopChromosome().getPath());
+		//			System.out.println("path differs optimum");
+		//		} else
+		//			System.out.println("path equals optimum");
 	}
 
 	@Override
@@ -180,6 +195,11 @@ public class TsmGaSolver extends ApplicationAdapter {
 		renderer.dispose();
 		stage.dispose();
 		Assets.manager.dispose();
+	}
+
+	/** @return the {@link #path} */
+	public Array<Vector2> getPath() {
+		return path;
 	}
 
 }
