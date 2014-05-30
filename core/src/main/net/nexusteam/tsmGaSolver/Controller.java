@@ -33,17 +33,17 @@ public class Controller {
 	/**
 	 * The part of the population eligable for mateing.
 	 */
-	protected int matingPopulationSize = chromosome_quantity / 2;
+	protected float mating_population_percentage = .5f;
 
 	/**
 	 * The part of the population favored for mating.
 	 */
-	protected int favoredPopulationSize = matingPopulationSize / 2;
+	protected float favored_population_percentage = .5f;
 
 	/**
 	 * How much genetic material to take during a mating.
 	 */
-	protected int cutLength = 1;
+	protected int cut_length = 1;
 
 	/**
 	 * The current generation, or epoch
@@ -91,9 +91,9 @@ public class Controller {
 		Preferences prefs = Settings.prefs;
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
 		mutation_percentage = prefs.getFloat(Settings.MUTATION_PERCENTAGE);
-		matingPopulationSize = prefs.getInteger(Settings.MATING_POPULATION_SIZE);
-		favoredPopulationSize = prefs.getInteger(Settings.FAVORED_POPULATION_SIZE);
-		cutLength = prefs.getInteger(Settings.CUT_LENGTH);
+		mating_population_percentage = prefs.getFloat(Settings.MATING_POPULATION_PERCENTAGE);
+		favored_population_percentage = prefs.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
+		cut_length = prefs.getInteger(Settings.CUT_LENGTH);
 		// TODO Settings.MAXIMUM_GENERATIONS
 		// TODO Settings.MAXIMUM_NON_CHANGE_GENERATIONS
 	}
@@ -110,7 +110,7 @@ public class Controller {
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
-		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, 0.25, 0.5, waypoints.length / 5);
+		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
 
 	public void start() {
@@ -145,86 +145,6 @@ public class Controller {
 
 	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
-	}
-
-	public int getChromosomes_quantity() {
-		return chromosome_quantity;
-	}
-
-	public void setChromosomes_quantity(int chromosomes_quantity) {
-		chromosome_quantity = chromosomes_quantity;
-	}
-
-	public float getMutation_percentage() {
-		return mutation_percentage;
-	}
-
-	public void setMutation_percentage(float mutation_percentage) {
-		this.mutation_percentage = mutation_percentage;
-	}
-
-	public int getMatingPopulationSize() {
-		return matingPopulationSize;
-	}
-
-	public void setMatingPopulationSize(int matingPopulationSize) {
-		this.matingPopulationSize = matingPopulationSize;
-	}
-
-	public int getFavoredPopulationSize() {
-		return favoredPopulationSize;
-	}
-
-	public void setFavoredPopulationSize(int favoredPopulationSize) {
-		this.favoredPopulationSize = favoredPopulationSize;
-	}
-
-	public int getCutLength() {
-		return cutLength;
-	}
-
-	public void setCutLength(int cutLength) {
-		this.cutLength = cutLength;
-	}
-
-	public int getGeneration_count() {
-		return generation_count;
-	}
-
-	public void setGeneration_count(int generation_count) {
-		this.generation_count = generation_count;
-	}
-
-	public boolean isStarted() {
-		return started;
-	}
-
-	public void setStarted(boolean started) {
-		this.started = started;
-	}
-
-	public boolean isStop() {
-		return stop;
-	}
-
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
-	public Waypoint[] getWaypoints() {
-		return waypoints;
-	}
-
-	public void setWaypoints(Waypoint[] waypoints) {
-		this.waypoints = waypoints;
 	}
 
 }

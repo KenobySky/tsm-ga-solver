@@ -23,8 +23,8 @@ public abstract class Settings {
 	public static final String WAYPOINT_QUANTITY = "waypoint quantity",
 			CHROMOSOME_QUANTITY = "chromosome quantity",
 			MUTATION_PERCENTAGE = "mutation percentage",
-			MATING_POPULATION_SIZE = "mating population size",
-			FAVORED_POPULATION_SIZE = "favored population size",
+			MATING_POPULATION_PERCENTAGE = "mating population percentage",
+			FAVORED_POPULATION_PERCENTAGE = "favored population percentage",
 			CUT_LENGTH = "cut length",
 			MAXIMUM_GENERATIONS = "maximum generations",
 			MAXIMUM_NON_CHANGE_GENERATIONS = "maximum non-change generations",
@@ -68,11 +68,11 @@ public abstract class Settings {
 		if(override || !prefs.contains(MUTATION_PERCENTAGE))
 			prefs.putFloat(MUTATION_PERCENTAGE, .1f);
 
-		if(override || !prefs.contains(MATING_POPULATION_SIZE))
-			prefs.putInteger(MATING_POPULATION_SIZE, 1000 / 2);
+		if(override || !prefs.contains(MATING_POPULATION_PERCENTAGE))
+			prefs.putFloat(MATING_POPULATION_PERCENTAGE, .25f);
 
-		if(override || !prefs.contains(FAVORED_POPULATION_SIZE))
-			prefs.putInteger(FAVORED_POPULATION_SIZE, 1000 / 4);
+		if(override || !prefs.contains(FAVORED_POPULATION_PERCENTAGE))
+			prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, .75f);
 
 		if(override || !prefs.contains(CUT_LENGTH))
 			prefs.putInteger(CUT_LENGTH, 10);
@@ -127,6 +127,7 @@ public abstract class Settings {
 		// mutation percentage
 		Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
 		final Slider mutationPercentage = new Slider(0, 1, .1f, false, skin);
+		mutationPercentage.setAnimateDuration(.1f);
 		mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
 		mutationPercentage.addListener(new ChangeListener() {
 
@@ -137,28 +138,34 @@ public abstract class Settings {
 
 		});
 
-		// mating population size
-		Label matingPopulationSizeLabel = new Label("Mating Population Size", skin);
-		TextField matingPopulationSize = new TextField(prefs.getString(MATING_POPULATION_SIZE), skin);
-		matingPopulationSize.setTextFieldFilter(numericFilter);
-		matingPopulationSize.setTextFieldListener(new TextFieldListener() {
+		// mating population percentage
+		Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
+		final Slider matingPopulationPercentage = new Slider(0, 1, .05f, false, skin);
+		matingPopulationPercentage.setAnimateDuration(.1f);
+		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
+
+		// favored population percentage
+		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
+		final Slider favoredPopulationPercentage = new Slider(0, 1, .05f, false, skin);
+		favoredPopulationPercentage.setAnimateDuration(.1f);
+		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
+		favoredPopulationPercentage.addListener(new ChangeListener() {
 
 			@Override
-			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MATING_POPULATION_SIZE, textField.getText());
+			public void changed(ChangeEvent event, Actor actor) {
+				if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
+					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
+				prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, favoredPopulationPercentage.getValue());
 			}
 
 		});
-
-		// favored population size
-		Label favoredPopulationSizeLabel = new Label("Favored Population Size", skin);
-		TextField favoredPopulationSize = new TextField(prefs.getString(FAVORED_POPULATION_SIZE), skin);
-		favoredPopulationSize.setTextFieldFilter(numericFilter);
-		favoredPopulationSize.setTextFieldListener(new TextFieldListener() {
+		matingPopulationPercentage.addListener(new ChangeListener() {
 
 			@Override
-			public void keyTyped(TextField textField, char c) {
-				prefs.putString(FAVORED_POPULATION_SIZE, textField.getText());
+			public void changed(ChangeEvent event, Actor actor) {
+				if(matingPopulationPercentage.getValue() > favoredPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
+					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
+				prefs.putFloat(MATING_POPULATION_PERCENTAGE, matingPopulationPercentage.getValue());
 			}
 
 		});
@@ -205,6 +212,7 @@ public abstract class Settings {
 		// mating percentage
 		Label matingPercentageLabel = new Label("Mating Percentage", skin);
 		final Slider matingPercentage = new Slider(0, 1, .1f, false, skin);
+		matingPercentage.setAnimateDuration(.1f);
 		matingPercentage.setValue(prefs.getFloat(MATING_PERCENTAGE));
 		matingPercentage.addListener(new ChangeListener() {
 
@@ -233,10 +241,10 @@ public abstract class Settings {
 		table.add(chromosomeQuantity).fill().row();
 		table.add(mutationPercentageLabel).fill();
 		table.add(mutationPercentage).fill().row();
-		table.add(matingPopulationSizeLabel).fill();
-		table.add(matingPopulationSize).fill().row();
-		table.add(favoredPopulationSizeLabel).fill();
-		table.add(favoredPopulationSize).fill().row();
+		table.add(matingPopulationPercentageLabel).fill();
+		table.add(matingPopulationPercentage).fill().row();
+		table.add(favoredPopulationPercentageLabel).fill();
+		table.add(favoredPopulationPercentage).fill().row();
 		table.add(cutLengthLabel).fill();
 		table.add(cutLength).fill().row();
 		table.add(maximumGenerationsLabel).fill();

@@ -138,7 +138,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render() {
+	public synchronized void render() {
 		stage.act(Gdx.graphics.getDeltaTime());
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
