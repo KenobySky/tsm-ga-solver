@@ -3,7 +3,7 @@ package net.nexusteam.tsmGaSolver;
 import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
 import net.nexusteam.tsmGaSolver.ann.Waypoint;
-import net.nexusteam.tsmGaSolver.tools.Random;
+import net.nexusteam.tsmGaSolver.tools.RandomUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
@@ -19,11 +19,6 @@ public class Controller {
 
 	//Reference to the View
 	protected TsmGaSolver view;
-
-	/**
-	 * How many cities to use
-	 */
-	protected int waypoint_quantity = 3;
 
 	/**
 	 * How many chromosomes to use
@@ -48,10 +43,10 @@ public class Controller {
 	/**
 	 * How much genetic material to take during a mating.
 	 */
-	protected int cutLength = waypoint_quantity / 5;
+	protected int cutLength = 1;
 
 	/**
-	 * The current generation,or epoc
+	 * The current generation, or epoch
 	 */
 	protected int generation_count;
 
@@ -94,26 +89,28 @@ public class Controller {
 			throw new IllegalStateException("configuring the Controller while it's running may produce unpredictable results");
 
 		Preferences prefs = Settings.prefs;
-		waypoint_quantity = prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
-		cutLength = prefs.getInteger(Settings.CUT_LENGTH);
 		mutation_percentage = prefs.getFloat(Settings.MUTATION_PERCENTAGE);
-		// TODO is there more to configure?
+		matingPopulationSize = prefs.getInteger(Settings.MATING_POPULATION_SIZE);
+		favoredPopulationSize = prefs.getInteger(Settings.FAVORED_POPULATION_SIZE);
+		cutLength = prefs.getInteger(Settings.CUT_LENGTH);
+		// TODO Settings.MAXIMUM_GENERATIONS
+		// TODO Settings.MAXIMUM_NON_CHANGE_GENERATIONS
 	}
 
 	/** Receives two parameters.
 	 * 	They represent the usable area to generate the cities.<br>
 	 * 	Should have been {@link #configure() configured} before. */
 	public void initialize(float usable_Width, float usable_Height) {
-		Array<Vector2> path = view.getPath();
-		waypoints = new Waypoint[waypoint_quantity];
+		Array<Vector2> viewWaypoints = view.getWaypoints();
+		waypoints = new Waypoint[viewWaypoints.size];
 
-		for(int i = 0; i < waypoint_quantity; i++) {
-			Vector2 point = path.get(i);
-			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(Random.getRandomLetter()));
+		for(int i = 0; i < waypoints.length; i++) {
+			Vector2 point = viewWaypoints.get(i);
+			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
-		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, 0.25, 0.5, waypoint_quantity / 5);
+		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, 0.25, 0.5, waypoints.length / 5);
 	}
 
 	public void start() {
@@ -148,14 +145,6 @@ public class Controller {
 
 	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
-	}
-
-	public int getCity_quantity() {
-		return waypoint_quantity;
-	}
-
-	public void setCity_quantity(int city_quantity) {
-		waypoint_quantity = city_quantity;
 	}
 
 	public int getChromosomes_quantity() {

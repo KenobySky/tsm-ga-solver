@@ -13,11 +13,14 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.width = 800;
 		cfg.height = 600;
-		cfg.title = "TSP GA Solver 0.4 Alpha";
+		cfg.title = "TSM-GA Solver 0.4 Alpha";
 
 		new LwjglApplication(new TsmGaSolver(), cfg);
 
-		if(ArrayUtils.contains(args, "--reset", false))
+		if(ArrayUtils.contains(args, "--reset", false)) {
 			Settings.reset(true);
+			Settings.prefs.flush();
+		}
 	}
+
 }
