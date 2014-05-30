@@ -34,7 +34,7 @@ apply plugin: "download-task"
 import de.undercouch.gradle.tasks.download.Download
 
 task fetchLibs(type: Download) {
-    src "http://dl.bintray.com/dermetfan/generic/libgdx-utils/0.2.1/libgdx-utils.jar"
+    src "http://dl.bintray.com/dermetfan/generic/libgdx-utils/0.3.0/libgdx-utils.jar"
     dest "libs"
     onlyIfNewer true
 }
