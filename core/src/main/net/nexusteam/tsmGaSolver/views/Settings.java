@@ -2,6 +2,7 @@ package net.nexusteam.tsmGaSolver.views;
 
 import net.dermetfan.utils.libgdx.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
+import net.nexusteam.tsmGaSolver.Controller;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
@@ -24,7 +25,35 @@ import com.badlogic.gdx.utils.Pools;
 /** @author dermetfan */
 public abstract class Settings {
 
-	public static final Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
+	private static Controller controller;
+
+	public static final void setControllerReference(Controller c) {
+		controller = c;
+	}
+
+	// TODO USE THIS
+	private static boolean accept() {
+		try {
+			if (controller != null) {
+				if (controller.isStarted()) {
+					return false;
+				} else {
+					return true;
+				}
+			} else if (controller == null) {
+				System.out.println("Warning : " + "Controller Class is Null! "
+						+ "'NPE'" + " At Settings Class! ; accept() method!");
+			}
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return true;
+	}
+
+	public static final Preferences prefs = Gdx.app
+			.getPreferences("TSM-GA-Solver");
 
 	public static final String WAYPOINT_QUANTITY = "waypoint quantity",
 			CHROMOSOME_QUANTITY = "chromosome quantity",
@@ -42,7 +71,11 @@ public abstract class Settings {
 
 		@Override
 		public boolean acceptChar(TextField textField, char c) {
-			return isNumeric(c);
+			if (c == ' ') {
+				return false;
+			} else {
+				return isNumeric(c);
+			}
 		}
 
 	};
@@ -53,50 +86,59 @@ public abstract class Settings {
 
 	/** @return if the given char represents a numeric value */
 	public static boolean isNumeric(char c) {
-		return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
+
+		return (c == '0' || c == '1' || c == '2' || c == '3' || c == '4'
+				|| c == '5' || c == '6' || c == '7' || c == '8' || c == '9');
 	}
 
-	/** @param str the String to numerize
-	 *  @return {@code "0"} if the given String is empty */
+	/**
+	 * @param str
+	 *            the String to numerize
+	 * @return {@code "0"} if the given String is empty
+	 */
 	public static String numerize(String str) {
 		return str.isEmpty() ? "0" : str;
 	}
 
-	/**	resets the prefs to the default values
-	 * 	@param override if values should be set even though they already exist */
+	/**
+	 * resets the prefs to the default values
+	 * 
+	 * @param override
+	 *            if values should be set even though they already exist
+	 */
 	public static void reset(boolean override) {
-		if(override || !prefs.contains(WAYPOINT_QUANTITY))
+		if (override || !prefs.contains(WAYPOINT_QUANTITY))
 			prefs.putInteger(WAYPOINT_QUANTITY, 10);
 
-		if(override || !prefs.contains(CHROMOSOME_QUANTITY))
+		if (override || !prefs.contains(CHROMOSOME_QUANTITY))
 			prefs.putInteger(CHROMOSOME_QUANTITY, 1000);
 
-		if(override || !prefs.contains(MUTATION_PERCENTAGE))
+		if (override || !prefs.contains(MUTATION_PERCENTAGE))
 			prefs.putFloat(MUTATION_PERCENTAGE, .1f);
 
-		if(override || !prefs.contains(MATING_POPULATION_PERCENTAGE))
+		if (override || !prefs.contains(MATING_POPULATION_PERCENTAGE))
 			prefs.putFloat(MATING_POPULATION_PERCENTAGE, .25f);
 
-		if(override || !prefs.contains(FAVORED_POPULATION_PERCENTAGE))
+		if (override || !prefs.contains(FAVORED_POPULATION_PERCENTAGE))
 			prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, .75f);
 
-		if(override || !prefs.contains(CUT_LENGTH))
+		if (override || !prefs.contains(CUT_LENGTH))
 			prefs.putInteger(CUT_LENGTH, 10);
 
 		// doesn't have any effect yet
 
-		if(override || !prefs.contains(MAXIMUM_GENERATIONS))
+		if (override || !prefs.contains(MAXIMUM_GENERATIONS))
 			prefs.putInteger(MAXIMUM_GENERATIONS, 5000);
 
-		if(override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
+		if (override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
 			prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, 50);
 
-		if(override || !prefs.contains(MATING_PERCENTAGE))
+		if (override || !prefs.contains(MATING_PERCENTAGE))
 			prefs.putFloat(MATING_PERCENTAGE, .8f);
 
 		// gui settings
 
-		if(override || !prefs.contains(ADD_WAYPOINTS_MANUALLY))
+		if (override || !prefs.contains(ADD_WAYPOINTS_MANUALLY))
 			prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, false);
 	}
 
@@ -122,9 +164,10 @@ public abstract class Settings {
 			public boolean handle(Event e) {
 				super.handle(e);
 				actor = e.getListenerActor();
-				if(actor instanceof Slider)
-					valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
-				else if(actor instanceof TextField)
+				if (actor instanceof Slider)
+					valueLabel.setText(String.valueOf(((Slider) actor)
+							.getValue() * 100));
+				else if (actor instanceof TextField)
 					valueLabel.setText(((TextField) actor).getText());
 				return false;
 			}
@@ -134,7 +177,9 @@ public abstract class Settings {
 				super.show();
 				Vector2 tmp = Pools.obtain(Vector2.class);
 				actor.localToStageCoordinates(tmp.set(0, 0));
-				valueContainer.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+				valueContainer.setPosition(tmp.x + actor.getWidth()
+						+ valueLabel.getWidth() / 2 + 5,
+						tmp.y + actor.getHeight() / 2);
 				Pools.free(tmp);
 			}
 
@@ -142,20 +187,24 @@ public abstract class Settings {
 
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
-		TextField waypointQuantity = new TextField(prefs.getString(WAYPOINT_QUANTITY), skin);
+		TextField waypointQuantity = new TextField(
+				prefs.getString(WAYPOINT_QUANTITY), skin);
 		waypointQuantity.setTextFieldFilter(numericFilter);
-		waypointQuantity.setTextFieldListener(new TextFieldListener() {
 
+		waypointQuantity.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
+
 				prefs.putString(WAYPOINT_QUANTITY, textField.getText());
+
 			}
 
 		});
 
 		// chromosome quantity
 		Label chromosomeQuantityLabel = new Label("Chromosomes", skin);
-		TextField chromosomeQuantity = new TextField(prefs.getString(CHROMOSOME_QUANTITY), skin);
+		TextField chromosomeQuantity = new TextField(
+				prefs.getString(CHROMOSOME_QUANTITY), skin);
 		chromosomeQuantity.setTextFieldFilter(numericFilter);
 		chromosomeQuantity.setTextFieldListener(new TextFieldListener() {
 
@@ -176,31 +225,42 @@ public abstract class Settings {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				prefs.putFloat(MUTATION_PERCENTAGE, mutationPercentage.getValue());
+				prefs.putFloat(MUTATION_PERCENTAGE,
+						mutationPercentage.getValue());
 			}
 
 		});
 
 		// mating population percentage
-		Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
-		final Slider matingPopulationPercentage = new Slider(0, 1, .05f, false, skin);
+		Label matingPopulationPercentageLabel = new Label(
+				"Mating Population Percentage", skin);
+		final Slider matingPopulationPercentage = new Slider(0, 1, .05f, false,
+				skin);
 		matingPopulationPercentage.setAnimateDuration(.1f);
-		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
+		matingPopulationPercentage.setValue(prefs
+				.getFloat(MATING_POPULATION_PERCENTAGE));
 		matingPopulationPercentage.addListener(valueTooltip);
 
 		// favored population percentage
-		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
-		final Slider favoredPopulationPercentage = new Slider(0, 1, .05f, false, skin);
+		Label favoredPopulationPercentageLabel = new Label(
+				"Favored Population Percentage", skin);
+		final Slider favoredPopulationPercentage = new Slider(0, 1, .05f,
+				false, skin);
 		favoredPopulationPercentage.setAnimateDuration(.1f);
-		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
+		favoredPopulationPercentage.setValue(prefs
+				.getFloat(FAVORED_POPULATION_PERCENTAGE));
 		favoredPopulationPercentage.addListener(valueTooltip);
 		favoredPopulationPercentage.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize())
-					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
-				prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, favoredPopulationPercentage.getValue());
+				if (favoredPopulationPercentage.getValue() < matingPopulationPercentage
+						.getValue() + favoredPopulationPercentage.getStepSize())
+					favoredPopulationPercentage
+							.setValue(matingPopulationPercentage.getValue()
+									+ favoredPopulationPercentage.getStepSize());
+				prefs.putFloat(FAVORED_POPULATION_PERCENTAGE,
+						favoredPopulationPercentage.getValue());
 			}
 
 		});
@@ -208,9 +268,13 @@ public abstract class Settings {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(matingPopulationPercentage.getValue() > favoredPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
-					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
-				prefs.putFloat(MATING_POPULATION_PERCENTAGE, matingPopulationPercentage.getValue());
+				if (matingPopulationPercentage.getValue() > favoredPopulationPercentage
+						.getValue() - favoredPopulationPercentage.getStepSize())
+					favoredPopulationPercentage
+							.setValue(matingPopulationPercentage.getValue()
+									+ favoredPopulationPercentage.getStepSize());
+				prefs.putFloat(MATING_POPULATION_PERCENTAGE,
+						matingPopulationPercentage.getValue());
 			}
 
 		});
@@ -230,7 +294,8 @@ public abstract class Settings {
 
 		// maximum generations
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
-		TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
+		TextField maximumGenerations = new TextField(
+				prefs.getString(MAXIMUM_GENERATIONS), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
 		maximumGenerations.setTextFieldListener(new TextFieldListener() {
 
@@ -242,17 +307,21 @@ public abstract class Settings {
 		});
 
 		// minimum non-change generations
-		Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
-		TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
+		Label minimumNonChangeGenerationsLabel = new Label(
+				"Mininum non-change Generations", skin);
+		TextField minimumNonChangeGenerations = new TextField(
+				prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
 		minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
-		minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
+		minimumNonChangeGenerations
+				.setTextFieldListener(new TextFieldListener() {
 
-			@Override
-			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, textField.getText());
-			}
+					@Override
+					public void keyTyped(TextField textField, char c) {
+						prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS,
+								textField.getText());
+					}
 
-		});
+				});
 
 		// mating percentage
 		Label matingPercentageLabel = new Label("Mating Percentage", skin);
@@ -270,13 +339,16 @@ public abstract class Settings {
 		});
 
 		// add waypoints manually
-		final CheckBox addWaypointsManually = new CheckBox(" Add Waypoints Manually", skin);
-		addWaypointsManually.setChecked(prefs.getBoolean(ADD_WAYPOINTS_MANUALLY));
+		final CheckBox addWaypointsManually = new CheckBox(
+				" Add Waypoints Manually", skin);
+		addWaypointsManually.setChecked(prefs
+				.getBoolean(ADD_WAYPOINTS_MANUALLY));
 		addWaypointsManually.addListener(new ChangeListener() {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, addWaypointsManually.isChecked());
+				prefs.putBoolean(ADD_WAYPOINTS_MANUALLY,
+						addWaypointsManually.isChecked());
 			}
 
 		});

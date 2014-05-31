@@ -60,7 +60,7 @@ public class Controller {
 	/**
 	 * Is the thread started.
 	 */
-	protected boolean started = false;
+	private static boolean started = false;
 
 	/**
 	 * Is the thread stopped.
@@ -141,7 +141,6 @@ public class Controller {
 			}
 
 		} catch(Exception ex) {
-			worker = null;
 			ex.printStackTrace();
 		}
 	}
@@ -152,4 +151,20 @@ public class Controller {
 		return genetic.getChromosome(0);
 	}
 
+	/**
+	 * Is the thread started.
+	 */
+	public static boolean isStarted() {
+		return started;
+	}
+	
+	public static void setStarted(boolean solutionNotFound)
+	{
+		started = solutionNotFound;
+	}
+
+	
+
+	
+	
 }

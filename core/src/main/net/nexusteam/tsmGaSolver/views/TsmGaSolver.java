@@ -37,19 +37,25 @@ public class TsmGaSolver extends ApplicationAdapter {
 	private Viewport viewport;
 	private Rectangle bounds;
 	private Array<Vector2> waypoints = new Array<Vector2>();
-	/** the indices of {@link #waypoints} ordered by the currently optimal solution */
+	/**
+	 * the indices of {@link #waypoints} ordered by the currently optimal
+	 * solution
+	 */
 	private IntArray optimum = new IntArray();
 	private Label status, status2;
 
 	private Controller controller;
+	
+	
 
+	
 	@Override
 	public void create() {
 		Assets.manager.load(Assets.class);
 		Assets.manager.finishLoading();
 
 		renderer = new ShapeRenderer();
-		viewport = new ExtendViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		viewport = new ExtendViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 		stage = new Stage(viewport);
 		Gdx.input.setInputProcessor(stage);
 		bounds = new Rectangle(0, 0, stage.getWidth(), stage.getHeight());
@@ -68,6 +74,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 		status2.setAlignment(Align.center);
 
 		Button start = new TextButton("Start", skin), settings = new TextButton("Settings", skin);
+		
 		start.addListener(new ClickListener() {
 
 			@Override
@@ -79,6 +86,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 			}
 
 		});
+		
 		settings.addListener(new ClickListener() {
 
 			Window window;
@@ -88,7 +96,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 				stage.addActor(window); // add so it knows the stage
 				Settings.add(window);
 				window.remove(); // remove again to not be initially visible
-				final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
+				final int currentWaypointQuantity = Settings.prefs
+						.getInteger(Settings.WAYPOINT_QUANTITY);
 
 				Button close = new TextButton("close", skin);
 				close.addListener(new ClickListener() {
@@ -101,8 +110,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 						controller.configure();
 
 						// repopulate if necessary
-						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
-						if(currentWaypointQuantity != waypointQuantity)
+						int waypointQuantity = Settings.prefs
+								.getInteger(Settings.WAYPOINT_QUANTITY);
+						if (currentWaypointQuantity != waypointQuantity)
 							populate(waypointQuantity);
 					}
 
@@ -110,12 +120,16 @@ public class TsmGaSolver extends ApplicationAdapter {
 				window.row();
 				window.add(close).colspan(2).fill();
 				window.pack();
-				window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
+				window.setPosition(
+						stage.getWidth() / 2 - window.getWidth() / 2,
+						stage.getHeight() / 2 - window.getHeight() / 2);
 			}
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				stage.addActor(window);
+				if (!controller.isStarted()) {
+					stage.addActor(window);
+				}
 			}
 
 		});
@@ -131,7 +145,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 		bounds.height -= bounds.y;
 
 		populate(Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY));
+
 		controller = new Controller(this, bounds.width, bounds.height);
+		Settings.setControllerReference(controller);
+
 	}
 
 	@Override
@@ -156,15 +173,16 @@ public class TsmGaSolver extends ApplicationAdapter {
 		// draw optimum
 		renderer.setColor(Color.GREEN);
 		renderer.begin(ShapeType.Line);
-		for(int i = 1; i < optimum.size; i++)
-			renderer.line(waypoints.get(optimum.get(i - 1)), waypoints.get(optimum.get(i)));
+		for (int i = 1; i < optimum.size; i++)
+			renderer.line(waypoints.get(optimum.get(i - 1)),
+					waypoints.get(optimum.get(i)));
 
 		renderer.end();
 
 		// draw cities
 		renderer.setColor(Color.WHITE);
 		renderer.begin(ShapeType.Filled);
-		for(Vector2 city : waypoints)
+		for (Vector2 city : waypoints)
 			renderer.circle(city.x, city.y, 5);
 		renderer.end();
 
@@ -175,9 +193,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 		Pools.freeAll(waypoints, true);
 		waypoints.clear();
 
-		for(; count > 0; count--) {
+		for (; count > 0; count--) {
 			Vector2 waypoint = Pools.obtain(Vector2.class);
-			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
+			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width),
+					MathUtils.random(bounds.y, bounds.y + bounds.height));
 			waypoints.add(waypoint);
 		}
 
@@ -190,12 +209,13 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		optimum.clear();
 		TSPChromosome c = controller.getTopChromosome();
-		for(Integer gene : c.getGenes())
+		for (Integer gene : c.getGenes())
 			optimum.add(gene);
 
 		float distance = 0;
-		for(int i = 1; i < optimum.size; i++)
-			distance += waypoints.get(optimum.get(i - 1)).dst(waypoints.get(optimum.get(i)));
+		for (int i = 1; i < optimum.size; i++)
+			distance += waypoints.get(optimum.get(i - 1)).dst(
+					waypoints.get(optimum.get(i)));
 		status2.setText("Distance: " + distance);
 	}
 
