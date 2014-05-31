@@ -183,7 +183,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 	}
 
 	/** updates the view according to the {@link #controller} */
-	public void update() {
+	public synchronized void update() {
 		status.setText(controller.status);
 
 		optimum.clear();
