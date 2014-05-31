@@ -24,5 +24,10 @@ public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 		}
 		sortChromosomes();
 	}
+	
+	@Override
+	public void iteration() throws NeuralNetworkError {
+		super.iteration();
+	}
 
 }

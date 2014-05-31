@@ -26,7 +26,8 @@ public class WorkerThread implements Runnable {
 		final NumberFormat nf = NumberFormat.getInstance();
 		nf.setMinimumFractionDigits(2);
 		nf.setMinimumFractionDigits(2);
-
+	
+//controller.minimum_non_change_generations
 		while(countSame < controller.minimum_non_change_generations) {
 			controller.generation_count++;
 			controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + nf.format(0) + "%";

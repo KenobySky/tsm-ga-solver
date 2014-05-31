@@ -167,14 +167,14 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 
 		// mate and form the next generation
 		for(int i = 0; i < countToMate; i++) {
+			
 			final CHROMOSOME_TYPE mother = this.chromosomes[i];
 			final int fatherInt = (int) (Math.random() * matingPopulationSize);
 			final CHROMOSOME_TYPE father = this.chromosomes[fatherInt];
 			final CHROMOSOME_TYPE child1 = this.chromosomes[offspringIndex];
 			final CHROMOSOME_TYPE child2 = this.chromosomes[offspringIndex + 1];
 
-			final MateWorker<CHROMOSOME_TYPE> worker = new MateWorker<CHROMOSOME_TYPE>(
-					mother, father, child1, child2);
+			final MateWorker<CHROMOSOME_TYPE> worker = new MateWorker<CHROMOSOME_TYPE>(mother, father, child1, child2);
 
 			try {
 				if(this.pool != null)
