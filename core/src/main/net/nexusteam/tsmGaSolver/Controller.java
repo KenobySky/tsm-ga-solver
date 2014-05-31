@@ -45,6 +45,8 @@ public class Controller {
 	 */
 	protected int cut_length = 1;
 
+	protected int minimum_non_change_generations;
+
 	/**
 	 * The current generation, or epoch
 	 */
@@ -95,7 +97,7 @@ public class Controller {
 		favored_population_percentage = prefs.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
 		cut_length = prefs.getInteger(Settings.CUT_LENGTH);
 		// TODO Settings.MAXIMUM_GENERATIONS
-		// TODO Settings.MAXIMUM_NON_CHANGE_GENERATIONS
+		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
 	/** Receives two parameters.

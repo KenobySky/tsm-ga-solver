@@ -27,7 +27,7 @@ public abstract class Settings {
 			FAVORED_POPULATION_PERCENTAGE = "favored population percentage",
 			CUT_LENGTH = "cut length",
 			MAXIMUM_GENERATIONS = "maximum generations",
-			MAXIMUM_NON_CHANGE_GENERATIONS = "maximum non-change generations",
+			MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations",
 			MATING_PERCENTAGE = "mating percentage",
 			ADD_WAYPOINTS_MANUALLY = "add waypoints manually";
 
@@ -82,8 +82,8 @@ public abstract class Settings {
 		if(override || !prefs.contains(MAXIMUM_GENERATIONS))
 			prefs.putInteger(MAXIMUM_GENERATIONS, 5000);
 
-		if(override || !prefs.contains(MAXIMUM_NON_CHANGE_GENERATIONS))
-			prefs.putInteger(MAXIMUM_NON_CHANGE_GENERATIONS, 50);
+		if(override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
+			prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, 50);
 
 		if(override || !prefs.contains(MATING_PERCENTAGE))
 			prefs.putFloat(MATING_PERCENTAGE, .8f);
@@ -196,15 +196,15 @@ public abstract class Settings {
 
 		});
 
-		// maximum non-change generations
-		Label maximumNonChangeGenerationsLabel = new Label("Maximum non-change Generations", skin);
-		TextField maximumNonChangeGenerations = new TextField(prefs.getString(MAXIMUM_NON_CHANGE_GENERATIONS), skin);
-		maximumNonChangeGenerations.setTextFieldFilter(numericFilter);
-		maximumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
+		// minimum non-change generations
+		Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
+		TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
+		minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
+		minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MAXIMUM_NON_CHANGE_GENERATIONS, textField.getText());
+				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, textField.getText());
 			}
 
 		});
@@ -249,8 +249,8 @@ public abstract class Settings {
 		table.add(cutLength).fill().row();
 		table.add(maximumGenerationsLabel).fill();
 		table.add(maximumGenerations).fill().row();
-		table.add(maximumNonChangeGenerationsLabel).fill();
-		table.add(maximumNonChangeGenerations).fill().row();
+		table.add(minimumNonChangeGenerationsLabel).fill();
+		table.add(minimumNonChangeGenerations).fill().row();
 		table.add(matingPercentageLabel).fill();
 		table.add(matingPercentage).fill().row();
 		table.add(addWaypointsManually).colspan(2).fill();
