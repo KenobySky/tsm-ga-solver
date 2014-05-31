@@ -96,9 +96,24 @@ public class TsmGaSolver extends ApplicationAdapter {
 				stage.addActor(window); // add so it knows the stage
 				Settings.add(window);
 				window.remove(); // remove again to not be initially visible
-				final int currentWaypointQuantity = Settings.prefs
-						.getInteger(Settings.WAYPOINT_QUANTITY);
-
+				
+				
+				//TODO ROBIN CHECK THIS, IS THIS GOOD?
+				
+			
+				try{
+					Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);	
+				}catch(Exception ex)
+				{
+					ex.printStackTrace();
+					Settings.reset(true);
+					Settings.prefs.flush();
+				}
+				
+				
+				final int finalCurrentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);	
+				
+				
 				Button close = new TextButton("close", skin);
 				close.addListener(new ClickListener() {
 
@@ -110,9 +125,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 						controller.configure();
 
 						// repopulate if necessary
-						int waypointQuantity = Settings.prefs
-								.getInteger(Settings.WAYPOINT_QUANTITY);
-						if (currentWaypointQuantity != waypointQuantity)
+						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
+						
+						if (finalCurrentWaypointQuantity != waypointQuantity)
 							populate(waypointQuantity);
 					}
 
