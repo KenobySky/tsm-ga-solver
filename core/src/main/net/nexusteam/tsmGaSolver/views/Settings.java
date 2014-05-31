@@ -153,7 +153,7 @@ public abstract class Settings {
 
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
+				if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize())
 					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
 				prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, favoredPopulationPercentage.getValue());
 			}
