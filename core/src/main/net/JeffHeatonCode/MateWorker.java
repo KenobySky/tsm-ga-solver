@@ -30,8 +30,7 @@ public class MateWorker<CHROMOSME_TYPE extends Chromosome<?, ?>> implements Call
 	private final CHROMOSME_TYPE child1;
 	private final CHROMOSME_TYPE child2;
 
-	public MateWorker(final CHROMOSME_TYPE mother, final CHROMOSME_TYPE father,
-			final CHROMOSME_TYPE child1, final CHROMOSME_TYPE child2) {
+	public MateWorker(final CHROMOSME_TYPE mother, final CHROMOSME_TYPE father,final CHROMOSME_TYPE child1, final CHROMOSME_TYPE child2) {
 		this.mother = mother;
 		this.father = father;
 		this.child1 = child1;

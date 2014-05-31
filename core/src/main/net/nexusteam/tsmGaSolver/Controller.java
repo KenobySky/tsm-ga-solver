@@ -111,6 +111,9 @@ public class Controller {
 			Vector2 point = viewWaypoints.get(i);
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
+		
+		//TEST
+		cut_length = chromosome_quantity /5;
 
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
