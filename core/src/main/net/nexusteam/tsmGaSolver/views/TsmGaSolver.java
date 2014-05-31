@@ -85,7 +85,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			{
 				window = new Window("Settings", skin);
+				stage.addActor(window); // add so it knows the stage
 				Settings.add(window);
+				window.remove(); // remove again to not be initially visible
 				final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 
 				Button close = new TextButton("close", skin);

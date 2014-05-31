@@ -1,11 +1,16 @@
 package net.nexusteam.tsmGaSolver.views;
 
+import net.dermetfan.utils.libgdx.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
@@ -14,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Pools;
 
 /** @author dermetfan */
 public abstract class Settings {
@@ -98,6 +104,42 @@ public abstract class Settings {
 	public static void add(Table table) {
 		Skin skin = Assets.manager.get(Assets.uiskin);
 
+		// value tooltip
+		final Label valueLabel = new Label("", skin, "status");
+		final Container valueContainer = new Container(valueLabel);
+		valueContainer.setBackground(valueLabel.getStyle().background);
+		valueContainer.pack();
+		table.getStage().addActor(valueContainer);
+		Tooltip valueTooltip = new Tooltip(valueContainer) {
+
+			{
+				showOn(Type.touchDown);
+			}
+
+			Actor actor;
+
+			@Override
+			public boolean handle(Event e) {
+				super.handle(e);
+				actor = e.getListenerActor();
+				if(actor instanceof Slider)
+					valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
+				else if(actor instanceof TextField)
+					valueLabel.setText(((TextField) actor).getText());
+				return false;
+			}
+
+			@Override
+			public void show() {
+				super.show();
+				Vector2 tmp = Pools.obtain(Vector2.class);
+				actor.localToStageCoordinates(tmp.set(0, 0));
+				valueContainer.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+				Pools.free(tmp);
+			}
+
+		};
+
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
 		TextField waypointQuantity = new TextField(prefs.getString(WAYPOINT_QUANTITY), skin);
@@ -129,6 +171,7 @@ public abstract class Settings {
 		final Slider mutationPercentage = new Slider(0, 1, .1f, false, skin);
 		mutationPercentage.setAnimateDuration(.1f);
 		mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
+		mutationPercentage.addListener(valueTooltip);
 		mutationPercentage.addListener(new ChangeListener() {
 
 			@Override
@@ -143,12 +186,14 @@ public abstract class Settings {
 		final Slider matingPopulationPercentage = new Slider(0, 1, .05f, false, skin);
 		matingPopulationPercentage.setAnimateDuration(.1f);
 		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
+		matingPopulationPercentage.addListener(valueTooltip);
 
 		// favored population percentage
 		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
 		final Slider favoredPopulationPercentage = new Slider(0, 1, .05f, false, skin);
 		favoredPopulationPercentage.setAnimateDuration(.1f);
 		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
+		favoredPopulationPercentage.addListener(valueTooltip);
 		favoredPopulationPercentage.addListener(new ChangeListener() {
 
 			@Override
@@ -214,6 +259,7 @@ public abstract class Settings {
 		final Slider matingPercentage = new Slider(0, 1, .1f, false, skin);
 		matingPercentage.setAnimateDuration(.1f);
 		matingPercentage.setValue(prefs.getFloat(MATING_PERCENTAGE));
+		matingPercentage.addListener(valueTooltip);
 		matingPercentage.addListener(new ChangeListener() {
 
 			@Override
