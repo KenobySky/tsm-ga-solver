@@ -2,6 +2,8 @@ package net.nexusteam.tsmGaSolver;
 
 import java.text.NumberFormat;
 
+import net.nexusteam.tsmGaSolver.views.Settings;
+
 /**
  *
  * @author Andre Vinícius Lopes
@@ -27,7 +29,7 @@ public class WorkerThread implements Runnable {
 		nf.setMinimumFractionDigits(2);
 		nf.setMinimumFractionDigits(2);
 
-		while(countSame < 100) {
+		while(countSame < Settings.prefs.getInteger(Settings.MAXIMUM_NON_CHANGE_GENERATIONS)) {
 			controller.generation_count++;
 			controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + nf.format(0) + "%";
 
