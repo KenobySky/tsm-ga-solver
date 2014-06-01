@@ -148,7 +148,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(WAYPOINT_QUANTITY, textField.getText());
+				prefs.putString(WAYPOINT_QUANTITY, numerize(textField.getText()));
 			}
 
 		});
@@ -161,7 +161,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(CHROMOSOME_QUANTITY, textField.getText());
+				prefs.putString(CHROMOSOME_QUANTITY, numerize(textField.getText()));
 			}
 
 		});
@@ -223,7 +223,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(CUT_LENGTH, textField.getText());
+				prefs.putString(CUT_LENGTH, numerize(textField.getText()));
 			}
 
 		});
@@ -236,7 +236,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MAXIMUM_GENERATIONS, textField.getText());
+				prefs.putString(MAXIMUM_GENERATIONS, numerize(textField.getText()));
 			}
 
 		});
@@ -249,7 +249,7 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, textField.getText());
+				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, numerize(textField.getText()));
 			}
 
 		});
