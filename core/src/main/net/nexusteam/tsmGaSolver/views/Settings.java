@@ -2,6 +2,7 @@ package net.nexusteam.tsmGaSolver.views;
 
 import net.dermetfan.utils.libgdx.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
@@ -64,39 +65,40 @@ public abstract class Settings {
 	/**	resets the prefs to the default values
 	 * 	@param override if values should be set even though they already exist */
 	public static void reset(boolean override) {
-		if(override || !prefs.contains(WAYPOINT_QUANTITY))
-			prefs.putInteger(WAYPOINT_QUANTITY, 10);
-
-		if(override || !prefs.contains(CHROMOSOME_QUANTITY))
-			prefs.putInteger(CHROMOSOME_QUANTITY, 1000);
-
-		if(override || !prefs.contains(MUTATION_PERCENTAGE))
-			prefs.putFloat(MUTATION_PERCENTAGE, .1f);
-
-		if(override || !prefs.contains(MATING_POPULATION_PERCENTAGE))
-			prefs.putFloat(MATING_POPULATION_PERCENTAGE, .25f);
-
-		if(override || !prefs.contains(FAVORED_POPULATION_PERCENTAGE))
-			prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, .75f);
-
-		if(override || !prefs.contains(CUT_LENGTH))
-			prefs.putInteger(CUT_LENGTH, 10);
-
-		if(override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
-			prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, 50);
+		put(WAYPOINT_QUANTITY, 10, override);
+		put(CHROMOSOME_QUANTITY, 1000, override);
+		put(MUTATION_PERCENTAGE, .1f, override);
+		put(MATING_POPULATION_PERCENTAGE, .25f, override);
+		put(FAVORED_POPULATION_PERCENTAGE, .75f, override);
+		put(CUT_LENGTH, 10, override);
+		put(MINIMUM_NON_CHANGE_GENERATIONS, 50, override);
 
 		// doesn't have any effect yet
 
-		if(override || !prefs.contains(MAXIMUM_GENERATIONS))
-			prefs.putInteger(MAXIMUM_GENERATIONS, 5000);
-
-		if(override || !prefs.contains(MATING_PERCENTAGE)) // TODO remove if this is the same as MATING_POPULATION_PERCENTAGE
-			prefs.putFloat(MATING_PERCENTAGE, .8f);
+		put(MAXIMUM_GENERATIONS, 5000, override);
+		put(MATING_PERCENTAGE, .8f, override); // TODO remove if this is the same as MATING_POPULATION_PERCENTAGE
 
 		// gui settings
 
-		if(override || !prefs.contains(ADD_WAYPOINTS_MANUALLY))
-			prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, false);
+		put(ADD_WAYPOINTS_MANUALLY, false, override);
+	}
+
+	/** @param key the key
+	 *  @param value the value
+	 *  @param override if the value should be put even if it already exists */
+	public static <T> void put(String key, T value, boolean override) {
+		if(!override && prefs.contains(key))
+			return;
+		if(value instanceof String)
+			prefs.putString(key, (String) value);
+		else if(value instanceof Integer)
+			prefs.putInteger(key, (Integer) value);
+		else if(value instanceof Float)
+			prefs.putFloat(key, (Float) value);
+		else if(value instanceof Boolean)
+			prefs.putBoolean(key, (Boolean) value);
+		else if(value instanceof Long)
+			prefs.putLong(key, (Long) value);
 	}
 
 	/** adds the settings widgets to the given {@link Table} */

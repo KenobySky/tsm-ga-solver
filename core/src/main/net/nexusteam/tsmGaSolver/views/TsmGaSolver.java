@@ -67,7 +67,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 		status2 = new Label("[current optimum]", skin, "status");
 		status2.setAlignment(Align.center);
 
-		Button start = new TextButton("Start", skin), settings = new TextButton("Settings", skin);
+		final Button start = new TextButton("Start", skin);
+		Button settings = new TextButton("Settings", skin);
 
 		start.addListener(new ClickListener() {
 
@@ -112,9 +113,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 				window.row();
 				window.add(close).colspan(2).fill();
 				window.pack();
-				window.setPosition(
-						stage.getWidth() / 2 - window.getWidth() / 2,
-						stage.getHeight() / 2 - window.getHeight() / 2);
+				window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
 			}
 
 			@Override
@@ -203,8 +202,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		float distance = 0;
 		for(int i = 1; i < optimum.size; i++)
-			distance += waypoints.get(optimum.get(i - 1)).dst(
-					waypoints.get(optimum.get(i)));
+			distance += waypoints.get(optimum.get(i - 1)).dst(waypoints.get(optimum.get(i)));
 		status2.setText("Distance: " + distance);
 	}
 

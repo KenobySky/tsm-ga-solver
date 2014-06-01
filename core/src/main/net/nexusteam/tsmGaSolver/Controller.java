@@ -133,12 +133,10 @@ public class Controller {
 		generation_count = 0;
 
 		try {
-
 			if(worker != null) {
 				worker.interrupt();
 				worker = null;
 			}
-
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
