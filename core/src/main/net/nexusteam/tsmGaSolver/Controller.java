@@ -17,7 +17,6 @@ import com.badlogic.gdx.utils.Array;
  */
 public class Controller {
 
-	//Reference to the View
 	protected TsmGaSolver view;
 
 	/**
@@ -31,7 +30,7 @@ public class Controller {
 	protected float mutation_percentage = 0.100f;
 
 	/**
-	 * The part of the population eligable for mateing.
+	 * The part of the population eligible for mating.
 	 */
 	protected float mating_population_percentage = .5f;
 
@@ -60,7 +59,7 @@ public class Controller {
 	/**
 	 * Is the thread started.
 	 */
-	protected boolean started = false;
+	private static boolean started = false;
 
 	/**
 	 * Is the thread stopped.
@@ -111,9 +110,9 @@ public class Controller {
 			Vector2 point = viewWaypoints.get(i);
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
-		
-		//TEST
-		cut_length = chromosome_quantity /5;
+
+		// TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
+		cut_length = chromosome_quantity / 5;
 
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
@@ -141,15 +140,25 @@ public class Controller {
 			}
 
 		} catch(Exception ex) {
-			worker = null;
 			ex.printStackTrace();
 		}
 	}
 
-	//GETTERS AND SETTERS
-
 	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
+	}
+
+	// GETTERS AND SETTERS
+
+	/**
+	 * Is the thread started.
+	 */
+	public static boolean isStarted() {
+		return started;
+	}
+
+	public static void setStarted(boolean started) {
+		Controller.started = started;
 	}
 
 }

@@ -46,8 +46,10 @@ public class WorkerThread implements Runnable {
 			controller.view.update();
 		}
 
+		
 		controller.status = "Solution found after " + controller.generation_count + " generations!";
 		controller.view.update();
+		controller.setStarted(false);
 	}
 
 }

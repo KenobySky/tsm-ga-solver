@@ -2,7 +2,6 @@ package net.nexusteam.tsmGaSolver.views;
 
 import net.dermetfan.utils.libgdx.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
@@ -83,15 +82,15 @@ public abstract class Settings {
 		if(override || !prefs.contains(CUT_LENGTH))
 			prefs.putInteger(CUT_LENGTH, 10);
 
+		if(override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
+			prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, 50);
+
 		// doesn't have any effect yet
 
 		if(override || !prefs.contains(MAXIMUM_GENERATIONS))
 			prefs.putInteger(MAXIMUM_GENERATIONS, 5000);
 
-		if(override || !prefs.contains(MINIMUM_NON_CHANGE_GENERATIONS))
-			prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, 50);
-
-		if(override || !prefs.contains(MATING_PERCENTAGE))
+		if(override || !prefs.contains(MATING_PERCENTAGE)) // TODO remove if this is the same as MATING_POPULATION_PERCENTAGE
 			prefs.putFloat(MATING_PERCENTAGE, .8f);
 
 		// gui settings
@@ -148,6 +147,8 @@ public abstract class Settings {
 
 			@Override
 			public void keyTyped(TextField textField, char c) {
+				if(textField.getText().equals("1"))
+					textField.setText("2");
 				prefs.putString(WAYPOINT_QUANTITY, numerize(textField.getText()));
 			}
 
