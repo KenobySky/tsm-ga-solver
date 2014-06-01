@@ -52,9 +52,14 @@ public class Controller {
 	protected int generation_count;
 
 	/**
-	 * The background worker Thread
+	 * The Encapsulation of background worker Thread
 	 */
 	protected Thread worker;
+	
+	/**
+	 * The Reference to the Currently background worker Thread
+	 */
+	private WorkerThread workerThread;
 
 	/**
 	 * Is the thread started.
@@ -118,30 +123,39 @@ public class Controller {
 	}
 
 	public void start() {
+		
 		stop();
 
 		started = true;
 		generation_count = 0;
-
-		worker = new Thread(new WorkerThread(this));
+		
+		workerThread = new WorkerThread(this);
+		worker = new Thread(workerThread);
 		worker.start();
 
 	}
 
 	public void stop() {
-		started = false;
-		generation_count = 0;
+		
 
 		try {
 
+			if(workerThread != null)
+			{
+				workerThread.stopThread = true;
+			}
+			
 			if(worker != null) {
 				worker.interrupt();
-				worker = null;
 			}
 
 		} catch(Exception ex) {
+			System.out.println("stop() generated Error : ");
 			ex.printStackTrace();
+		}finally{
 		}
+		
+		
 	}
 
 	public TSPChromosome getTopChromosome() {
