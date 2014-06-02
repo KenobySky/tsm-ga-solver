@@ -17,21 +17,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Chromosome: Implements a chromosome to genetic algorithm.
- * This is an abstract class.  Other classes are provided in this
- * book that use this base class to train neural networks or
- * provide an answer to the traveling salesman problem.
- *
- * Lifeforms in this genetic algorithm consist of one single
- * chromosome each.  Therefore, this class represents a virtual
- * lifeform.  The chromosome is a string of objects that represent
- * one solution.  For a neural network, this string of objects
- * usually represents the weight and threshold matrix.
- *
- * Chromosomes are made up of genes.  These are of the generic type
- * GENE_TYPE.  For a neural network this type would most likely
- * be double values.
- *
+ * Chromosome: Implements a chromosome to genetic algorithm. This is an abstract
+ * class. Other classes are provided in this book that use this base class to
+ * train neural networks or provide an answer to the traveling salesman problem.
+ * 
+ * Lifeforms in this genetic algorithm consist of one single chromosome each.
+ * Therefore, this class represents a virtual lifeform. The chromosome is a
+ * string of objects that represent one solution. For a neural network, this
+ * string of objects usually represents the weight and threshold matrix.
+ * 
+ * Chromosomes are made up of genes. These are of the generic type GENE_TYPE.
+ * For a neural network this type would most likely be double values.
+ * 
  * @author Jeff Heaton
  * @version 2.1
  * @param <GENE_TYPE>
@@ -39,10 +36,10 @@ import java.util.Set;
  */
 
 public abstract class Chromosome<GENE_TYPE, GA_TYPE extends GeneticAlgorithm<?>>
-implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
+		implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
-	 * The cost for this chromosome.  The lower the better.
+	 * The cost for this chromosome. The lower the better.
 	 */
 	private double cost;
 
@@ -58,13 +55,14 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Called to calculate the cost for this chromosome.
+	 * 
 	 * @throws NeuralNetworkError
 	 */
 	abstract public void calculateCost() throws NeuralNetworkError;
 
 	/**
 	 * Used to compare two chromosomes. Used to sort by cost.
-	 *
+	 * 
 	 * @param other
 	 *            The other chromosome to compare.
 	 * @return The value 0 if the argument is a chromosome that has an equal
@@ -75,7 +73,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 	 */
 	@Override
 	public int compareTo(final Chromosome<GENE_TYPE, GA_TYPE> other) {
-		if(getCost() > other.getCost())
+		if (getCost() > other.getCost())
 			return 1;
 		else
 			return -1;
@@ -90,7 +88,9 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Get the specified gene.
-	 * @param gene The specified gene.
+	 * 
+	 * @param gene
+	 *            The specified gene.
 	 * @return The gene specified.
 	 */
 	public GENE_TYPE getGene(final int gene) {
@@ -99,6 +99,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Used the get the entire gene array.
+	 * 
 	 * @return the genes
 	 */
 	public GENE_TYPE[] getGenes() {
@@ -116,7 +117,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 	 * Get a list of the genes that have not been taken before. This is useful
 	 * if you do not wish the same gene to appear more than once in a
 	 * chromosome.
-	 *
+	 * 
 	 * @param source
 	 *            The pool of genes to select from.
 	 * @param taken
@@ -127,9 +128,9 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 			final Set<GENE_TYPE> taken) {
 		final int geneLength = source.size();
 
-		for(int i = 0; i < geneLength; i++) {
+		for (int i = 0; i < geneLength; i++) {
 			final GENE_TYPE trial = source.getGene(i);
-			if(!taken.contains(trial)) {
+			if (!taken.contains(trial)) {
 				taken.add(trial);
 				return trial;
 			}
@@ -141,7 +142,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 	/**
 	 * Assuming this chromosome is the "mother" mate with the passed in
 	 * "father".
-	 *
+	 * 
 	 * @param father
 	 *            The father.
 	 * @param offspring1
@@ -155,7 +156,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 	public void mate(final Chromosome<GENE_TYPE, GA_TYPE> father,
 			final Chromosome<GENE_TYPE, GA_TYPE> offspring1,
 			final Chromosome<GENE_TYPE, GA_TYPE> offspring2)
-					throws NeuralNetworkError {
+			throws NeuralNetworkError {
 		final int geneLength = getGenes().length;
 
 		// the chromosome must be cut at two positions, determine them
@@ -169,8 +170,9 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 		final Set<GENE_TYPE> taken2 = new HashSet<GENE_TYPE>();
 
 		// handle cut section
-		for(int i = 0; i < geneLength; i++)
-			if(i < cutpoint1 || i > cutpoint2) {} else {
+		for (int i = 0; i < geneLength; i++)
+			if (i < cutpoint1 || i > cutpoint2) {
+			} else {
 				offspring1.setGene(i, father.getGene(i));
 				offspring2.setGene(i, this.getGene(i));
 				taken1.add(offspring1.getGene(i));
@@ -178,9 +180,9 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 			}
 
 		// handle outer sections
-		for(int i = 0; i < geneLength; i++)
-			if(i < cutpoint1 || i > cutpoint2)
-				if(getGeneticAlgorithm().isPreventRepeat()) {
+		for (int i = 0; i < geneLength; i++)
+			if (i < cutpoint1 || i > cutpoint2)
+				if (getGeneticAlgorithm().isPreventRepeat()) {
 					offspring1.setGene(i, getNotTaken(this, taken1));
 					offspring2.setGene(i, getNotTaken(father, taken2));
 				} else {
@@ -189,10 +191,12 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 				}
 
 		// mutate
-		if(Math.random() < this.geneticAlgorithm.getMutationPercent())
+		if (Math.random() < this.geneticAlgorithm.getMutationPercent()) {
 			offspring1.mutate();
-		if(Math.random() < this.geneticAlgorithm.getMutationPercent())
+		}
+		if (Math.random() < this.geneticAlgorithm.getMutationPercent()) {
 			offspring2.mutate();
+		}
 
 		// calculate cost
 		offspring1.calculateCost();
@@ -207,6 +211,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Set the cost for this chromosome.
+	 * 
 	 * @param cost
 	 *            the cost to set
 	 */
@@ -216,8 +221,11 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Set the specified gene's value.
-	 * @param gene The specified gene.
-	 * @param value The value to set the specified gene to.
+	 * 
+	 * @param gene
+	 *            The specified gene.
+	 * @param value
+	 *            The value to set the specified gene to.
 	 */
 	public void setGene(final int gene, final GENE_TYPE value) {
 		this.genes[gene] = value;
@@ -225,6 +233,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Set the entire gene array.
+	 * 
 	 * @param genes
 	 *            the genes to set
 	 */
@@ -234,6 +243,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Set the genes directly, not allowed to be overridden.
+	 * 
 	 * @param genes
 	 *            the genes to set
 	 */
@@ -244,6 +254,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Set the genetic algorithm.
+	 * 
 	 * @param geneticAlgorithm
 	 *            the geneticAlgorithm to set
 	 */
@@ -253,6 +264,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Get the size of the gene array.
+	 * 
 	 * @return The size of the gene array.
 	 */
 	private int size() {
@@ -261,6 +273,7 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 
 	/**
 	 * Convert the chromosome to a string.
+	 * 
 	 * @return The chromosome as a string.
 	 */
 	@Override
@@ -270,7 +283,5 @@ implements Comparable<Chromosome<GENE_TYPE, GA_TYPE>> {
 		builder.append(getCost());
 		return builder.toString();
 	}
-
-	
 
 }

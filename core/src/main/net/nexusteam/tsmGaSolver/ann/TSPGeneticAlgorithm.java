@@ -9,7 +9,10 @@ import net.JeffHeatonCode.NeuralNetworkError;
  */
 public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 
+	private int timesMutated = 0;
+	
 	public TSPGeneticAlgorithm(final Waypoint waypoints[], final int populationSize, final double mutationPercent, final double percentToMate, final double matingPopulationPercent, final int cutLength) throws NeuralNetworkError {
+		
 		setMutationPercent(mutationPercent);
 		setMatingPopulation(matingPopulationPercent);
 		setPopulationSize(populationSize);
@@ -18,11 +21,22 @@ public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 		setPreventRepeat(true);
 
 		setChromosomes(new TSPChromosome[getPopulationSize()]);
+		
 		for(int i = 0; i < getChromosomes().length; i++) {
 			final TSPChromosome c = new TSPChromosome(this, waypoints);
 			setChromosome(i, c);
 		}
 		sortChromosomes();
+	}
+	
+	public int getTimesMutated()
+	{
+		return timesMutated;
+	}
+	
+	public void incrementMutation()
+	{
+		timesMutated++;
 	}
 
 }
