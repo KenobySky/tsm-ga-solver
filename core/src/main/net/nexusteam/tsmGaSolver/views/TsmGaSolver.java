@@ -72,6 +72,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
+				if(start.isDisabled())
+					return;
 				controller.stop();
 				controller.configure();
 				controller.initialize(bounds.width, bounds.height);
@@ -106,6 +108,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 						if(currentWaypointQuantity != waypointQuantity)
 							populate(waypointQuantity);
+
+						start.setDisabled(false);
 					}
 
 				});
@@ -117,8 +121,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(!Controller.isStarted())
+				if(!Controller.isStarted()) {
 					stage.addActor(window);
+					start.setDisabled(true);
+				}
 			}
 
 		});
