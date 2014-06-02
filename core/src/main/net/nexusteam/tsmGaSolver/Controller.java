@@ -92,11 +92,19 @@ public class Controller {
 	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
 	public void configure() {
 		if(started) {
-			
-			//TODO have to Change the Logic in This if, because now the thread wont have a deadlock inside that while statement...
-			//We shouldnt have to save each time someone press start, maybe just save if settings are different?
-			//We have to speak about this
-			//throw new IllegalStateException("configuring the Controller while it's running may produce unpredictable results");
+
+			if(workerThread != null)
+			{
+
+				if(worker != null)
+				{
+					if(worker.isInterrupted())
+					{
+						throw new IllegalStateException("Denied : Configuring the Controller while it's running may produce unpredictable results");
+					}
+				}
+			}
+
 		} else {}
 
 		Preferences prefs = Settings.prefs;
