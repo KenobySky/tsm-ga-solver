@@ -89,8 +89,7 @@ public class Controller {
 		initialize(usable_Width, usable_Height);
 	}
 
-	/** configures this Controller based on the {@link #view} and
-	 *  {@link Settings#prefs preferences} */
+	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
 	public void configure() {
 		if(started)
 			throw new IllegalStateException("configuring the Controller while it's running may produce unpredictable results");
@@ -105,8 +104,9 @@ public class Controller {
 		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
-	/** Receives two parameters. They represent the usable area to generate the cities.<br>
-	 *  Should have been {@link #configure() configured} before. */
+	/** Receives two parameters.
+	 * 	They represent the usable area to generate the cities.<br>
+	 * 	Should have been {@link #configure() configured} before. */
 	public void initialize(float usable_Width, float usable_Height) {
 		Array<Vector2> viewWaypoints = view.getWaypoints();
 		waypoints = new Waypoint[viewWaypoints.size];
@@ -116,8 +116,7 @@ public class Controller {
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
-		// TODO remove from Settings if this is not configurable (currently
-		// apparently needs to be chromosome_quantity / 5)
+		// TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
 		cut_length = chromosome_quantity / 5;
 		System.out.println("Cut : " + cut_length);
 		System.out.println("Chromo q : " + chromosome_quantity);
@@ -143,6 +142,7 @@ public class Controller {
 				workerThread.stopThread = true;
 			if(worker != null) {
 				worker.interrupt();
+				worker = null;
 			}
 		} catch(Exception ex) {
 			ex.printStackTrace();
