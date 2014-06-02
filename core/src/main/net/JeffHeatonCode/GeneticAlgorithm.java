@@ -167,7 +167,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 
 		// mate and form the next generation
 		for(int i = 0; i < countToMate; i++) {
-			
+
 			final CHROMOSOME_TYPE mother = this.chromosomes[i];
 			final int fatherInt = (int) (Math.random() * matingPopulationSize);
 			final CHROMOSOME_TYPE father = this.chromosomes[fatherInt];
@@ -193,7 +193,6 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 			try {
 				this.pool.invokeAll(tasks, 120, TimeUnit.SECONDS);
 			} catch(final InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -278,9 +277,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 
 	public void sortChromosomes() {
 		try {
-			
-		
-			
+
 			Arrays.sort(this.chromosomes);
 		} catch(Exception ex)
 		{
