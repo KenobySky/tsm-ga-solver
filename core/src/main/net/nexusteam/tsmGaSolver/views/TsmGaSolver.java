@@ -68,8 +68,6 @@ public class TsmGaSolver extends ApplicationAdapter {
 		status2.setAlignment(Align.center);
 
 		final Button start = new TextButton("Start", skin);
-		Button settings = new TextButton("Settings", skin);
-
 		start.addListener(new ClickListener() {
 
 			@Override
@@ -82,6 +80,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		});
 
+		Button settings = new TextButton("Settings", skin);
 		settings.addListener(new ClickListener() {
 
 			Window window;
@@ -124,11 +123,25 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		});
 
+		Button stop = new TextButton("Stop", skin);
+		stop.addListener(new ClickListener() {
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				controller.stop();
+			}
+
+		});
+
+		Button step = new TextButton("Step", skin);
+
 		table.defaults().bottom().fillX();
 		table.add(status).expand();
-		table.add(start).row();
+		table.add(start).uniformX();
+		table.add(step).uniformX().row();
 		table.add(status2);
-		table.add(settings);
+		table.add(stop).uniformX();
+		table.add(settings).uniformX();
 
 		// adjust bounds
 		bounds.y = status.getHeight() + status2.getHeight();
