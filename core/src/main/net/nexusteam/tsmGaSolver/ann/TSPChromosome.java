@@ -64,7 +64,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 		final Integer temp = getGene(iswap1);
 		setGene(iswap1, getGene(iswap2));
 		setGene(iswap2, temp);
-		getGeneticAlgorithm().incrementMutation();
+		getGeneticAlgorithm().incrementMutationCounter();
 
 		//System.out.println("Mutation Calls : " + getGeneticAlgorithm().gettimesMutated());
 
@@ -83,12 +83,13 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	 */
 	@Override
 	public int compareTo(Chromosome<Integer, TSPGeneticAlgorithm> other) {
-		if(getCost() > other.getCost())
+		if(getCost() > other.getCost()) {
 			return 1;
-		else if(getCost() == other.getCost())
+		}else if(getCost() == other.getCost())
 			return 0;
-		else
+		else {
 			return -1;
+		}
 	}
 
 	/** @return the {@link #path} */

@@ -33,7 +33,7 @@ public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 		return timesMutated;
 	}
 
-	public void incrementMutation() {
+	public void incrementMutationCounter() {
 		timesMutated++;
 	}
 
