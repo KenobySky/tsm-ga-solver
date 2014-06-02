@@ -10,7 +10,6 @@ import net.JeffHeatonCode.NeuralNetworkError;
 public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 
 	protected Waypoint[] path;
-	
 
 	public TSPChromosome(final TSPGeneticAlgorithm owner, final Waypoint path[]) {
 		setGeneticAlgorithm(owner);
@@ -19,22 +18,22 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 		final Integer genes[] = new Integer[this.path.length];
 		final boolean taken[] = new boolean[path.length];
 
-		for (int i = 0; i < genes.length; i++) {
+		for(int i = 0; i < genes.length; i++) {
 			taken[i] = false;
 		}
-		for (int i = 0; i < genes.length - 1; i++) {
+		for(int i = 0; i < genes.length - 1; i++) {
 			int icandidate;
 
 			do {
 				icandidate = (int) (Math.random() * genes.length);
-			} while (taken[icandidate]);
+			} while(taken[icandidate]);
 
 			genes[i] = icandidate;
 			taken[icandidate] = true;
-			if (i == genes.length - 2) {
+			if(i == genes.length - 2) {
 				icandidate = 0;
 
-				while (taken[icandidate]) {
+				while(taken[icandidate]) {
 					icandidate++;
 				}
 
@@ -49,7 +48,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	@Override
 	public void calculateCost() throws NeuralNetworkError {
 		double cost = 0.0;
-		for (int i = 0; i < path.length - 1; i++) {
+		for(int i = 0; i < path.length - 1; i++) {
 			final double dist = path[getGene(i)].dst(path[getGene(i + 1)]);
 			cost += dist;
 		}
@@ -66,8 +65,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 		setGene(iswap1, getGene(iswap2));
 		setGene(iswap2, temp);
 		getGeneticAlgorithm().incrementMutation();
-		
-		
+
 		//System.out.println("Mutation Calls : " + getGeneticAlgorithm().gettimesMutated());
 
 	}
@@ -85,9 +83,9 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	 */
 	@Override
 	public int compareTo(Chromosome<Integer, TSPGeneticAlgorithm> other) {
-		if (getCost() > other.getCost())
+		if(getCost() > other.getCost())
 			return 1;
-		else if (getCost() == other.getCost())
+		else if(getCost() == other.getCost())
 			return 0;
 		else
 			return -1;
@@ -97,7 +95,5 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	public Waypoint[] getPath() {
 		return path;
 	}
-
-	
 
 }

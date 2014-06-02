@@ -89,41 +89,31 @@ public class Controller {
 		initialize(usable_Width, usable_Height);
 	}
 
-	/**
-	 * configures this Controller based on the {@link #view} and
-	 * {@link Settings#prefs preferences}
-	 */
+	/** configures this Controller based on the {@link #view} and
+	 *  {@link Settings#prefs preferences} */
 	public void configure() {
-		if (started)
-			throw new IllegalStateException(
-					"configuring the Controller while it's running may produce unpredictable results");
+		if(started)
+			throw new IllegalStateException("configuring the Controller while it's running may produce unpredictable results");
 
 		Preferences prefs = Settings.prefs;
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
 		mutation_percentage = prefs.getFloat(Settings.MUTATION_PERCENTAGE);
-		mating_population_percentage = prefs
-				.getFloat(Settings.MATING_POPULATION_PERCENTAGE);
-		favored_population_percentage = prefs
-				.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
+		mating_population_percentage = prefs.getFloat(Settings.MATING_POPULATION_PERCENTAGE);
+		favored_population_percentage = prefs.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
 		cut_length = prefs.getInteger(Settings.CUT_LENGTH);
 		// TODO Settings.MAXIMUM_GENERATIONS
-		minimum_non_change_generations = prefs
-				.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
+		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
-	/**
-	 * Receives two parameters. They represent the usable area to generate the
-	 * cities.<br>
-	 * Should have been {@link #configure() configured} before.
-	 */
+	/** Receives two parameters. They represent the usable area to generate the cities.<br>
+	 *  Should have been {@link #configure() configured} before. */
 	public void initialize(float usable_Width, float usable_Height) {
 		Array<Vector2> viewWaypoints = view.getWaypoints();
 		waypoints = new Waypoint[viewWaypoints.size];
 
-		for (int i = 0; i < waypoints.length; i++) {
+		for(int i = 0; i < waypoints.length; i++) {
 			Vector2 point = viewWaypoints.get(i);
-			waypoints[i] = new Waypoint(point.x, point.y,
-					String.valueOf(RandomUtils.getRandomLetter()));
+			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
 		// TODO remove from Settings if this is not configurable (currently
@@ -132,9 +122,7 @@ public class Controller {
 		System.out.println("Cut : " + cut_length);
 		System.out.println("Chromo q : " + chromosome_quantity);
 
-		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity,
-				mutation_percentage, mating_population_percentage,
-				favored_population_percentage, cut_length);
+		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
 
 	public void start() {
@@ -151,12 +139,12 @@ public class Controller {
 
 	public void stop() {
 		try {
-			if (workerThread != null)
+			if(workerThread != null)
 				workerThread.stopThread = true;
-			if (worker != null) {
+			if(worker != null) {
 				worker.interrupt();
 			}
-		} catch (Exception ex) {
+		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
 	}
