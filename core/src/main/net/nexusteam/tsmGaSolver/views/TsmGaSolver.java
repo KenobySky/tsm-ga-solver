@@ -202,8 +202,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		for(; count > 0; count--) {
 			Vector2 waypoint = Pools.obtain(Vector2.class);
-			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width),
-					MathUtils.random(bounds.y, bounds.y + bounds.height));
+			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width),MathUtils.random(bounds.y, bounds.y + bounds.height));
 			waypoints.add(waypoint);
 		}
 

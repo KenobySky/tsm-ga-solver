@@ -136,8 +136,8 @@ public class Controller {
 
 		// TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
 		cut_length = chromosome_quantity / 5;
-		System.out.println("Cut : " + cut_length);
-		System.out.println("Chromo q : " + chromosome_quantity);
+		//System.out.println("Cut : " + cut_length);
+		//System.out.println("Chromo q : " + chromosome_quantity);
 
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
