@@ -87,7 +87,6 @@ public class WorkerThreadIterative implements Runnable {
 			} // END OF *IF* NUMBER OF ITERATIONS 
 
 		} else
-		System.out.println("Thread StoppedConsequences May cause unpredictable Results.Return@..Stand by...");
 		controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 		return;
 

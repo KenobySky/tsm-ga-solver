@@ -7,6 +7,7 @@ import net.nexusteam.tsmGaSolver.tools.RandomUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -164,7 +165,7 @@ public class Controller {
 		try {
 			if(workerThread != null)
 				workerThread.stopToKillThread = true;
-				
+
 			if(worker != null) {
 				worker.interrupt();
 				worker = null;
@@ -185,53 +186,36 @@ public class Controller {
 	/**
 	 * Step The WorkerThreadIterative Mode
 	 */
-	public void step(int numberOfIterations)
-	{
-		
+	public void step(int numberOfIterations) {
 		//Check if Full Mode is Running
 		boolean isFullModeRunning = isWorkerThreadRunning();
-		
-		if(isFullModeRunning)
-		{
+
+		if(isFullModeRunning) {
 			stop();
 		}
-		
-		if(iterativeWorkerThread == null)
-		{
+
+		if(iterativeWorkerThread == null) {
 			iterativeWorkerThread = new WorkerThreadIterative(this, numberOfIterations);
-
-		} else if(iterativeWorkerThread.isWaitingUser())
-		{
-
+		} else if(iterativeWorkerThread.isWaitingUser()) {
 			iterativeWorkerThread.changeNumberOfIterations(numberOfIterations);
-
 		} else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped()) {
-			System.out.println("Thread is waiting another user input but Thread is Killed!");
+			Gdx.app.error(getClass().getName(), "Iterative worker thread is waiting another user input but thread is killed!");
 		}
-
 	}
 
 	/**
 	 * Kill The IterativeWorkerThread Mode
 	 */
-	public void killWorkerThreadIterative()
-	{
-		if(iterativeWorkerThread != null)
-		{
-			if(!iterativeWorkerThread.isThreadStopped())
-			{
+	public void killWorkerThreadIterative() {
+		if(iterativeWorkerThread != null) {
+			if(!iterativeWorkerThread.isThreadStopped()) {
 				iterativeWorkerThread.stopToKillThread();
-
-				if(worker != null)
-				{
-					
+				if(worker != null) {
 					worker.interrupt();
 				}
-
 			}
 		} else if(iterativeWorkerThread == null) {
-			if(worker != null)
-			{
+			if(worker != null) {
 				worker.interrupt();
 			}
 		}
@@ -239,32 +223,10 @@ public class Controller {
 		System.out.println("IterativeWorkerThread Destroyed.");
 	}
 
-	private boolean isWorkerThreadRunning()
-	{
-
-		if(workerThread != null)
-		{
-			if(worker != null)
-			{
-				if(!workerThread.stopToKillThread)
-				{
-					if(!worker.isInterrupted())
-					{
-						return true;
-					}else
-					{
-						return false;
-					}
-				}
-
-			}
-		} else
-		{
-			return false;
-		}
-
+	private boolean isWorkerThreadRunning() {
+		if(workerThread != null && worker != null && !workerThread.stopToKillThread)
+			return !worker.isInterrupted();
 		return false;
-
 	}
 
 	// GETTERS AND SETTERS
