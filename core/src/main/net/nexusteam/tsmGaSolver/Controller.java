@@ -63,6 +63,11 @@ public class Controller {
 	private WorkerThread workerThread;
 
 	/**
+	 * The Reference to the Currently background ITERATIVE worker Thread
+	 */
+	private WorkerThreadIterative iterativeWorkerThread;
+
+	/**
 	 * Is the thread started.
 	 */
 	private static boolean started = false;
@@ -125,6 +130,9 @@ public class Controller {
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
 
+	/**
+	 * Starts the Full Mode
+	 */
 	public void start() {
 		stop();
 
@@ -137,6 +145,9 @@ public class Controller {
 
 	}
 
+	/**
+	 * Stops The Full Mode
+	 */
 	public void stop() {
 		try {
 			if(workerThread != null)
@@ -153,6 +164,56 @@ public class Controller {
 
 	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//ITERATIVE METHODS BELOW
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Step The WorkerThreadIterative Mode
+	 */
+	public void step(int numberOfIterations) {
+		//Check if Full Mode is Running
+		boolean isFullModeRunning = isWorkerThreadRunning();
+
+		if(isFullModeRunning) {
+			stop();
+		}
+
+		if(iterativeWorkerThread == null) {
+			iterativeWorkerThread = new WorkerThreadIterative(this, numberOfIterations);
+		} else if(iterativeWorkerThread.isWaitingUser()) {
+			iterativeWorkerThread.changeNumberOfIterations(numberOfIterations);
+		} else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped()) {
+			Gdx.app.error(getClass().getName(), "Iterative worker thread is waiting another user input but thread is killed!");
+		}
+	}
+
+	/**
+	 * Kill The IterativeWorkerThread Mode
+	 */
+	public void killWorkerThreadIterative() {
+		if(iterativeWorkerThread != null) {
+			if(!iterativeWorkerThread.isThreadStopped()) {
+				iterativeWorkerThread.stopToKillThread();
+				if(worker != null) {
+					worker.interrupt();
+				}
+			}
+		} else if(iterativeWorkerThread == null) {
+			if(worker != null) {
+				worker.interrupt();
+			}
+		}
+
+		System.out.println("IterativeWorkerThread Destroyed.");
+	}
+
+	private boolean isWorkerThreadRunning() {
+		if(workerThread != null && worker != null && !workerThread.stopToKillThread)
+			return !worker.isInterrupted();
+		return false;
 	}
 
 	// GETTERS AND SETTERS
