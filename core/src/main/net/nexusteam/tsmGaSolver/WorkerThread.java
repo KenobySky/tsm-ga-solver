@@ -48,7 +48,7 @@ public class WorkerThread implements Runnable {
 					break;
 				}
 
-			controller.status = "Solution found after " + controller.generation_count + " generations.And after " + controller.genetic.getTimesMutated() + " Mutations";
+			controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
 			controller.view.update();
 			Controller.setStarted(false);
 		} else
