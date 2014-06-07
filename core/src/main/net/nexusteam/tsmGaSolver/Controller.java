@@ -7,12 +7,13 @@ import net.nexusteam.tsmGaSolver.tools.RandomUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * 
+ *
  * @author Andre Vinícius Lopes
  */
 public class Controller {
@@ -92,12 +93,11 @@ public class Controller {
 	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
 	public void configure() {
 		if(started) {
-			
 			//TODO have to Change the Logic in This if, because now the thread wont have a deadlock inside that while statement...
 			//We shouldnt have to save each time someone press start, maybe just save if settings are different?
 			//We have to speak about this
 			//throw new IllegalStateException("configuring the Controller while it's running may produce unpredictable results");
-		} else {}
+		}
 
 		Preferences prefs = Settings.prefs;
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
@@ -151,7 +151,7 @@ public class Controller {
 				worker = null;
 			}
 		} catch(Exception ex) {
-			ex.printStackTrace();
+			Gdx.app.error(getClass().getName(), worker.getName() + " could not be stopped", ex);
 		}
 	}
 
