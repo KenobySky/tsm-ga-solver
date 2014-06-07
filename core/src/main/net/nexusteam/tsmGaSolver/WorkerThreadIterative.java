@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 
 /**
  *
- * @author Andre Vinícius Lopes
+ * @author Andre VinÃ­cius Lopes
  */
 public class WorkerThreadIterative implements Runnable {
 
@@ -15,7 +15,7 @@ public class WorkerThreadIterative implements Runnable {
 	 * May Cause Unpredictable Problems if its set True During the
 	 * while(countSame < controller.minimum_non_change_generations) Loop.
 	 */
-	private volatile boolean stopThread;
+	private volatile boolean stopToKillThread = false;
 
 	/**
 	 * Number Of Iterations per Step/Button Click in View
@@ -25,7 +25,7 @@ public class WorkerThreadIterative implements Runnable {
 	/**
 	 * Flag to indicate that the Thread is waiting for the user to click the STEP button to make 1 or (*numberOfIterations*Variable) iterations
 	 */
-	public boolean waitingUserInput;
+	private boolean waitingUserInput;
 
 	public WorkerThreadIterative(Controller instance, int numberOfIterations) {
 		controller = instance;
@@ -34,7 +34,7 @@ public class WorkerThreadIterative implements Runnable {
 
 	@Override
 	public void run() {
-		if(!stopThread) {
+		if(!stopToKillThread) {
 			if(numberOfIterations > 0) {
 				waitingUserInput = false;
 				float thisCost = 500.0f;
@@ -45,7 +45,7 @@ public class WorkerThreadIterative implements Runnable {
 				controller.view.update();
 
 				while(countSame < controller.minimum_non_change_generations)
-					if(!stopThread) {
+					if(!stopToKillThread && numberOfIterations > 0) {
 						controller.generation_count++;
 						controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
@@ -61,14 +61,16 @@ public class WorkerThreadIterative implements Runnable {
 						}
 
 						controller.view.update();
-					} else
-						System.out.println("Thread Stopped During a critical loop.Consequences May cause unpredictable Results");
+						numberOfIterations--;
+					} else {
+						Gdx.app.error(getClass().getName(), "Thread stopped during a critical loop. Consequences may cause unpredictable results.\nAttempting to break loop and finish thread.");
+						break;
+					}
 
 				controller.status = "Solution found after " + controller.generation_count + " generations.And after " + controller.genetic.getTimesMutated() + " Mutations";
 				controller.view.update();
 				Controller.setStarted(false);
 				numberOfIterations--;
-
 			} else {
 				controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 				System.out.println("Ended Number Of Iterations" + " " + "Waiting Another Click on Step Button To Continue");
@@ -76,14 +78,17 @@ public class WorkerThreadIterative implements Runnable {
 			} // END OF *IF* NUMBER OF ITERATIONS
 
 		} else
-			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
+			System.out.println("Thread StoppedConsequences May cause unpredictable Results.Return@..Stand by...");
+		controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
+		return;
+
 	}// END OF *IF* STOP THREAD
 
 	/**
-	 * returns true if the number of iterations <= 0 And if stopThread == false;
+	 * returns true if the number of iterations <= 0
 	 */
 	public boolean isWaitingUser() {
-		return waitingUserInput && !stopThread;
+		return waitingUserInput;
 	}
 
 	/**
@@ -91,27 +96,28 @@ public class WorkerThreadIterative implements Runnable {
 	 */
 	public void changeNumberOfIterations(int iterations) {
 		if(numberOfIterations > 0)
-			Gdx.app.error(getClass().getName(), "Denied: cannot change number of iterations during a step-flow");
+			Gdx.app.debug(getClass().getName(), "Denied: cannot change number of iterations during a step-flow");
 		else {
 			numberOfIterations = iterations;
-			Gdx.app.log(getClass().getName(), "Accepted: Number Of Iterations changed to " + numberOfIterations);
+			Gdx.app.log(getClass().getName(), "Accepted: Number of iterations changed to " + numberOfIterations);
 		}
 	}
 
 	/**
 	 * Set stopThread = true;
-	 * Halts The Thread even if numberOfIterations > 0
+	 * Halts The Thread encapsulating all logic in an if(!stopThread) Statement, even if numberOfIterations > 0
+	 * All logic inside may lost consistency.
+	 * Controller Methods will attempt to interrupt and end this thread if this method is called
 	 */
-	public void stopThread() {
-		stopThread = true;
+	public void stopToKillThread() {
+		stopToKillThread = true;
 	}
 
 	/**
-	 * Set stopThread = false;
-	 * Allows The Thread to continue its logic.
+	 * Returns stopThread boolean
 	 */
-	public void continueThread() {
-		stopThread = false;
+	public boolean isThreadStopped() {
+		return stopToKillThread;
 	}
 
 }
