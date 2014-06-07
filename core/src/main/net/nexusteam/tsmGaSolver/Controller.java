@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * 
+ *
  * @author Andre Vinícius Lopes
  */
 public class Controller {
@@ -91,21 +91,8 @@ public class Controller {
 
 	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
 	public void configure() {
-		if(started) {
-
-			if(workerThread != null)
-			{
-
-				if(worker != null)
-				{
-					if(worker.isInterrupted())
-					{
-						throw new IllegalStateException("Denied : Configuring the Controller while it's running may produce unpredictable results");
-					}
-				}
-			}
-
-		} else {}
+		if(started && workerThread != null && worker != null && worker.isInterrupted())
+			throw new IllegalStateException("Denied: Configuring the Controller while it's running may produce unpredictable results");
 
 		Preferences prefs = Settings.prefs;
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
