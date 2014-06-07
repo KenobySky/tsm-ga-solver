@@ -1,6 +1,6 @@
 package net.nexusteam.tsmGaSolver;
 
-import java.text.NumberFormat;
+import com.badlogic.gdx.Gdx;
 
 /**
  *
@@ -15,7 +15,7 @@ public class WorkerThreadIterative implements Runnable {
 	 * May Cause Unpredictable Problems if its set True During the
 	 * while(countSame < controller.minimum_non_change_generations) Loop.
 	 */
-	private boolean stopToKillThread = false;
+	private volatile boolean stopThread;
 
 	/**
 	 * Number Of Iterations per Step/Button Click in View
@@ -25,7 +25,7 @@ public class WorkerThreadIterative implements Runnable {
 	/**
 	 * Flag to indicate that the Thread is waiting for the user to click the STEP button to make 1 or (*numberOfIterations*Variable) iterations
 	 */
-	private boolean waitingUserInput = false;
+	public boolean waitingUserInput;
 
 	public WorkerThreadIterative(Controller instance, int numberOfIterations) {
 		controller = instance;
@@ -34,10 +34,8 @@ public class WorkerThreadIterative implements Runnable {
 
 	@Override
 	public void run() {
-		if(!stopToKillThread) {
-
-			if(numberOfIterations > 0)
-			{
+		if(!stopThread) {
+			if(numberOfIterations > 0) {
 				waitingUserInput = false;
 				float thisCost = 500.0f;
 				float oldCost = 0.0f;
@@ -46,9 +44,8 @@ public class WorkerThreadIterative implements Runnable {
 				controller.status = "Current cost: " + oldCost;
 				controller.view.update();
 
-				while(countSame < controller.minimum_non_change_generations) {
-					if(!stopToKillThread && numberOfIterations > 0)
-					{
+				while(countSame < controller.minimum_non_change_generations)
+					if(!stopThread) {
 						controller.generation_count++;
 						controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
@@ -64,78 +61,57 @@ public class WorkerThreadIterative implements Runnable {
 						}
 
 						controller.view.update();
-						numberOfIterations--;
 					} else
-					{
 						System.out.println("Thread Stopped During a critical loop.Consequences May cause unpredictable Results");
-						System.out.println("Attempt To Break Loop and finish Thread.");
-						System.out.println("Breaking Loop...");
-						break;
-					}
-				}
 
 				controller.status = "Solution found after " + controller.generation_count + " generations.And after " + controller.genetic.getTimesMutated() + " Mutations";
 				controller.view.update();
 				Controller.setStarted(false);
 				numberOfIterations--;
 
-			} else
-			{
+			} else {
 				controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 				System.out.println("Ended Number Of Iterations" + " " + "Waiting Another Click on Step Button To Continue");
 				waitingUserInput = true;
-			} // END OF *IF* NUMBER OF ITERATIONS 
+			} // END OF *IF* NUMBER OF ITERATIONS
 
 		} else
-		System.out.println("Thread StoppedConsequences May cause unpredictable Results.Return@..Stand by...");
-		controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
-		return;
-
+			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 	}// END OF *IF* STOP THREAD
 
 	/**
-	 * returns true if the number of iterations <= 0 
+	 * returns true if the number of iterations <= 0 And if stopThread == false;
 	 */
-	public boolean isWaitingUser()
-	{
-		return waitingUserInput;
+	public boolean isWaitingUser() {
+		return waitingUserInput && !stopThread;
 	}
 
 	/**
 	 * Changes the Number of Iterations
 	 */
-	public void changeNumberOfIterations(int iterations)
-	{
+	public void changeNumberOfIterations(int iterations) {
 		if(numberOfIterations > 0)
-		{
-			System.out.println("Denied : cannot change number of iterations during a step-flow");
-
-		} else
-		{
+			Gdx.app.error(getClass().getName(), "Denied: cannot change number of iterations during a step-flow");
+		else {
 			numberOfIterations = iterations;
-			System.out.println("Accepted : Number Of Iterations changed to : " + numberOfIterations);
+			Gdx.app.log(getClass().getName(), "Accepted: Number Of Iterations changed to " + numberOfIterations);
 		}
 	}
 
 	/**
 	 * Set stopThread = true;
-	 * Halts The Thread encapsulating all logic in an if(!stopThread) Statement, even if numberOfIterations > 0
-	 * All logic inside may lost consistency.
-	 * Controller Methods will attempt to interrupt and end this thread if this method is called
+	 * Halts The Thread even if numberOfIterations > 0
 	 */
-	public void stopToKillThread()
-	{
-		stopToKillThread = true;
+	public void stopThread() {
+		stopThread = true;
 	}
 
-	
-
 	/**
-	 * Returns stopThread boolean
+	 * Set stopThread = false;
+	 * Allows The Thread to continue its logic.
 	 */
-	public boolean isThreadStopped()
-	{
-		return stopToKillThread;
+	public void continueThread() {
+		stopThread = false;
 	}
 
 }

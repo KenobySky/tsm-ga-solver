@@ -1,6 +1,6 @@
 package net.nexusteam.tsmGaSolver;
 
-import java.text.NumberFormat;
+import com.badlogic.gdx.Gdx;
 
 /**
  *
@@ -9,8 +9,8 @@ import java.text.NumberFormat;
 public class WorkerThread implements Runnable {
 
 	private Controller controller;
-	
-	public boolean stopToKillThread = false;
+
+	public volatile boolean stopToKillThread;
 
 	public WorkerThread(Controller instance) {
 		controller = instance;
@@ -26,14 +26,8 @@ public class WorkerThread implements Runnable {
 			controller.status = "Current cost: " + oldCost;
 			controller.view.update();
 
-			//final NumberFormat nf = NumberFormat.getInstance();
-			//nf.setMinimumFractionDigits(2);
-			//nf.setMinimumFractionDigits(2);
-
-			// controller.minimum_non_change_generations
-			while(countSame < controller.minimum_non_change_generations) {
-				if(!stopToKillThread)
-				{
+			while(countSame < controller.minimum_non_change_generations)
+				if(!stopToKillThread) {
 					controller.generation_count++;
 					controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
@@ -49,19 +43,14 @@ public class WorkerThread implements Runnable {
 					}
 
 					controller.view.update();
-				}else
-				{
-					System.out.println("Thread Stopped During a critical loop.Consequences May cause unpredictable Results");
-					System.out.println("Attempt To Break Loop and finish Thread.");
-					System.out.println("Breaking Loop...");
+				} else {
+					Gdx.app.error(getClass().getName(), "Thread stopped during a critical loop. Consequences may cause unpredictable results.\nAttempting to break loop and finish Thread...");
 					break;
 				}
-			}
 
 			controller.status = "Solution found after " + controller.generation_count + " generations.And after " + controller.genetic.getTimesMutated() + " Mutations";
 			controller.view.update();
 			Controller.setStarted(false);
-
 		} else
 			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 	}
