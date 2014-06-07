@@ -31,8 +31,15 @@ public class WorkerThread implements Runnable {
 					controller.generation_count++;
 					controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
+					try{
 					controller.genetic.iteration();
-
+					}catch(Exception ex)
+					{
+						Gdx.app.error(getClass().getName(), "Genetic Iteration Critical Failure.Reason : "+ex.getMessage()+"\nAttempting to break loop and finish Thread...");
+						stopToKillThread = true;
+						break;
+					}
+					
 					thisCost = (float) controller.getTopChromosome().getCost();
 
 					if((int) thisCost == (int) oldCost)
