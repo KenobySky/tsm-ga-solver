@@ -15,7 +15,9 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -67,17 +69,23 @@ public class TsmGaSolver extends ApplicationAdapter {
 		status2 = new Label("[current optimum]", skin, "status");
 		status2.setAlignment(Align.center);
 
-		final Button start = new TextButton("Start", skin);
-		start.addListener(new ClickListener() {
+		final TextButton startStop = new TextButton("Start", skin);
+		startStop.addListener(new ClickListener() {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(start.isDisabled())
+				if(startStop.isDisabled())
 					return;
-				controller.stop();
-				controller.configure();
-				controller.initialize(bounds.width, bounds.height);
-				controller.start();
+				if(!controller.isStarted()) {
+					controller.stop();
+					controller.configure();
+					controller.initialize(bounds.width, bounds.height);
+					controller.start();
+					startStop.setText("Stop");
+				} else {
+					startStop.setText("Start");
+					controller.stop();
+				}
 			}
 
 		});
@@ -109,7 +117,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 						if(currentWaypointQuantity != waypointQuantity)
 							populate(waypointQuantity);
 
-						start.setDisabled(false);
+						startStop.setDisabled(false);
 					}
 
 				});
@@ -121,20 +129,29 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(!Controller.isStarted()) {
+				if(!controller.isStarted()) {
 					stage.addActor(window);
-					start.setDisabled(true);
+					startStop.setDisabled(true);
 				}
 			}
 
 		});
 
-		Button stop = new TextButton("Stop", skin);
-		stop.addListener(new ClickListener() {
+		Button samples = new TextButton("Samples", skin);
+		samples.addListener(new ClickListener() {
+
+			Samples samples = new Samples("Samples");
+
+			{
+				samples.setColor(1, 1, 1, 0);
+			}
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				controller.stop();
+				samples.pack();
+				samples.setPosition(stage.getWidth() / 2 - samples.getWidth() / 2, stage.getHeight() / 2 - samples.getHeight() / 2);
+				stage.addActor(samples);
+				samples.addAction(Actions.fadeIn(Dialog.fadeDuration));
 			}
 
 		});
@@ -143,10 +160,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		table.defaults().bottom().fillX();
 		table.add(status).expand();
-		table.add(start).uniformX();
+		table.add(startStop).uniformX();
 		table.add(step).uniformX().row();
 		table.add(status2);
-		table.add(stop).uniformX();
+		table.add(samples).uniformX();
 		table.add(settings).uniformX();
 
 		// adjust bounds
@@ -181,9 +198,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 		renderer.setColor(Color.GREEN);
 		renderer.begin(ShapeType.Line);
 		for(int i = 1; i < optimum.size; i++)
-			renderer.line(waypoints.get(optimum.get(i - 1)),
-					waypoints.get(optimum.get(i)));
-
+			renderer.line(waypoints.get(optimum.get(i - 1)), waypoints.get(optimum.get(i)));
 		renderer.end();
 
 		// draw cities
@@ -202,7 +217,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		for(; count > 0; count--) {
 			Vector2 waypoint = Pools.obtain(Vector2.class);
-			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width),MathUtils.random(bounds.y, bounds.y + bounds.height));
+			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
 			waypoints.add(waypoint);
 		}
 
@@ -234,6 +249,11 @@ public class TsmGaSolver extends ApplicationAdapter {
 	/** @return the {@link #waypoints} */
 	public Array<Vector2> getWaypoints() {
 		return waypoints;
+	}
+
+	/** @return the {@link #controller} */
+	public Controller getController() {
+		return controller;
 	}
 
 }
