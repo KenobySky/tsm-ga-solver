@@ -13,7 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 /**
- * 
+ *
  * @author Andre Vinícius Lopes
  */
 public class Controller {
@@ -70,12 +70,12 @@ public class Controller {
 	/**
 	 * Is the thread started.
 	 */
-	private static boolean started = false;
+	private boolean started;
 
 	/**
 	 * Is the thread stopped.
 	 */
-	protected boolean stop = false;
+	protected boolean stop;
 
 	protected TSPGeneticAlgorithm genetic;
 
@@ -177,17 +177,15 @@ public class Controller {
 		//Check if Full Mode is Running
 		boolean isFullModeRunning = isWorkerThreadRunning();
 
-		if(isFullModeRunning) {
+		if(isFullModeRunning)
 			stop();
-		}
 
-		if(iterativeWorkerThread == null) {
+		if(iterativeWorkerThread == null)
 			iterativeWorkerThread = new WorkerThreadIterative(this, numberOfIterations);
-		} else if(iterativeWorkerThread.isWaitingUser()) {
+		else if(iterativeWorkerThread.isWaitingUser())
 			iterativeWorkerThread.changeNumberOfIterations(numberOfIterations);
-		} else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped()) {
+		else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped())
 			Gdx.app.error(getClass().getName(), "Iterative worker thread is waiting another user input but thread is killed!");
-		}
 	}
 
 	/**
@@ -197,15 +195,12 @@ public class Controller {
 		if(iterativeWorkerThread != null) {
 			if(!iterativeWorkerThread.isThreadStopped()) {
 				iterativeWorkerThread.stopToKillThread();
-				if(worker != null) {
+				if(worker != null)
 					worker.interrupt();
-				}
 			}
-		} else if(iterativeWorkerThread == null) {
-			if(worker != null) {
+		} else if(iterativeWorkerThread == null)
+			if(worker != null)
 				worker.interrupt();
-			}
-		}
 
 		System.out.println("IterativeWorkerThread Destroyed.");
 	}
@@ -221,12 +216,12 @@ public class Controller {
 	/**
 	 * Is the thread started.
 	 */
-	public static boolean isStarted() {
+	public boolean isStarted() {
 		return started;
 	}
 
-	public static void setStarted(boolean started) {
-		Controller.started = started;
+	public void setStarted(boolean started) {
+		this.started = started;
 	}
 
 }

@@ -50,7 +50,7 @@ public class WorkerThread implements Runnable {
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
 			controller.view.update();
-			Controller.setStarted(false);
+			controller.setStarted(false);
 		} else
 			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 	}

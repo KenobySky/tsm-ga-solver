@@ -69,7 +69,7 @@ public class WorkerThreadIterative implements Runnable {
 
 				controller.status = "Solution found after " + controller.generation_count + " generations.And after " + controller.genetic.getTimesMutated() + " Mutations";
 				controller.view.update();
-				Controller.setStarted(false);
+				controller.setStarted(false);
 				numberOfIterations--;
 			} else {
 				controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
