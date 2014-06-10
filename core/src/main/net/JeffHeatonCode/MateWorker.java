@@ -1,3 +1,4 @@
+
 package net.JeffHeatonCode;
 
 /**
@@ -15,14 +16,11 @@ package net.JeffHeatonCode;
 
 import java.util.concurrent.Callable;
 
-/**
- * MateWorker: This class is used in conjunction with a thread pool.
- * This allows the genetic algorithm to offload all of those calculations
- * to a thread pool.
- *
+/** MateWorker: This class is used in conjunction with a thread pool. This allows the genetic algorithm to offload all of those
+ * calculations to a thread pool.
+ * 
  * @author Jeff Heaton
- * @version 2.1
- */
+ * @version 2.1 */
 public class MateWorker<CHROMOSME_TYPE extends Chromosome<?, ?>> implements Callable<Integer> {
 
 	private final CHROMOSME_TYPE mother;
@@ -30,7 +28,8 @@ public class MateWorker<CHROMOSME_TYPE extends Chromosome<?, ?>> implements Call
 	private final CHROMOSME_TYPE child1;
 	private final CHROMOSME_TYPE child2;
 
-	public MateWorker(final CHROMOSME_TYPE mother, final CHROMOSME_TYPE father,final CHROMOSME_TYPE child1, final CHROMOSME_TYPE child2) {
+	public MateWorker (final CHROMOSME_TYPE mother, final CHROMOSME_TYPE father, final CHROMOSME_TYPE child1,
+		final CHROMOSME_TYPE child2) {
 		this.mother = mother;
 		this.father = father;
 		this.child1 = child1;
@@ -39,8 +38,8 @@ public class MateWorker<CHROMOSME_TYPE extends Chromosome<?, ?>> implements Call
 
 	@Override
 	@SuppressWarnings({"unchecked", "rawtypes"})
-	public Integer call() throws Exception {
-		this.mother.mate((Chromosome) this.father, (Chromosome) this.child1, (Chromosome) this.child2);
+	public Integer call () throws Exception {
+		this.mother.mate((Chromosome)this.father, (Chromosome)this.child1, (Chromosome)this.child2);
 		return null;
 	}
 

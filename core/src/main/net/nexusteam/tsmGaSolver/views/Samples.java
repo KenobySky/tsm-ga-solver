@@ -1,3 +1,4 @@
+
 package net.nexusteam.tsmGaSolver.views;
 
 import net.nexusteam.tsmGaSolver.Assets;
@@ -30,11 +31,11 @@ public class Samples extends Window {
 
 	List<String> samples;
 
-	public Samples(String title) {
+	public Samples (String title) {
 		this(title, Assets.manager.get(Assets.uiskin, Skin.class));
 	}
 
-	public Samples(String title, final Skin skin) {
+	public Samples (String title, final Skin skin) {
 		super("Samples", skin);
 		setSkin(skin);
 
@@ -51,10 +52,9 @@ public class Samples extends Window {
 		samples.addListener(new ChangeListener() {
 
 			@Override
-			public void changed(ChangeEvent event, Actor actor) {
+			public void changed (ChangeEvent event, Actor actor) {
 				String text = samples.getSelected();
-				if(text == null)
-					text = "";
+				if (text == null) text = "";
 				name.setText(text);
 			}
 
@@ -66,14 +66,13 @@ public class Samples extends Window {
 			Json json = new Json();
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked (InputEvent event, float x, float y) {
 				FileHandle file = Sample.SAMPLE_DIR.child(name.getText() + "." + Sample.FILE_EXTENSION);
-				if(file.exists()) {
+				if (file.exists()) {
 					Sample sample = json.fromJson(Sample.class, file);
-					if(sample != null) {
-						TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
-						if(solver.getController().isStarted())
-							solver.getController().stop();
+					if (sample != null) {
+						TsmGaSolver solver = (TsmGaSolver)Gdx.app.getApplicationListener();
+						if (solver.getController().isStarted()) solver.getController().stop();
 						Array<Vector2> waypoints = solver.getWaypoints();
 						waypoints.clear();
 						waypoints.addAll(sample.waypoints);
@@ -94,10 +93,10 @@ public class Samples extends Window {
 		delete.addListener(new ClickListener() {
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked (InputEvent event, float x, float y) {
 				FileHandle file = Sample.SAMPLE_DIR.child(name.getText() + "." + Sample.FILE_EXTENSION);
-				if(file.exists()) {
-					if(!file.delete()) {
+				if (file.exists()) {
+					if (!file.delete()) {
 						message.setText("Failed to delete sample: " + file.nameWithoutExtension());
 						notification.show(getStage());
 
@@ -117,15 +116,15 @@ public class Samples extends Window {
 		save.addListener(new ClickListener() {
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				final Array<Vector2> waypoints = ((TsmGaSolver) Gdx.app.getApplicationListener()).getWaypoints();
+			public void clicked (InputEvent event, float x, float y) {
+				final Array<Vector2> waypoints = ((TsmGaSolver)Gdx.app.getApplicationListener()).getWaypoints();
 				FileHandle file = Sample.SAMPLE_DIR.child(name.getText() + "." + Sample.FILE_EXTENSION);
-				if(file.exists()) {
+				if (file.exists()) {
 					Dialog overrideDialog = new Dialog("Sample " + name.getText() + " already exists", skin) {
 
 						@Override
-						protected void result(Object object) {
-							if(object instanceof Boolean && (Boolean) object) {
+						protected void result (Object object) {
+							if (object instanceof Boolean && (Boolean)object) {
 								new Sample(waypoints).save(name.getText());
 								updateSamples();
 								pack();
@@ -151,7 +150,7 @@ public class Samples extends Window {
 		close.addListener(new ClickListener() {
 
 			@Override
-			public void clicked(InputEvent event, float x, float y) {
+			public void clicked (InputEvent event, float x, float y) {
 				addAction(Actions.sequence(Actions.fadeOut(Dialog.fadeDuration), Actions.removeActor()));
 			}
 
@@ -169,7 +168,7 @@ public class Samples extends Window {
 		add(close).colspan(2);
 	}
 
-	public void updateSamples() {
+	public void updateSamples () {
 		@SuppressWarnings("unchecked")
 		Array<String> sampleNames = Pools.obtain(Array.class);
 		sampleNames.clear();
@@ -180,9 +179,9 @@ public class Samples extends Window {
 		Pools.free(sampleNames);
 	}
 
-	public static void findSampleNames(Array<String> fill) {
+	public static void findSampleNames (Array<String> fill) {
 		fill.clear();
-		for(FileHandle file : Sample.SAMPLE_DIR.list("." + Sample.FILE_EXTENSION))
+		for (FileHandle file : Sample.SAMPLE_DIR.list("." + Sample.FILE_EXTENSION))
 			fill.add(file.nameWithoutExtension());
 	}
 

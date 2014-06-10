@@ -1,3 +1,4 @@
+
 package net.nexusteam.tsmGaSolver.tools;
 
 import com.badlogic.gdx.utils.TimeUtils;
@@ -14,22 +15,22 @@ public class TimerWD {
 
 	private boolean neverUsed;
 
-	public TimerWD(int seconds) {
+	public TimerWD (int seconds) {
 
 		this.seconds = seconds * NANO;
 		start = end = -1; // I use negative one to see if the timer is active
 		neverUsed = true;
 	}
 
-	public TimerWD(float seconds) {
+	public TimerWD (float seconds) {
 
-		this.seconds = (long) (seconds * NANO);
+		this.seconds = (long)(seconds * NANO);
 		start = end = -1; // I use negative one to see if the timer is active
 		neverUsed = true;
 	}
 
 	// Activate the timer
-	public void start() {
+	public void start () {
 
 		start = TimeUtils.nanoTime();
 		end = start + seconds;
@@ -38,9 +39,9 @@ public class TimerWD {
 
 	// Check if the timer is done
 	// If so, deactivate it and return true
-	public boolean isDone() {
+	public boolean isDone () {
 
-		if(TimeUtils.nanoTime() >= end) {
+		if (TimeUtils.nanoTime() >= end) {
 			start = end = -1;
 			return true;
 		}
@@ -48,27 +49,27 @@ public class TimerWD {
 		return false;
 	}
 
-	public boolean neverUsed() {
+	public boolean neverUsed () {
 		return neverUsed;
 	}
 
-	public void reset() {
+	public void reset () {
 		start = end = -1; // I use negative one to see if the timer is active
 		neverUsed = true;
 
 	}
 
-	public void changeTiming(int seconds) {
+	public void changeTiming (int seconds) {
 		this.seconds = seconds * NANO;
 	}
 
 	@Override
-	public String toString() {
+	public String toString () {
 		System.out.println("Start :" + start + "[] End " + end);
 		return "Start :" + start + "[] End " + end;
 	}
 
-	public float getTime() {
+	public float getTime () {
 
 		System.out.println("getTime " + seconds / NANO);
 		return seconds / NANO;

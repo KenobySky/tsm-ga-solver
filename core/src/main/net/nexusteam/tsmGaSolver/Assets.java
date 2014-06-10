@@ -1,3 +1,4 @@
+
 package net.nexusteam.tsmGaSolver;
 
 import net.dermetfan.utils.libgdx.AnnotationAssetManager;
@@ -9,7 +10,6 @@ public abstract class Assets {
 
 	public static final AnnotationAssetManager manager = new AnnotationAssetManager();
 
-	@Asset(type = Skin.class)
-	public static final String uiskin = "assets/uiskin.json";
+	@Asset(type = Skin.class) public static final String uiskin = "assets/uiskin.json";
 
 }
