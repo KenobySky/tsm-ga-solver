@@ -1,7 +1,9 @@
 syntax: glob
 
-## Java
+## TSM-GA-Solver
+*.tsmgass
 
+## Java
 *.class
 *.war
 *.ear
@@ -30,6 +32,7 @@ gen/
 *.iml
 out/
 com_crashlytics_export_strings.xml
+classes/
 
 ## Eclipse
 .classpath
@@ -60,6 +63,5 @@ nb-configuration.xml
 .nb-gradle/
 
 ## Gradle
-
 .gradle
 build/
