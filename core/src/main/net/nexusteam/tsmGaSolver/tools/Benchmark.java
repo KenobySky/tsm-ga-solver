@@ -2,6 +2,7 @@
 package net.nexusteam.tsmGaSolver.tools;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -14,13 +15,16 @@ public class Benchmark {
 	private float completedIterations;
 	private String benchmarkFileName = "";
 	private float cost = 0;
-	float wayPoints_Quantity;
-	float chromosomes_Quantity;
-	float mutation_Percentage;
-	float mating_Population_Percentage;
-	float favored_Populating_Percentage;
-	float cut_Length;
-	float minimum_Non_Change_Generations;
+	private float wayPoints_Quantity;
+	private float chromosomes_Quantity;
+	private float mutation_Percentage;
+	private float mating_Population_Percentage;
+	private float favored_Populating_Percentage;
+	private float cut_Length;
+	private float minimum_Non_Change_Generations;
+
+	private long start_time;
+	private String total_spent_time;
 
 	public Benchmark (String sampleName, float completedIterations, float currentCost, float wayPoints_Quantity,
 		float chromosomes_Quantity, float mutation_Percentage, float mating_Population_Percentage,
@@ -36,6 +40,10 @@ public class Benchmark {
 		this.favored_Populating_Percentage = favored_Populating_Percentage;
 		this.cut_Length = cut_Length;
 		this.minimum_Non_Change_Generations = minimum_Non_Change_Generations;
+
+		// Calculate Time
+
+		this.start_time = System.nanoTime();
 
 		benchmarkFileName = recordBenchmarkName(sampleName);
 
@@ -57,11 +65,51 @@ public class Benchmark {
 		this.minimum_Non_Change_Generations = minimum_Non_Change_Generations;
 
 		if (saveFile) {
+			total_spent_time = calculateCostTime(start_time);
 			saveBenchmark();
 		} else {
 			System.out.println("Updated benchmark!");
 		}
 
+	}
+
+	private String calculateCostTime (long start_time) {
+
+		long end_time = System.nanoTime();
+		long diff = end_time - start_time;
+
+		// Show Time Spent in Different Formats
+
+		long milliseconds_spent = TimeUnit.MILLISECONDS.convert(diff, TimeUnit.NANOSECONDS);
+		long seconds_spent = TimeUnit.SECONDS.convert(diff, TimeUnit.NANOSECONDS);
+		long minutes_spent = TimeUnit.MINUTES.convert(diff, TimeUnit.NANOSECONDS);
+		long hours_spent = TimeUnit.HOURS.convert(diff, TimeUnit.NANOSECONDS);
+		long days_spent = TimeUnit.DAYS.convert(diff, TimeUnit.NANOSECONDS);
+
+		total_spent_time += "Total Spent Time in Milliseconds : " + milliseconds_spent;
+		total_spent_time += "\n";
+		total_spent_time += "Total Spent Time in Seconds : " + seconds_spent;
+		total_spent_time += "\n";
+		total_spent_time += "Total Spent Time in Minutes : " + minutes_spent;
+		total_spent_time += "\n";
+		total_spent_time += "Total Spent Time in Hours : " + hours_spent;
+		total_spent_time += "\n";
+		total_spent_time += "Total Spent Time in Days : " + days_spent;
+		total_spent_time += "\n";
+
+		System.out.println("Total Spent Time : " + total_spent_time);
+
+		// ROBIN HELP TODO
+		// Show Time Spent in HH:MM:SS:MS
+
+		long milliseconds = 0;
+		long seconds = 0;
+		long minutes = 0;
+		long hours = 0;
+
+		total_spent_time += "Calculated Time Spent : " + hours + "h " + minutes + "m " + seconds + "s " + milliseconds + "ms";
+
+		return total_spent_time;
 	}
 
 	private void saveBenchmark () {
@@ -89,6 +137,8 @@ public class Benchmark {
 			localBenchmarkFile.writeString("Cut Length : " + cut_Length, true);
 			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("Minimum Non Change Generations : " + minimum_Non_Change_Generations, true);
+			localBenchmarkFile.writeString("\n", true);
+			localBenchmarkFile.writeString("Total spent Time : " + total_spent_time, true);
 			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("End Of Benchmark File!", true);
 
@@ -137,7 +187,6 @@ public class Benchmark {
 		String information = "";
 
 		information += "Sample Name : " + sampleName;
-
 		information += "\n";
 
 		information += "Current Completed Iterations : " + completedIterations;
@@ -165,7 +214,8 @@ public class Benchmark {
 		information += "\n";
 
 		information += "Minimum Non Change Generations : " + minimum_Non_Change_Generations;
-
+		information += "\n";
+		information += "Total Time Spent " + total_spent_time;
 		return information;
 
 	}
