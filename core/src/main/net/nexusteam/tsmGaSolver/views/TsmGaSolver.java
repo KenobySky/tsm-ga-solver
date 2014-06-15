@@ -74,10 +74,10 @@ public class TsmGaSolver extends ApplicationAdapter {
 		startStop.addListener(new ClickListener() {
 
 			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				if (startStop.isDisabled()) return;
-				if (!controller.isStarted()) {
-					controller.stop();
+			public void clicked(InputEvent event, float x, float y) {
+				if(startStop.isDisabled())
+					return;
+				if(!controller.isRunning()) {
 					controller.configure();
 					controller.initialize(bounds.width, bounds.height);
 					controller.start();
@@ -128,7 +128,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
-				if (!controller.isStarted()) {
+				if (!controller.isRunning()) {
 					stage.addActor(window);
 					startStop.setDisabled(true);
 				}
@@ -172,7 +172,12 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 		populate(Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY));
 
-		controller = new Controller(this, bounds.width, bounds.height);
+		controller = new Controller(this, bounds.width, bounds.height, new Runnable() {
+			@Override
+			public void run() {
+				startStop.setText("Start");
+			}
+		});
 	}
 
 	@Override

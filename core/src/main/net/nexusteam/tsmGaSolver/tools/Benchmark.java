@@ -20,7 +20,7 @@ public class Benchmark {
 
 	private String sampleName;
 	private float iterations;
-	private float cost = 0;
+	private float cost;
 	private float waypoint_quantity;
 	private float chromosome_quantity;
 	private float mutation_percentage;
@@ -111,9 +111,105 @@ public class Benchmark {
 
 	@Override
 	public String toString() {
-		Json json = new Json();
-		json.addClassTag("benchmark", getClass());
-		return json.prettyPrint(this);
+		return new Json().prettyPrint(this);
+	}
+
+	// getters and setters
+
+	public String getSampleName() {
+		return sampleName;
+	}
+
+	public void setSampleName(String sampleName) {
+		this.sampleName = sampleName;
+	}
+
+	public float getIterations() {
+		return iterations;
+	}
+
+	public void setIterations(float iterations) {
+		this.iterations = iterations;
+	}
+
+	public float getCost() {
+		return cost;
+	}
+
+	public void setCost(float cost) {
+		this.cost = cost;
+	}
+
+	public float getWaypoint_quantity() {
+		return waypoint_quantity;
+	}
+
+	public void setWaypoint_quantity(float waypoint_quantity) {
+		this.waypoint_quantity = waypoint_quantity;
+	}
+
+	public float getChromosome_quantity() {
+		return chromosome_quantity;
+	}
+
+	public void setChromosome_quantity(float chromosome_quantity) {
+		this.chromosome_quantity = chromosome_quantity;
+	}
+
+	public float getMutation_percentage() {
+		return mutation_percentage;
+	}
+
+	public void setMutation_percentage(float mutation_percentage) {
+		this.mutation_percentage = mutation_percentage;
+	}
+
+	public float getMutation_quantity() {
+		return mutation_quantity;
+	}
+
+	public void setMutation_quantity(float mutation_quantity) {
+		this.mutation_quantity = mutation_quantity;
+	}
+
+	public float getMating_population_percentage() {
+		return mating_population_percentage;
+	}
+
+	public void setMating_population_percentage(float mating_population_percentage) {
+		this.mating_population_percentage = mating_population_percentage;
+	}
+
+	public float getFavored_populating_percentage() {
+		return favored_populating_percentage;
+	}
+
+	public void setFavored_populating_percentage(float favored_populating_percentage) {
+		this.favored_populating_percentage = favored_populating_percentage;
+	}
+
+	public float getCut_length() {
+		return cut_length;
+	}
+
+	public void setCut_length(float cut_length) {
+		this.cut_length = cut_length;
+	}
+
+	public float getMinimum_non_change_generations() {
+		return minimum_non_change_generations;
+	}
+
+	public void setMinimum_non_change_generations(float minimum_non_change_generations) {
+		this.minimum_non_change_generations = minimum_non_change_generations;
+	}
+
+	public long getStart_time() {
+		return start_time;
+	}
+
+	public long getEnd_time() {
+		return end_time;
 	}
 
 }

@@ -31,6 +31,7 @@ public class WorkerThread implements Runnable {
 
 			controller.status = "Current cost: " + controller.getTopChromosome().getCost();
 			controller.view.update();
+			benchmark.start();
 
 			while(countSame < controller.minimum_non_change_generations) {
 				if(!stopToKillThread) {
@@ -61,12 +62,13 @@ public class WorkerThread implements Runnable {
 				}
 			}
 
+			benchmark.end();
 			benchmark.set(controller.generation_count, (float) controller.getTopChromosome().getCost(), controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length, controller.minimum_non_change_generations, controller.genetic.getTimesMutated());
 			benchmark.save(false);
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
 			controller.view.update();
-			controller.setStarted(false);
+			controller.solutionFound();
 		} else
 			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 	}

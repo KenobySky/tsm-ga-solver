@@ -1,4 +1,3 @@
-
 package net.nexusteam.tsmGaSolver;
 
 import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
@@ -31,7 +30,7 @@ public class Controller {
 	protected float favored_population_percentage = .5f;
 
 	/** How much genetic material to take during a mating. */
-	protected int cut_length = 1;
+	protected int cut_length;
 
 	protected int minimum_non_change_generations;
 
@@ -47,11 +46,8 @@ public class Controller {
 	/** The Reference to the Currently background ITERATIVE worker Thread */
 	private WorkerThreadIterative iterativeWorkerThread;
 
-	/** Is the thread started. */
-	private boolean started;
-
-	/** Is the thread stopped. */
-	protected boolean stop;
+	/** Is the thread running. */
+	private boolean running;
 
 	protected TSPGeneticAlgorithm genetic;
 
@@ -61,17 +57,24 @@ public class Controller {
 	/** List of WayPoints */
 	Waypoint[] waypoints;
 
-	public Controller (TsmGaSolver view, float usable_Width, float usable_Height) {
+	/** an optional solutionFound */
+	private Runnable callback;
+
+	public Controller(TsmGaSolver view, float usable_Width, float usable_Height) {
 		this.view = view;
 		configure();
 		initialize(usable_Width, usable_Height);
 	}
 
+	public Controller(TsmGaSolver view, float usable_width, float usable_height, Runnable callback) {
+		this(view, usable_width, usable_height);
+		this.callback = callback;
+	}
+
 	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
-	public void configure () {
-		if (started && workerThread != null && worker != null && worker.isInterrupted())
-			throw new IllegalStateException(
-				"Denied: Configuring the Controller while it's running may produce unpredictable results");
+	public void configure() {
+		if(running && workerThread != null && worker != null && worker.isInterrupted())
+			throw new IllegalStateException("Denied: Configuring the Controller while it's running may produce unpredictable results");
 
 		Preferences prefs = Settings.prefs;
 		chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
@@ -83,54 +86,58 @@ public class Controller {
 		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
-	/** Receives two parameters. They represent the usable area to generate the cities.<br>
-	 * Should have been {@link #configure() configured} before. */
-	public void initialize (float usable_Width, float usable_Height) {
+	/**
+	 * Receives two parameters. They represent the usable area to generate the cities.<br>
+	 * Should have been {@link #configure() configured} before.
+	 */
+	public void initialize(float usable_Width, float usable_Height) {
 		Array<Vector2> viewWaypoints = view.getWaypoints();
 		waypoints = new Waypoint[viewWaypoints.size];
 
-		for (int i = 0; i < waypoints.length; i++) {
+		for(int i = 0; i < waypoints.length; i++) {
 			Vector2 point = viewWaypoints.get(i);
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
-		// TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
-		cut_length = chromosome_quantity / 5;
-		// System.out.println("Cut : " + cut_length);
-		// System.out.println("Chromo q : " + chromosome_quantity);
+		cut_length = chromosome_quantity / 5; // TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
 
-		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage,
-			favored_population_percentage, cut_length);
+		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
 
 	/** Starts the Full Mode */
-	public void start () {
+	public void start() {
 		stop();
 
-		started = true;
+		running = true;
 		generation_count = 0;
 
 		workerThread = new WorkerThread(this);
 		worker = new Thread(workerThread);
 		worker.start();
-
 	}
 
 	/** Stops The Full Mode */
-	public void stop () {
+	public void stop() {
 		try {
-			if (workerThread != null) workerThread.stopToKillThread = true;
+			if(workerThread != null)
+				workerThread.stopToKillThread = true;
 
-			if (worker != null) {
+			if(worker != null) {
 				worker.interrupt();
 				worker = null;
 			}
-		} catch (Exception ex) {
+		} catch(Exception ex) {
 			Gdx.app.error(getClass().getName(), worker.getName() + " could not be stopped", ex);
 		}
 	}
 
-	public TSPChromosome getTopChromosome () {
+	public void solutionFound() {
+		running = false;
+		if(callback != null)
+			callback.run();
+	}
+
+	public TSPChromosome getTopChromosome() {
 		return genetic.getChromosome(0);
 	}
 
@@ -139,46 +146,57 @@ public class Controller {
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/** Step The WorkerThreadIterative Mode */
-	public void step (int numberOfIterations) {
+	public void step(int numberOfIterations) {
 		// Check if Full Mode is Running
 		boolean isFullModeRunning = isWorkerThreadRunning();
 
-		if (isFullModeRunning) stop();
+		if(isFullModeRunning)
+			stop();
 
-		if (iterativeWorkerThread == null)
+		if(iterativeWorkerThread == null)
 			iterativeWorkerThread = new WorkerThreadIterative(this, numberOfIterations);
-		else if (iterativeWorkerThread.isWaitingUser())
+		else if(iterativeWorkerThread.isWaitingUser())
 			iterativeWorkerThread.changeNumberOfIterations(numberOfIterations);
-		else if (iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped())
+		else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped())
 			Gdx.app.error(getClass().getName(), "Iterative worker thread is waiting another user input but thread is killed!");
 	}
 
 	/** Kill The IterativeWorkerThread Mode */
-	public void killWorkerThreadIterative () {
-		if (iterativeWorkerThread != null) {
-			if (!iterativeWorkerThread.isThreadStopped()) {
+	public void killWorkerThreadIterative() {
+		if(iterativeWorkerThread != null) {
+			if(!iterativeWorkerThread.isThreadStopped()) {
 				iterativeWorkerThread.stopToKillThread();
-				if (worker != null) worker.interrupt();
+				if(worker != null)
+					worker.interrupt();
 			}
-		} else if (iterativeWorkerThread == null) if (worker != null) worker.interrupt();
+		} else if(worker != null)
+			worker.interrupt();
 
 		System.out.println("IterativeWorkerThread Destroyed.");
 	}
 
-	private boolean isWorkerThreadRunning () {
-		if (workerThread != null && worker != null && !workerThread.stopToKillThread) return !worker.isInterrupted();
+	private boolean isWorkerThreadRunning() {
+		if(workerThread != null && worker != null && !workerThread.stopToKillThread)
+			return !worker.isInterrupted();
 		return false;
 	}
 
 	// GETTERS AND SETTERS
 
-	/** Is the thread started. */
-	public boolean isStarted () {
-		return started;
+	public boolean isRunning() {
+		return running;
 	}
 
-	public void setStarted (boolean started) {
-		this.started = started;
+	public void setRunning(boolean running) {
+		this.running = running;
+	}
+
+	public Runnable getCallback() {
+		return callback;
+	}
+
+	public void setCallback(Runnable callback) {
+		this.callback = callback;
 	}
 
 }
