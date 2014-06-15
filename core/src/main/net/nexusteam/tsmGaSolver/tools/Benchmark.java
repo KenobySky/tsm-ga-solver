@@ -18,6 +18,7 @@ public class Benchmark {
 	private float wayPoints_Quantity;
 	private float chromosomes_Quantity;
 	private float mutation_Percentage;
+	private float mutation_Quantity;
 	private float mating_Population_Percentage;
 	private float favored_Populating_Percentage;
 	private float cut_Length;
@@ -54,7 +55,7 @@ public class Benchmark {
 	// Only save when finished iteration
 	public void update (boolean saveFile, float currentQuantityIterations, float currentCost, float wayPoints_Quantity,
 		float chromosomes_Quantity, float mutation_Percentage, float mating_Population_Percentage,
-		float favored_Populating_Percentage, float cut_Length, float minimum_Non_Change_Generations) {
+		float favored_Populating_Percentage, float cut_Length, float minimum_Non_Change_Generations,float mutation_Quantity) {
 
 		this.completedIterations = currentQuantityIterations;
 		this.cost = currentCost;
@@ -65,7 +66,7 @@ public class Benchmark {
 		this.favored_Populating_Percentage = favored_Populating_Percentage;
 		this.cut_Length = cut_Length;
 		this.minimum_Non_Change_Generations = minimum_Non_Change_Generations;
-
+		this.mutation_Quantity = mutation_Quantity;
 		if (saveFile) {
 			total_spent_time = calculateCostTime(start_time);
 
@@ -132,6 +133,8 @@ public class Benchmark {
 			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("Chromosomes Quantity : " + chromosomes_Quantity, true);
 			localBenchmarkFile.writeString("\n", true);
+			localBenchmarkFile.writeString("Mutation Quantity : " + mutation_Quantity, true);
+			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("Mutation Percentage : " + mutation_Percentage, true);
 			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("Mating Population Percentage : " + mating_Population_Percentage, true);
@@ -145,7 +148,8 @@ public class Benchmark {
 			localBenchmarkFile.writeString("Total spent Time : " + total_spent_time, true);
 			localBenchmarkFile.writeString("\n", true);
 			localBenchmarkFile.writeString("End Of Benchmark File!", true);
-
+			
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

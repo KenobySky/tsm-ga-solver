@@ -59,7 +59,7 @@ public class WorkerThread implements Runnable {
 					benchmark.update(false, controller.generation_count, (float)controller.getTopChromosome().getCost(),
 						controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage,
 						controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length,
-						controller.minimum_non_change_generations);
+						controller.minimum_non_change_generations,controller.genetic.getTimesMutated());
 
 				} else {
 					Gdx.app
@@ -73,7 +73,7 @@ public class WorkerThread implements Runnable {
 			benchmark.update(true, controller.generation_count,(float)controller.getTopChromosome().getCost(),
 				controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage,
 				controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length,
-				controller.minimum_non_change_generations);
+				controller.minimum_non_change_generations,controller.genetic.getTimesMutated());
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and "
 				+ controller.genetic.getTimesMutated() + " mutations";
