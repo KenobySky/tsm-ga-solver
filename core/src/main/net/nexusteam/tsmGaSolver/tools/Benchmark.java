@@ -9,7 +9,7 @@ import com.badlogic.gdx.files.FileHandle;
 
 public class Benchmark {
 
-	private String dir = "/benchmarks/";
+	private String dir = "../benchmark/";
 
 	private String sampleName = "";
 	private float completedIterations;
@@ -45,7 +45,9 @@ public class Benchmark {
 
 		this.start_time = System.nanoTime();
 
-		benchmarkFileName = recordBenchmarkName(sampleName);
+		
+		Gdx.files.local(dir).mkdirs();
+		
 
 	}
 
@@ -66,9 +68,10 @@ public class Benchmark {
 
 		if (saveFile) {
 			total_spent_time = calculateCostTime(start_time);
+
 			saveBenchmark();
 		} else {
-			System.out.println("Updated benchmark!");
+			//System.out.println("Updated benchmark!");
 		}
 
 	}
@@ -100,7 +103,6 @@ public class Benchmark {
 		System.out.println("Total Spent Time : " + total_spent_time);
 
 		// ROBIN HELP TODO
-		// Show Time Spent in HH:MM:SS:MS
 
 		long milliseconds = 0;
 		long seconds = 0;
@@ -114,7 +116,9 @@ public class Benchmark {
 
 	private void saveBenchmark () {
 
-		FileHandle localBenchmarkFile = Gdx.files.local(benchmarkFileName);
+		benchmarkFileName = recordBenchmarkName(sampleName);
+		FileHandle localBenchmarkFile = Gdx.files.local(dir + benchmarkFileName);
+		
 		try {
 			localBenchmarkFile.file().createNewFile();
 
@@ -150,9 +154,9 @@ public class Benchmark {
 
 	private String recordBenchmarkName (String samplename) {
 
-		String benchmarkFileName = samplename + "_benchmark";
+		String benchmarkFileName = samplename + "_TSMGABenchmark";
 
-		FileHandle internal = Gdx.files.internal(dir + benchmarkFileName);
+		FileHandle internal = Gdx.files.local(dir + benchmarkFileName);
 
 		boolean fileExists = internal.exists();
 		if (!fileExists) {
@@ -161,7 +165,7 @@ public class Benchmark {
 
 		// Calculate new name
 		// Aux Variables
-		int counter = 0;
+		int counter = 1;
 		String newBenchmarkFilename;
 
 		while (fileExists) {

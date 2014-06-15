@@ -1,17 +1,24 @@
 
 package net.nexusteam.tsmGaSolver;
 
+import net.nexusteam.tsmGaSolver.tools.Benchmark;
+
 import com.badlogic.gdx.Gdx;
 
-/** @author Andre Vinícius Lopes */
+/** @author Andre Vinicius Lopes */
 public class WorkerThread implements Runnable {
 
 	private Controller controller;
 
 	public volatile boolean stopToKillThread;
 
+	private Benchmark benchmark;
+
 	public WorkerThread (Controller instance) {
 		controller = instance;
+		benchmark = new Benchmark("", 0, 0, controller.waypoints.length, controller.chromosome_quantity,
+			controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage,
+			controller.cut_length, controller.minimum_non_change_generations);
 	}
 
 	@Override
@@ -21,14 +28,14 @@ public class WorkerThread implements Runnable {
 			float oldCost = 0.0f;
 			int countSame = 0;
 
-			controller.status = "Current cost: " + oldCost;
+			controller.status = "Current cost: " + controller.getTopChromosome().getCost();
 			controller.view.update();
 
-			while (countSame < controller.minimum_non_change_generations)
+			while (countSame < controller.minimum_non_change_generations) {
 				if (!stopToKillThread) {
 					controller.generation_count++;
-					controller.status = "Generation: " + controller.generation_count + " - Cost: " + thisCost + " - Mutated "
-						+ controller.genetic.getTimesMutated() + " Times";
+					controller.status = "Generation: " + controller.generation_count + " - Cost: "
+						+ controller.getTopChromosome().getCost() + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
 					try {
 						controller.genetic.iteration();
@@ -49,6 +56,11 @@ public class WorkerThread implements Runnable {
 					}
 
 					controller.view.update();
+					benchmark.update(false, controller.generation_count, (float)controller.getTopChromosome().getCost(),
+						controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage,
+						controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length,
+						controller.minimum_non_change_generations);
+
 				} else {
 					Gdx.app
 						.error(
@@ -56,6 +68,12 @@ public class WorkerThread implements Runnable {
 							"Thread stopped during a critical loop. Consequences may cause unpredictable results.\nAttempting to break loop and finish Thread...");
 					break;
 				}
+			}
+
+			benchmark.update(true, controller.generation_count,(float)controller.getTopChromosome().getCost(),
+				controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage,
+				controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length,
+				controller.minimum_non_change_generations);
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and "
 				+ controller.genetic.getTimesMutated() + " mutations";
