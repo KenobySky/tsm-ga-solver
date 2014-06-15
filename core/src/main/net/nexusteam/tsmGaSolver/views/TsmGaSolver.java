@@ -147,6 +147,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked (InputEvent event, float x, float y) {
+				samples.updateSamples();
 				samples.pack();
 				samples.setPosition(stage.getWidth() / 2 - samples.getWidth() / 2, stage.getHeight() / 2 - samples.getHeight() / 2);
 				stage.addActor(samples);
