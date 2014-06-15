@@ -1,41 +1,35 @@
 package net.nexusteam.tsmGaSolver.views;
 
-import net.nexusteam.tsmGaSolver.Assets;
-import net.nexusteam.tsmGaSolver.tools.Sample;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.List;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
+import net.nexusteam.tsmGaSolver.Assets;
+import net.nexusteam.tsmGaSolver.tools.Sample;
 
 /** @author dermetfan */
-public class Samples extends Window {
+public class Samples extends Table {
+
+	public static void findSampleNames(Array<String> fill) {
+		fill.clear();
+		for(FileHandle file : Sample.SAMPLE_DIR.list("." + Sample.FILE_EXTENSION))
+			fill.add(file.nameWithoutExtension());
+	}
 
 	List<String> samples;
 
-	public Samples(String title) {
-		this(title, Assets.manager.get(Assets.uiskin, Skin.class));
+	public Samples() {
+		this(Assets.manager.get(Assets.uiskin, Skin.class));
 	}
 
-	public Samples(String title, final Skin skin) {
-		super("Samples", skin);
+	public Samples(final Skin skin) {
 		setSkin(skin);
 
 		final Dialog notification = new Dialog("Message", skin);
@@ -52,15 +46,15 @@ public class Samples extends Window {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
 				String text = samples.getSelected();
-				if(text == null)
+				if(text == null) {
 					text = "";
+				}
 				name.setText(text);
 			}
 		});
 
 		Button load = new TextButton("load", skin);
 		load.addListener(new ClickListener() {
-
 			Json json = new Json();
 
 			@Override
@@ -85,12 +79,10 @@ public class Samples extends Window {
 				}
 
 			}
-
 		});
 
 		Button delete = new TextButton("delete", skin);
 		delete.addListener(new ClickListener() {
-
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				FileHandle file = Sample.SAMPLE_DIR.child(name.getText() + "." + Sample.FILE_EXTENSION);
@@ -98,22 +90,20 @@ public class Samples extends Window {
 					if(!file.delete()) {
 						message.setText("Failed to delete sample: " + file.nameWithoutExtension());
 						notification.show(getStage());
-
 					} else {
 						updateSamples();
 						pack();
+						packParent();
 					}
 				} else {
 					message.setText("Sample " + file.nameWithoutExtension() + " does not exist");
 					notification.show(getStage());
 				}
 			}
-
 		});
 
-		Button save = new TextButton("save", skin);
+		Button save = new TextButton("save new sample", skin);
 		save.addListener(new ClickListener() {
-
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				final Array<Vector2> waypoints = ((TsmGaSolver) Gdx.app.getApplicationListener()).getWaypoints();
@@ -140,31 +130,17 @@ public class Samples extends Window {
 					new Sample(waypoints).save(name.getText());
 					updateSamples();
 					pack();
+					packParent();
 				}
 			}
-
 		});
 
-		Button close = new TextButton("close", skin);
-		close.addListener(new ClickListener() {
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				addAction(Actions.sequence(Actions.fadeOut(Dialog.fadeDuration), Actions.removeActor()));
-			}
-
-		});
-
-		defaults().fill();
-		add(new ScrollPane(samples)).colspan(2).row();
-		add(name).colspan(2).row();
-		Table loadAndDelete = new Table();
-		loadAndDelete.defaults().expand().fill();
-		loadAndDelete.add(load).row();
-		loadAndDelete.add(delete);
-		add(loadAndDelete);
-		add(save).row();
-		add(close).colspan(2);
+		add(name).fillX().colspan(2).row();
+		add(load).fillX();
+		add(delete).fillX().row();
+		add(save).colspan(2).fillX().row();
+		add("Samples:").row();
+		add(new ScrollPane(samples)).maxHeight(Gdx.graphics.getHeight() / 2).colspan(2).fill().row();
 	}
 
 	public void updateSamples() {
@@ -178,10 +154,11 @@ public class Samples extends Window {
 		Pools.free(sampleNames);
 	}
 
-	public static void findSampleNames(Array<String> fill) {
-		fill.clear();
-		for(FileHandle file : Sample.SAMPLE_DIR.list("." + Sample.FILE_EXTENSION))
-			fill.add(file.nameWithoutExtension());
+	public void packParent() {
+		Actor parent = getParent();
+		if(parent instanceof WidgetGroup) {
+			((WidgetGroup) parent).pack();
+		}
 	}
 
 }

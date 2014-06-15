@@ -1,4 +1,3 @@
-
 package net.nexusteam.tsmGaSolver.views;
 
 import net.nexusteam.tsmGaSolver.Assets;
@@ -47,7 +46,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 	private Controller controller;
 
 	@Override
-	public void create () {
+	public void create() {
 		Assets.manager.load(Assets.class);
 		Assets.manager.finishLoading();
 
@@ -97,16 +96,12 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			{
 				window = new Window("Settings", skin);
-				stage.addActor(window); // add so it knows the stage
-				Settings.add(window);
-				window.remove(); // remove again to not be initially visible
 
 				final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 				Button close = new TextButton("close", skin);
 				close.addListener(new ClickListener() {
-
 					@Override
-					public void clicked (InputEvent event, float x, float y) {
+					public void clicked(InputEvent event, float x, float y) {
 						window.remove();
 						Settings.prefs.flush();
 						controller.stop();
@@ -114,21 +109,22 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 						// repopulate if necessary
 						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
-						if (currentWaypointQuantity != waypointQuantity) populate(waypointQuantity);
+						if(currentWaypointQuantity != waypointQuantity)
+							populate(waypointQuantity);
 
 						startStop.setDisabled(false);
 					}
-
 				});
-				window.row();
-				window.add(close).colspan(2).fill();
+
+				window.add(new Settings()).fill().row();
+				window.add(close).fill();
 				window.pack();
 				window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
 			}
 
 			@Override
-			public void clicked (InputEvent event, float x, float y) {
-				if (!controller.isRunning()) {
+			public void clicked(InputEvent event, float x, float y) {
+				if(!controller.isRunning()) {
 					stage.addActor(window);
 					startStop.setDisabled(true);
 				}
@@ -139,19 +135,29 @@ public class TsmGaSolver extends ApplicationAdapter {
 		Button samples = new TextButton("Samples", skin);
 		samples.addListener(new ClickListener() {
 
-			Samples samples = new Samples("Samples");
+			Window window = new Window("Samples", skin);
+			Samples samples = new Samples();
 
 			{
-				samples.setColor(1, 1, 1, 0);
+				Button close = new TextButton("close", skin);
+				close.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						window.addAction(Actions.sequence(Actions.fadeOut(Dialog.fadeDuration), Actions.removeActor()));
+					}
+				});
+				window.add(samples).row();
+				window.add(close).fillX();
+				window.setColor(1, 1, 1, 0);
 			}
 
 			@Override
-			public void clicked (InputEvent event, float x, float y) {
+			public void clicked(InputEvent event, float x, float y) {
 				samples.updateSamples();
-				samples.pack();
-				samples.setPosition(stage.getWidth() / 2 - samples.getWidth() / 2, stage.getHeight() / 2 - samples.getHeight() / 2);
-				stage.addActor(samples);
-				samples.addAction(Actions.fadeIn(Dialog.fadeDuration));
+				window.pack();
+				window.setPosition(stage.getWidth() / 2 - samples.getWidth() / 2, stage.getHeight() / 2 - samples.getHeight() / 2);
+				stage.addActor(window);
+				window.addAction(Actions.fadeIn(Dialog.fadeDuration));
 			}
 
 		});
@@ -181,12 +187,12 @@ public class TsmGaSolver extends ApplicationAdapter {
 	}
 
 	@Override
-	public void resize (int width, int height) {
+	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 	}
 
 	@Override
-	public synchronized void render () {
+	public synchronized void render() {
 		stage.act(Gdx.graphics.getDeltaTime());
 
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -202,25 +208,25 @@ public class TsmGaSolver extends ApplicationAdapter {
 		// draw optimum
 		renderer.setColor(Color.GREEN);
 		renderer.begin(ShapeType.Line);
-		for (int i = 1; i < optimum.size; i++)
+		for(int i = 1; i < optimum.size; i++)
 			renderer.line(waypoints.get(optimum.get(i - 1)), waypoints.get(optimum.get(i)));
 		renderer.end();
 
 		// draw cities
 		renderer.setColor(Color.WHITE);
 		renderer.begin(ShapeType.Filled);
-		for (Vector2 city : waypoints)
+		for(Vector2 city : waypoints)
 			renderer.circle(city.x, city.y, 5);
 		renderer.end();
 
 		stage.draw();
 	}
 
-	private void populate (int count) {
+	private void populate(int count) {
 		Pools.freeAll(waypoints, true);
 		waypoints.clear();
 
-		for (; count > 0; count--) {
+		for(; count > 0; count--) {
 			Vector2 waypoint = Pools.obtain(Vector2.class);
 			waypoint.set(MathUtils.random(bounds.x, bounds.x + bounds.width), MathUtils.random(bounds.y, bounds.y + bounds.height));
 			waypoints.add(waypoint);
@@ -230,34 +236,34 @@ public class TsmGaSolver extends ApplicationAdapter {
 	}
 
 	/** updates the view according to the {@link #controller} */
-	public synchronized void update () {
+	public synchronized void update() {
 		status.setText(controller.status);
 
 		optimum.clear();
 		TSPChromosome c = controller.getTopChromosome();
-		for (Integer gene : c.getGenes())
+		for(Integer gene : c.getGenes())
 			optimum.add(gene);
 
 		float distance = 0;
-		for (int i = 1; i < optimum.size; i++)
+		for(int i = 1; i < optimum.size; i++)
 			distance += waypoints.get(optimum.get(i - 1)).dst(waypoints.get(optimum.get(i)));
 		status2.setText("Distance: " + distance);
 	}
 
 	@Override
-	public void dispose () {
+	public void dispose() {
 		renderer.dispose();
 		stage.dispose();
 		Assets.manager.dispose();
 	}
 
 	/** @return the {@link #waypoints} */
-	public Array<Vector2> getWaypoints () {
+	public Array<Vector2> getWaypoints() {
 		return waypoints;
 	}
 
 	/** @return the {@link #controller} */
-	public Controller getController () {
+	public Controller getController() {
 		return controller;
 	}
 
