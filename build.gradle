@@ -20,7 +20,7 @@ allprojects {
     ext {
         appName = 'TSM-GA-Solver'
         gdxVersion = '1.1.1-SNAPSHOT'
-        roboVMVersion = '0.0.11'
+        roboVMVersion = '0.0.13'
     }
 
     repositories {
@@ -34,7 +34,7 @@ apply plugin: "download-task"
 import de.undercouch.gradle.tasks.download.Download
 
 task fetchLibs(type: Download) {
-    src "http://dl.bintray.com/dermetfan/generic/libgdx-utils/0.3.2/libgdx-utils.jar"
+    src "http://dl.bintray.com/dermetfan/generic/libgdx-utils/0.3.3/libgdx-utils.jar"
     dest "libs"
     onlyIfNewer true
 }
