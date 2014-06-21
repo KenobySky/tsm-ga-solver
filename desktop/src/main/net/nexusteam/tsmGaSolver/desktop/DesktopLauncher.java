@@ -1,11 +1,6 @@
 
 package net.nexusteam.tsmGaSolver.desktop;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
-
-import sun.util.resources.CalendarData;
 import net.dermetfan.utils.ArrayUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
