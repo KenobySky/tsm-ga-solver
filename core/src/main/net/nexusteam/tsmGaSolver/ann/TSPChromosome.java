@@ -66,40 +66,30 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 
 		boolean use2OptSwap = false;
 		if(use2OptSwap)
-		{
 			setGenes(optimize(getGenes()));
-
-		}
 
 		// System.out.println("Mutation Calls : " + getGeneticAlgorithm().gettimesMutated());
 
 	}
 
 	//2Opt Methods
-	private Waypoint[] optSwap(Integer genes[], int i, int k)
-	{
+	private Waypoint[] optSwap(Integer genes[], int i, int k) {
 
 		Integer auxGenes[] = new Integer[genes.length];
 		//Step 1
 
-		for(int index = 0; index < i - 1; index++)
-		{
-			auxGenes[index] = genes[index]; 
-		}
+		System.arraycopy(genes, 0, auxGenes, 0, i - 1);
 
-		
 		//Step 2
 		int auxIndex = k;
-		for(int index = i; index < k; index++)
-		{
+		for(int index = i; index < k; index++) {
 			auxGenes[index] = genes[auxIndex];
 			auxIndex--;
 		}
 
 		//Step 3
 
-		for(int index = k + 1; index < genes.length; i++)
-		{
+		for(int index = k + 1; index < genes.length; i++) {
 			auxGenes[index] = genes[i];
 		}
 
@@ -110,21 +100,22 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 		//  return new_route;
 		// }
 
-		
 		//example route: A ==> B ==> C ==> D ==> E ==> F ==> G ==> H ==> A
-			//	   example i = 4, example k = 7
-				//   new_route:
-				  //     1. (A ==> B ==> C)
-				    //   2. A ==> B ==> C ==> (G ==> F ==> E ==> D)
-				      // 3. A ==> B ==> C ==> G ==> F ==> E ==> D (==> H ==> A)
-		
+		//	   example i = 4, example k = 7
+		//   new_route:
+		//     1. (A ==> B ==> C)
+		//   2. A ==> B ==> C ==> (G ==> F ==> E ==> D)
+		// 3. A ==> B ==> C ==> G ==> F ==> E ==> D (==> H ==> A)
+
 		//
 
-		
 		//ROBIN IDK.
 		//How do i do this?
-		Waypoint[] auxPath = null;
- 
+		// Robin: Just a guess, not sure if that's what you wanted to do
+		Waypoint[] auxPath = new Waypoint[auxGenes.length];
+		for(int g = 0; g < auxGenes.length; g++)
+			auxPath[g] = getPath()[auxGenes[g]];
+
 		return auxPath;
 	}
 
@@ -132,20 +123,16 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	 * @param genes
 	 * @return
 	 */
-	private Integer[] optimize(Integer genes[])
-	{
+	private Integer[] optimize(Integer genes[]) {
 		boolean improved = false;
 		double best_distance = Double.MAX_VALUE;
 
-		while(!improved)
-		{
+		while(!improved) {
 			calculateCost();
 			best_distance = getCost();
 
-			for(int i = 0; i < getGenes().length; i++)
-			{
-				for(int k = i + 1; k < getGenes().length; k++)
-				{
+			for(int i = 0; i < getGenes().length; i++) {
+				for(int k = i + 1; k < getGenes().length; k++) {
 
 					TSPChromosome newRoute = new TSPChromosome(this.getGeneticAlgorithm(), optSwap(genes, i, k));
 
@@ -153,8 +140,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 
 					double new_distance = newRoute.getCost();
 
-					if(new_distance < best_distance)
-					{
+					if(new_distance < best_distance) {
 						improved = true;
 						genes = newRoute.getGenes();
 					}
@@ -184,7 +170,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 	}
 
 	/** Used to compare two chromosomes. Used to sort by cost.
-	 * 
+	 *
 	 * @param other The other chromosome to compare.
 	 * @return The value 0 if the argument is a chromosome that has an equal cost to this chromosome; a value less than 0 if the
 	 *         argument is a chromosome with a cost greater than this chromosome; and a value greater than 0 if the argument is a

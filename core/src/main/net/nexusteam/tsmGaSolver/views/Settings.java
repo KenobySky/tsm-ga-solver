@@ -98,11 +98,10 @@ public class Settings extends Table {
 		{ // algorithm settings
 			// value tooltip
 			final Label valueLabel = new Label("", skin, "status");
-			final Container<Label> valueContainer = new Container<Label>(valueLabel);
+			final Container<Label> valueContainer = new Container<>(valueLabel);
 			valueContainer.setBackground(valueLabel.getStyle().background);
 			valueContainer.pack();
-			algorithmSettings.addActor(valueContainer);
-			Tooltip valueTooltip = new Tooltip(valueContainer) {
+			Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
 
 				{ showOn(Type.touchDown); }
 
@@ -112,21 +111,21 @@ public class Settings extends Table {
 				public boolean handle(Event e) {
 					super.handle(e);
 					actor = e.getListenerActor();
-					if(actor instanceof Slider) {
+					if(actor instanceof Slider)
 						valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
-					} else if(actor instanceof TextField) {
+					else if(actor instanceof TextField)
 						valueLabel.setText(((TextField) actor).getText());
-					}
 					return false;
 				}
 
 				@Override
-				public void show() {
-					super.show();
+				public boolean show(Event e) {
+					super.show(e);
 					Vector2 tmp = Pools.obtain(Vector2.class);
 					actor.localToStageCoordinates(tmp.set(0, 0));
-					valueContainer.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+					popup.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
 					Pools.free(tmp);
+					return false;
 				}
 
 			};
@@ -159,7 +158,7 @@ public class Settings extends Table {
 			// mutation percentage
 			Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
 
-			final Slider mutationPercentage = new Slider(0, 1, 0.0100f, false, skin);
+			final Slider mutationPercentage = new Slider(0, 1, 0.01f, false, skin);
 			mutationPercentage.setAnimateDuration(.1f);
 			mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
 			mutationPercentage.addListener(valueTooltip);
@@ -172,14 +171,14 @@ public class Settings extends Table {
 
 			// mating population percentage
 			Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
-			final Slider matingPopulationPercentage = new Slider(0, 1, .010f, false, skin);
+			final Slider matingPopulationPercentage = new Slider(0, 1, .01f, false, skin);
 			matingPopulationPercentage.setAnimateDuration(.1f);
 			matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
 			matingPopulationPercentage.addListener(valueTooltip);
 
 			// favored population percentage
 			Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
-			final Slider favoredPopulationPercentage = new Slider(0, 1, .010f, false, skin);
+			final Slider favoredPopulationPercentage = new Slider(0, 1, .01f, false, skin);
 			favoredPopulationPercentage.setAnimateDuration(.1f);
 			favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
 			favoredPopulationPercentage.addListener(valueTooltip);
