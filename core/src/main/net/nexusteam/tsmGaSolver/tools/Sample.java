@@ -6,18 +6,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 
-/**
- * Represents a Sample
- * @author Andre Vinícius Lopes
- * @author dermetfan
- */
+/** Represents a Sample
+ *  @author Andre Vinícius Lopes
+ *  @author dermetfan */
 public class Sample {
 
 	public static final FileHandle SAMPLE_DIR = Gdx.files.isLocalStorageAvailable() ? Gdx.files.local("samples") : Gdx.files.external("TSM-GA-Solver").child("samples");
-	public static final String FILE_EXTENSION = "tsmgass";
 
 	public static FileHandle fileOf(String name) {
-		return SAMPLE_DIR.child(name + "." + FILE_EXTENSION);
+		return SAMPLE_DIR.child(name).child("sample.json");
 	}
 
 	public static boolean exists(String name) {
@@ -30,6 +27,7 @@ public class Sample {
 
 	public Array<? extends Vector2> waypoints;
 
+	/** constructor for serialization */
 	public Sample() {}
 
 	public Sample(Array<? extends Vector2> waypoints) {

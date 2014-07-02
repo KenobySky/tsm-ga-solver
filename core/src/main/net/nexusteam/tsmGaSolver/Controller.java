@@ -77,7 +77,7 @@ public class Controller {
 		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
-	/** Receives two parameters. They represent the usable area to generate the cities.<br> */
+	/** Receives two parameters. They represent the usable area to generate the cities. */
 	public void initialize(float usable_Width, float usable_Height) {
 		configure();
 		Array<Vector2> viewWaypoints = view.getWaypoints();
@@ -88,7 +88,7 @@ public class Controller {
 			waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
 		}
 
-		cut_length = chromosome_quantity / 5; // TODO remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
+		cut_length = chromosome_quantity / 5; // FIXME https://bitbucket.org/dermetfan/tsm-ga-solver/issue/2/some-settings-cause-calculate-cost-to-give remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
 
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
@@ -156,7 +156,7 @@ public class Controller {
 	// GETTERS AND SETTERS
 
 	public boolean isRunning() {
-		return workerThread != null && !workerThread.isThreadStopping() && !workerThread.isInterrupted();
+		return workerThread != null && !workerThread.isThreadStopping() && !workerThread.isInterrupted() && workerThread.isAlive();
 	}
 
 	public Runnable getCallback() {

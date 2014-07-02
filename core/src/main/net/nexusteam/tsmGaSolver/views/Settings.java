@@ -38,18 +38,14 @@ public class Settings extends Table {
 		return c == '0' || c == '1' || c == '2' || c == '3' || c == '4' || c == '5' || c == '6' || c == '7' || c == '8' || c == '9';
 	}
 
-	/**
-	 * @param str the String to numerize
-	 * @return {@code "0"} if the given String is empty
-	 */
+	/** @param str the String to numerize
+	 *  @return {@code "0"} if the given String is empty */
 	public static String numerize(String str) {
 		return str.isEmpty() ? "0" : str;
 	}
 
-	/**
-	 * resets the prefs to the default values
-	 * @param override if values should be set even though they already exist
-	 */
+	/** resets the prefs to the default values
+	 *  @param override if values should be set even though they already exist */
 	public static void reset(boolean override) {
 		put(WAYPOINT_QUANTITY, 10, override);
 		put(CHROMOSOME_QUANTITY, 1000, override);
@@ -69,11 +65,9 @@ public class Settings extends Table {
 		put(ADD_WAYPOINTS_MANUALLY, false, override);
 	}
 
-	/**
-	 * @param key the key
-	 * @param value the value
-	 * @param override if the value should be put even if it already exists
-	 */
+	/** @param key the key
+	 *  @param value the value
+	 *  @param override if the value should be put even if it already exists */
 	public static <T> void put(String key, T value, boolean override) {
 		if(!override && prefs.contains(key))
 			return;
@@ -93,197 +87,186 @@ public class Settings extends Table {
 	public Settings() {
 		Skin skin = Assets.manager.get(Assets.uiskin);
 
-		Table algorithmSettings = new Table(skin), benchmarkSettings = new Table(skin);
+		// value tooltip
+		final Label valueLabel = new Label("", skin, "status");
+		final Container<Label> valueContainer = new Container<>(valueLabel);
+		valueContainer.setBackground(valueLabel.getStyle().background);
+		valueContainer.pack();
+		Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
 
-		{ // algorithm settings
-			// value tooltip
-			final Label valueLabel = new Label("", skin, "status");
-			final Container<Label> valueContainer = new Container<>(valueLabel);
-			valueContainer.setBackground(valueLabel.getStyle().background);
-			valueContainer.pack();
-			Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
+			{ showOn(Type.touchDown); }
 
-				{ showOn(Type.touchDown); }
+			Actor actor;
 
-				Actor actor;
+			@Override
+			public boolean handle(Event e) {
+				super.handle(e);
+				actor = e.getListenerActor();
+				if(actor instanceof Slider)
+					valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
+				else if(actor instanceof TextField)
+					valueLabel.setText(((TextField) actor).getText());
+				return false;
+			}
 
-				@Override
-				public boolean handle(Event e) {
-					super.handle(e);
-					actor = e.getListenerActor();
-					if(actor instanceof Slider)
-						valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
-					else if(actor instanceof TextField)
-						valueLabel.setText(((TextField) actor).getText());
-					return false;
+			@Override
+			public boolean show(Event e) {
+				super.show(e);
+				Vector2 tmp = Pools.obtain(Vector2.class);
+				actor.localToStageCoordinates(tmp.set(0, 0));
+				popup.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+				Pools.free(tmp);
+				return false;
+			}
+
+		};
+
+		// waypoint quantity
+		Label waypointQuantityLabel = new Label("Waypoints", skin);
+		TextField waypointQuantity = new TextField(prefs.getString(WAYPOINT_QUANTITY), skin);
+		waypointQuantity.setTextFieldFilter(numericFilter);
+		waypointQuantity.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				String num = String.valueOf(Math.max(Integer.parseInt(numerize(textField.getText())), 2));
+				prefs.putString(WAYPOINT_QUANTITY, num);
+			}
+		});
+
+		// chromosome quantity
+		Label chromosomeQuantityLabel = new Label("Chromosomes", skin);
+		TextField chromosomeQuantity = new TextField(prefs.getString(CHROMOSOME_QUANTITY), skin);
+		chromosomeQuantity.setTextFieldFilter(numericFilter);
+		chromosomeQuantity.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				prefs.putString(CHROMOSOME_QUANTITY, numerize(textField.getText()));
+			}
+		});
+
+		// mutation percentage
+		Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
+
+		final Slider mutationPercentage = new Slider(0, 1, 0.01f, false, skin);
+		mutationPercentage.setAnimateDuration(.1f);
+		mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
+		mutationPercentage.addListener(valueTooltip);
+		mutationPercentage.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				prefs.putFloat(MUTATION_PERCENTAGE, mutationPercentage.getValue());
+			}
+		});
+
+		// mating population percentage
+		Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
+		final Slider matingPopulationPercentage = new Slider(0, 1, .01f, false, skin);
+		matingPopulationPercentage.setAnimateDuration(.1f);
+		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
+		matingPopulationPercentage.addListener(valueTooltip);
+
+		// favored population percentage
+		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
+		final Slider favoredPopulationPercentage = new Slider(0, 1, .01f, false, skin);
+		favoredPopulationPercentage.setAnimateDuration(.1f);
+		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
+		favoredPopulationPercentage.addListener(valueTooltip);
+		favoredPopulationPercentage.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize()) {
+					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
 				}
+				prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, favoredPopulationPercentage.getValue());
+			}
+		});
+		matingPopulationPercentage.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				if(matingPopulationPercentage.getValue() > favoredPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
+					favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
+				if(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize() >= matingPopulationPercentage.getMaxValue())
+					matingPopulationPercentage.setValue(matingPopulationPercentage.getMaxValue() - Math.max(favoredPopulationPercentage.getStepSize(), matingPopulationPercentage.getStepSize()) * 1.5f);
+				prefs.putFloat(MATING_POPULATION_PERCENTAGE, matingPopulationPercentage.getValue());
+			}
+		});
 
-				@Override
-				public boolean show(Event e) {
-					super.show(e);
-					Vector2 tmp = Pools.obtain(Vector2.class);
-					actor.localToStageCoordinates(tmp.set(0, 0));
-					popup.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
-					Pools.free(tmp);
-					return false;
-				}
+		// cut length
+		Label cutLengthLabel = new Label("Cut Length", skin);
+		TextField cutLength = new TextField(prefs.getString(CUT_LENGTH), skin);
+		cutLength.setTextFieldFilter(numericFilter);
+		cutLength.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				prefs.putString(CUT_LENGTH, numerize(textField.getText()));
+			}
+		});
 
-			};
+		// maximum generations
+		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
+		TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
+		maximumGenerations.setTextFieldFilter(numericFilter);
+		maximumGenerations.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				prefs.putString(MAXIMUM_GENERATIONS, numerize(textField.getText()));
+			}
+		});
 
-			// waypoint quantity
-			Label waypointQuantityLabel = new Label("Waypoints", skin);
-			TextField waypointQuantity = new TextField(prefs.getString(WAYPOINT_QUANTITY), skin);
-			waypointQuantity.setTextFieldFilter(numericFilter);
-			waypointQuantity.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField textField, char c) {
-					String num = String.valueOf(Math.max(Integer.parseInt(numerize(textField.getText())), 2));
-					prefs.putString(WAYPOINT_QUANTITY, num);
-				}
-			});
+		// minimum non-change generations
+		Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
+		TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
+		minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
+		minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, numerize(textField.getText()));
+			}
+		});
 
-			// chromosome quantity
-			Label chromosomeQuantityLabel = new Label("Chromosomes", skin);
-			TextField chromosomeQuantity = new TextField(prefs.getString(CHROMOSOME_QUANTITY), skin);
-			chromosomeQuantity.setTextFieldFilter(numericFilter);
-			chromosomeQuantity.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField textField, char c) {
-					prefs.putString(CHROMOSOME_QUANTITY, numerize(textField.getText()));
-				}
-			});
+		// mating percentage
+		Label matingPercentageLabel = new Label("Mating Percentage", skin);
+		final Slider matingPercentage = new Slider(0, 1, .01f, false, skin);
+		matingPercentage.setAnimateDuration(.1f);
+		matingPercentage.setValue(prefs.getFloat(MATING_PERCENTAGE));
+		matingPercentage.addListener(valueTooltip);
+		matingPercentage.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				// matingPercentage.setValue(MathUtils.ceilPositive(matingPercentage.getValue()));
+				prefs.putFloat(MATING_PERCENTAGE, matingPercentage.getValue());
+			}
+		});
 
-			// mutation percentage
-			Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
+		// add waypoints manually
+		final CheckBox addWaypointsManually = new CheckBox(" Add Waypoints Manually", skin);
+		addWaypointsManually.setChecked(prefs.getBoolean(ADD_WAYPOINTS_MANUALLY));
+		addWaypointsManually.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, addWaypointsManually.isChecked());
+			}
+		});
 
-			final Slider mutationPercentage = new Slider(0, 1, 0.01f, false, skin);
-			mutationPercentage.setAnimateDuration(.1f);
-			mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
-			mutationPercentage.addListener(valueTooltip);
-			mutationPercentage.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					prefs.putFloat(MUTATION_PERCENTAGE, mutationPercentage.getValue());
-				}
-			});
-
-			// mating population percentage
-			Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
-			final Slider matingPopulationPercentage = new Slider(0, 1, .01f, false, skin);
-			matingPopulationPercentage.setAnimateDuration(.1f);
-			matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
-			matingPopulationPercentage.addListener(valueTooltip);
-
-			// favored population percentage
-			Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
-			final Slider favoredPopulationPercentage = new Slider(0, 1, .01f, false, skin);
-			favoredPopulationPercentage.setAnimateDuration(.1f);
-			favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
-			favoredPopulationPercentage.addListener(valueTooltip);
-			favoredPopulationPercentage.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					if(favoredPopulationPercentage.getValue() < matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize()) {
-						favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
-					}
-					prefs.putFloat(FAVORED_POPULATION_PERCENTAGE, favoredPopulationPercentage.getValue());
-				}
-			});
-			matingPopulationPercentage.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					if(matingPopulationPercentage.getValue() > favoredPopulationPercentage.getValue() - favoredPopulationPercentage.getStepSize())
-						favoredPopulationPercentage.setValue(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize());
-					if(matingPopulationPercentage.getValue() + favoredPopulationPercentage.getStepSize() >= matingPopulationPercentage.getMaxValue())
-						matingPopulationPercentage.setValue(matingPopulationPercentage.getMaxValue() - Math.max(favoredPopulationPercentage.getStepSize(), matingPopulationPercentage.getStepSize()) * 1.5f);
-					prefs.putFloat(MATING_POPULATION_PERCENTAGE, matingPopulationPercentage.getValue());
-				}
-			});
-
-			// cut length
-			Label cutLengthLabel = new Label("Cut Length", skin);
-			TextField cutLength = new TextField(prefs.getString(CUT_LENGTH), skin);
-			cutLength.setTextFieldFilter(numericFilter);
-			cutLength.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField textField, char c) {
-					prefs.putString(CUT_LENGTH, numerize(textField.getText()));
-				}
-			});
-
-			// maximum generations
-			Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
-			TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
-			maximumGenerations.setTextFieldFilter(numericFilter);
-			maximumGenerations.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField textField, char c) {
-					prefs.putString(MAXIMUM_GENERATIONS, numerize(textField.getText()));
-				}
-			});
-
-			// minimum non-change generations
-			Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
-			TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
-			minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
-			minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
-				@Override
-				public void keyTyped(TextField textField, char c) {
-					prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, numerize(textField.getText()));
-				}
-			});
-
-			// mating percentage
-			Label matingPercentageLabel = new Label("Mating Percentage", skin);
-			final Slider matingPercentage = new Slider(0, 1, .01f, false, skin);
-			matingPercentage.setAnimateDuration(.1f);
-			matingPercentage.setValue(prefs.getFloat(MATING_PERCENTAGE));
-			matingPercentage.addListener(valueTooltip);
-			matingPercentage.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					// matingPercentage.setValue(MathUtils.ceilPositive(matingPercentage.getValue()));
-					prefs.putFloat(MATING_PERCENTAGE, matingPercentage.getValue());
-				}
-			});
-
-			// add waypoints manually
-			final CheckBox addWaypointsManually = new CheckBox(" Add Waypoints Manually", skin);
-			addWaypointsManually.setChecked(prefs.getBoolean(ADD_WAYPOINTS_MANUALLY));
-			addWaypointsManually.addListener(new ChangeListener() {
-				@Override
-				public void changed(ChangeEvent event, Actor actor) {
-					prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, addWaypointsManually.isChecked());
-				}
-			});
-
-			algorithmSettings.add(waypointQuantityLabel).fill();
-			algorithmSettings.add(waypointQuantity).fill().row();
-			algorithmSettings.add(chromosomeQuantityLabel).fill();
-			algorithmSettings.add(chromosomeQuantity).fill().row();
-			algorithmSettings.add(mutationPercentageLabel).fill();
-			algorithmSettings.add(mutationPercentage).fill().row();
-			algorithmSettings.add(matingPopulationPercentageLabel).fill();
-			algorithmSettings.add(matingPopulationPercentage).fill().row();
-			algorithmSettings.add(favoredPopulationPercentageLabel).fill();
-			algorithmSettings.add(favoredPopulationPercentage).fill().row();
-			algorithmSettings.add(cutLengthLabel).fill();
-			algorithmSettings.add(cutLength).fill().row();
-			algorithmSettings.add(maximumGenerationsLabel).fill();
-			algorithmSettings.add(maximumGenerations).fill().row();
-			algorithmSettings.add(minimumNonChangeGenerationsLabel).fill();
-			algorithmSettings.add(minimumNonChangeGenerations).fill().row();
-			algorithmSettings.add(matingPercentageLabel).fill();
-			algorithmSettings.add(matingPercentage).fill().row();
-			algorithmSettings.add(addWaypointsManually).colspan(2).fill();
-		}
-
-		{ // benchmark settings
-			// TODO put some benchmark settings here
-		}
-
-		add(algorithmSettings).uniformX();
-		add(benchmarkSettings).uniformX();
+		add(waypointQuantityLabel).fill();
+		add(waypointQuantity).fill().row();
+		add(chromosomeQuantityLabel).fill();
+		add(chromosomeQuantity).fill().row();
+		add(mutationPercentageLabel).fill();
+		add(mutationPercentage).fill().row();
+		add(matingPopulationPercentageLabel).fill();
+		add(matingPopulationPercentage).fill().row();
+		add(favoredPopulationPercentageLabel).fill();
+		add(favoredPopulationPercentage).fill().row();
+		add(cutLengthLabel).fill();
+		add(cutLength).fill().row();
+		add(maximumGenerationsLabel).fill();
+		add(maximumGenerations).fill().row();
+		add(minimumNonChangeGenerationsLabel).fill();
+		add(minimumNonChangeGenerations).fill().row();
+		add(matingPercentageLabel).fill();
+		add(matingPercentage).fill().row();
+		add(addWaypointsManually).colspan(2).fill();
 	}
 
 }

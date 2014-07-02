@@ -1,9 +1,5 @@
 package net.nexusteam.tsmGaSolver.views;
 
-import net.nexusteam.tsmGaSolver.Assets;
-import net.nexusteam.tsmGaSolver.Controller;
-import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
-
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -30,6 +26,9 @@ import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Pools;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import net.nexusteam.tsmGaSolver.Assets;
+import net.nexusteam.tsmGaSolver.Controller;
+import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 
 /** @author dermetfan */
 public class TsmGaSolver extends ApplicationAdapter {
@@ -38,7 +37,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 	private Stage stage;
 	private Viewport viewport;
 	private Rectangle bounds;
-	private Array<Vector2> waypoints = new Array<Vector2>();
+	private Array<Vector2> waypoints = new Array<>();
 	/** the indices of {@link #waypoints} ordered by the currently optimal solution */
 	private IntArray optimum = new IntArray();
 	private Label status, status2;
@@ -63,80 +62,83 @@ public class TsmGaSolver extends ApplicationAdapter {
 		table.setFillParent(true);
 		stage.addActor(table);
 
+		final Samples samples = new Samples(skin);
+
 		status = new Label("[status message]", skin, "status");
 		status.setAlignment(Align.center);
 
 		status2 = new Label("[current optimum]", skin, "status");
 		status2.setAlignment(Align.center);
 
-		final TextButton startStop = new TextButton("Start", skin);
-		startStop.addListener(new ClickListener() {
-
+		final TextButton action = new TextButton("Start", skin);
+		action.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				if(startStop.isDisabled())
+				if(action.isDisabled())
 					return;
 				if(!controller.isRunning()) {
 					controller.initialize(bounds.width, bounds.height);
 					controller.start();
-					startStop.setText("Stop");
+					action.setText("Stop");
 				} else {
-					startStop.setText("Start");
+					action.setText("Start");
 					controller.stop();
 				}
 			}
-
 		});
 
 		Button settings = new TextButton("Settings", skin);
 		settings.addListener(new ClickListener() {
-
-			Window window;
+			Window window = new Window("Settings", skin);
 
 			{
-				window = new Window("Settings", skin);
-
 				final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 				Button close = new TextButton("close", skin);
 				close.addListener(new ClickListener() {
+					Runnable showRunnable = new Runnable() {
+						@Override
+						public void run() {
+							Settings.prefs.flush();
+							if(controller.isRunning())
+								controller.stop();
+							controller.configure();
+
+							// repopulate if necessary
+							int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
+							if(currentWaypointQuantity != waypointQuantity)
+								populate(waypointQuantity);
+
+							action.setDisabled(false);
+						}
+					};
+
 					@Override
 					public void clicked(InputEvent event, float x, float y) {
-						window.remove();
-						Settings.prefs.flush();
-						if(controller.isRunning())
-							controller.stop();
-						controller.configure();
-
-						// repopulate if necessary
-						int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
-						if(currentWaypointQuantity != waypointQuantity)
-							populate(waypointQuantity);
-
-						startStop.setDisabled(false);
+						window.addAction(Actions.sequence(Actions.fadeOut(Dialog.fadeDuration), Actions.run(showRunnable)));
 					}
 				});
 
 				window.add(new Settings()).fill().row();
 				window.add(close).fill();
 				window.pack();
-				window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
+				window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+				window.setColor(1, 1, 1, 0);
 			}
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if(!controller.isRunning()) {
 					stage.addActor(window);
-					startStop.setDisabled(true);
+					window.addAction(Actions.fadeIn(Dialog.fadeDuration));
+					action.setDisabled(true);
 				}
 			}
 
 		});
 
-		Button samples = new TextButton("Samples", skin);
-		samples.addListener(new ClickListener() {
-
+		final Button samplesButton = new TextButton("Samples", skin);
+		samplesButton.addListener(new ClickListener() {
 			Window window = new Window("Samples", skin);
-			Samples samples = new Samples();
 
 			{
 				Button close = new TextButton("close", skin);
@@ -153,24 +155,47 @@ public class TsmGaSolver extends ApplicationAdapter {
 
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				samples.updateSamples();
 				window.pack();
-				window.setPosition(stage.getWidth() / 2 - samples.getWidth() / 2, stage.getHeight() / 2 - samples.getHeight() / 2);
+				window.setPosition(stage.getWidth() / 2 - samplesButton.getWidth() / 2, stage.getHeight() / 2 - samplesButton.getHeight() / 2);
 				stage.addActor(window);
 				window.addAction(Actions.fadeIn(Dialog.fadeDuration));
 			}
-
 		});
 
-		Button step = new TextButton("Step", skin);
+		final Button benchmarks = new TextButton("Benchmarks", skin);
+		benchmarks.addListener(new ClickListener() {
+			Window window = new Window("Benchmarks", skin);
+
+			{
+				window.setResizable(true);
+				Button close = new TextButton("close", skin);
+				close.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						window.addAction(Actions.sequence(Actions.fadeOut(Dialog.fadeDuration), Actions.removeActor()));
+					}
+				});
+				window.add(samples.getBenchmarks()).expand().fill().row();
+				window.add(close).expandX().fillX();
+				window.setColor(1, 1, 1, 0);
+			}
+
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				window.pack();
+				window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+				stage.addActor(window);
+				window.addAction(Actions.fadeIn(Dialog.fadeDuration));
+			}
+		});
 
 		table.defaults().bottom().fillX();
 		table.add(status).expand();
-		table.add(startStop).uniformX();
-		table.add(step).uniformX().row();
+		table.add(action).uniformX();
+		table.add(samplesButton).uniformX().row();
 		table.add(status2);
-		table.add(samples).uniformX();
 		table.add(settings).uniformX();
+		table.add(benchmarks).uniformX();
 
 		// adjust bounds
 		bounds.y = status.getHeight() + status2.getHeight();
@@ -181,7 +206,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 		controller = new Controller(this, bounds.width, bounds.height, new Runnable() {
 			@Override
 			public void run() {
-				startStop.setText("Start");
+				action.setText("Start");
 			}
 		});
 	}

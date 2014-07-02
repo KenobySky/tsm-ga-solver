@@ -1,8 +1,7 @@
 syntax: glob
 
 ## TSM-GA-Solver
-*.tsmgass
-*.tsmgasb
+android/assets/samples/
 
 ## Java
 *.class

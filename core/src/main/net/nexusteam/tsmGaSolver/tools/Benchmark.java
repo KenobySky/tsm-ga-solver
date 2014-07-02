@@ -1,24 +1,20 @@
 package net.nexusteam.tsmGaSolver.tools;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Benchmark {
 
-	public static final FileHandle BENCHMARK_DIR = Gdx.files.isLocalStorageAvailable() ? Gdx.files.local("benchmarks") : Gdx.files.external("TSM-GA-Solver").child("benchmarks");
-	public static final String FILE_EXTENSION = "tsmgasb";
-
-	public static FileHandle fileOf(String name) {
-		return BENCHMARK_DIR.child(name + "." + FILE_EXTENSION);
+	public FileHandle fileOf(String name) {
+		return Sample.SAMPLE_DIR.child(sample).child(name + ".json");
 	}
 
-	public static boolean exists(String name) {
+	public boolean exists(String name) {
 		return fileOf(name).exists();
 	}
 
-	private String sampleName;
+	private String sample;
 	private float iterations;
 	private float cost;
 	private float waypoint_quantity;
@@ -33,9 +29,13 @@ public class Benchmark {
 	private long start_time;
 	private long end_time;
 
-	public Benchmark(String sampleName) {
-		if(!Sample.exists(sampleName))
-			throw new IllegalArgumentException("Sample " + sampleName + " does not exist");
+	/** constructor for serialization */
+	public Benchmark() {}
+
+	public Benchmark(String sample) {
+		if(!Sample.exists(sample))
+			throw new IllegalArgumentException("Sample " + sample + " does not exist");
+		this.sample = sample;
 	}
 
 	public void start() {
@@ -97,15 +97,19 @@ public class Benchmark {
 	//		return total_spent_time;
 	//	}
 
-	public void save(boolean override) {
-		fileOf(override ? sampleName : findAvailableName(sampleName)).writeString(new Json().toJson(this), false);
+	public static Benchmark load(String sample, String name) {
+		return new Json().fromJson(Benchmark.class, Sample.fileOf(sample).sibling(name + ".json"));
 	}
 
-	protected static String findAvailableName(String sampleName) {
+	public void save(String name) {
+		fileOf(name).writeString(new Json().toJson(this), false);
+	}
+
+	public String findAvailableName(String sampleName) {
 		FileHandle file = fileOf(sampleName);
 		int num = 1;
 		while(file.exists())
-			file = fileOf(sampleName + String.valueOf(num++));
+			file = fileOf(sampleName + '-' + String.valueOf(num++));
 		return file.name();
 	}
 
@@ -115,14 +119,6 @@ public class Benchmark {
 	}
 
 	// getters and setters
-
-	public String getSampleName() {
-		return sampleName;
-	}
-
-	public void setSampleName(String sampleName) {
-		this.sampleName = sampleName;
-	}
 
 	public float getIterations() {
 		return iterations;

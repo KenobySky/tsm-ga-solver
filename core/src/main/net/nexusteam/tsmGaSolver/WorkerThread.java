@@ -66,7 +66,7 @@ public class WorkerThread extends Thread {
 
 			benchmark.end();
 			benchmark.set(controller.generation_count, (float) controller.getTopChromosome().getCost(), controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length, controller.minimum_non_change_generations, controller.genetic.getTimesMutated());
-			benchmark.save(false);
+			benchmark.save(String.valueOf(TimeUtils.millis())); // TODO custom name
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
 			controller.view.update();
