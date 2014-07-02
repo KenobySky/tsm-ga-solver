@@ -6,11 +6,13 @@ import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
 
 /** @author Andre Vinicius Lopes */
-public class WorkerThread implements Runnable {
+public class WorkerThread extends Thread {
 
-	private Controller controller;
+	protected Controller controller;
 
-	public volatile boolean stopToKillThread;
+	/** Master Flag To Stop The Thread.Prevents all Logic Inside be executed by using an if Statement. May Cause Unpredictable
+	 * Problems if its set True During the while(countSame < controller.minimum_non_change_generations) Loop. */
+	private volatile boolean stopToKillThread;
 
 	private Benchmark benchmark;
 
@@ -57,7 +59,7 @@ public class WorkerThread implements Runnable {
 
 					controller.view.update();
 				} else {
-					Gdx.app.error(getClass().getName(), "Thread stopped during a critical loop. Consequences may cause unpredictable results.\nAttempting to break loop and finish Thread...");
+					Gdx.app.log(getClass().getSimpleName() + "\"" + getName() + "\"", "Thread stopped during a critical loop. Consequences may cause unpredictable results.\nAttempting to break loop and finish Thread...");
 					break;
 				}
 			}
@@ -71,6 +73,17 @@ public class WorkerThread implements Runnable {
 			controller.solutionFound();
 		} else
 			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
+	}
+
+	/** Sets {@link #stopToKillThread} to true. Halts The Thread encapsulating all logic in an if(!stopThread) Statement.
+	 * All logic inside may lost consistency. Controller Methods will attempt to interrupt and end this thread if this method is called */
+	public void stopToKillThread() {
+		stopToKillThread = true;
+	}
+
+	/** @return {@link #stopToKillThread} */
+	public boolean isThreadStopping() {
+		return stopToKillThread;
 	}
 
 }

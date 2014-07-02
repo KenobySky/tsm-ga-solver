@@ -77,7 +77,6 @@ public class TsmGaSolver extends ApplicationAdapter {
 				if(startStop.isDisabled())
 					return;
 				if(!controller.isRunning()) {
-					controller.configure();
 					controller.initialize(bounds.width, bounds.height);
 					controller.start();
 					startStop.setText("Stop");
@@ -104,7 +103,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 					public void clicked(InputEvent event, float x, float y) {
 						window.remove();
 						Settings.prefs.flush();
-						controller.stop();
+						if(controller.isRunning())
+							controller.stop();
 						controller.configure();
 
 						// repopulate if necessary

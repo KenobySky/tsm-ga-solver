@@ -37,17 +37,8 @@ public class Controller {
 	/** The current generation, or epoch */
 	protected int generation_count;
 
-	/** The Encapsulation of background worker Thread */
-	protected Thread worker;
-
 	/** The Reference to the Currently background worker Thread */
 	private WorkerThread workerThread;
-
-	/** The Reference to the Currently background ITERATIVE worker Thread */
-	private WorkerThreadIterative iterativeWorkerThread;
-
-	/** Is the thread running. */
-	private boolean running;
 
 	protected TSPGeneticAlgorithm genetic;
 
@@ -73,7 +64,7 @@ public class Controller {
 
 	/** configures this Controller based on the {@link #view} and {@link Settings#prefs preferences} */
 	public void configure() {
-		if(running && workerThread != null && worker != null && worker.isInterrupted())
+		if(isRunning())
 			throw new IllegalStateException("Denied: Configuring the Controller while it's running may produce unpredictable results");
 
 		Preferences prefs = Settings.prefs;
@@ -86,11 +77,9 @@ public class Controller {
 		minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
 	}
 
-	/**
-	 * Receives two parameters. They represent the usable area to generate the cities.<br>
-	 * Should have been {@link #configure() configured} before.
-	 */
+	/** Receives two parameters. They represent the usable area to generate the cities.<br> */
 	public void initialize(float usable_Width, float usable_Height) {
+		configure();
 		Array<Vector2> viewWaypoints = view.getWaypoints();
 		waypoints = new Waypoint[viewWaypoints.size];
 
@@ -104,35 +93,39 @@ public class Controller {
 		genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
 	}
 
-	/** Starts the Full Mode */
+	/** starts the normal mode */
 	public void start() {
-		stop();
+		start(-1);
+	}
 
-		running = true;
+	/** @param numberOfIterations The number of iterations for iterative mode. Set to 0 or smaller for normal mode. */
+	public void start(int numberOfIterations) {
+		if(isRunning())
+			throw new IllegalStateException("Can't start: Algorithm is already running");
+
 		generation_count = 0;
 
-		workerThread = new WorkerThread(this);
-		worker = new Thread(workerThread);
-		worker.start();
+		workerThread = numberOfIterations <= 0 ? new WorkerThread(this) : new IterativeWorkerThread(this, numberOfIterations);
+		workerThread.start();
 	}
 
 	/** Stops The Full Mode */
 	public void stop() {
+		if(!isRunning())
+			throw new IllegalStateException("Can't stop: Algorithm is not running");
 		try {
-			if(workerThread != null)
-				workerThread.stopToKillThread = true;
-
-			if(worker != null) {
-				worker.interrupt();
-				worker = null;
+			if(workerThread != null && !workerThread.isThreadStopping()) {
+				workerThread.stopToKillThread();
+				workerThread.interrupt();
+				workerThread = null;
 			}
 		} catch(Exception ex) {
-			Gdx.app.error(getClass().getName(), worker.getName() + " could not be stopped", ex);
+			Gdx.app.error(getClass().getName(), "WorkerThread \"" + workerThread.getName() + "\" could not be stopped", ex);
 		}
 	}
 
+	/** Runs the {@link #callback} if any. */
 	public void solutionFound() {
-		running = false;
 		if(callback != null)
 			callback.run();
 	}
@@ -147,48 +140,23 @@ public class Controller {
 
 	/** Step The WorkerThreadIterative Mode */
 	public void step(int numberOfIterations) {
-		// Check if Full Mode is Running
-		boolean isFullModeRunning = isWorkerThreadRunning();
-
-		if(isFullModeRunning)
+		if(isRunning())
 			stop();
 
-		if(iterativeWorkerThread == null)
-			iterativeWorkerThread = new WorkerThreadIterative(this, numberOfIterations);
-		else if(iterativeWorkerThread.isWaitingUser())
-			iterativeWorkerThread.changeNumberOfIterations(numberOfIterations);
-		else if(iterativeWorkerThread.isWaitingUser() && iterativeWorkerThread.isThreadStopped())
-			Gdx.app.error(getClass().getName(), "Iterative worker thread is waiting another user input but thread is killed!");
-	}
+		IterativeWorkerThread iterWorkerThread = workerThread instanceof IterativeWorkerThread ? (IterativeWorkerThread) workerThread : null;
 
-	/** Kill The IterativeWorkerThread Mode */
-	public void killWorkerThreadIterative() {
-		if(iterativeWorkerThread != null) {
-			if(!iterativeWorkerThread.isThreadStopped()) {
-				iterativeWorkerThread.stopToKillThread();
-				if(worker != null)
-					worker.interrupt();
-			}
-		} else if(worker != null)
-			worker.interrupt();
+		if(iterWorkerThread == null)
+			iterWorkerThread = new IterativeWorkerThread(this, numberOfIterations);
+		else if(iterWorkerThread.awaitsUserInput())
+			iterWorkerThread.changeNumberOfIterations(numberOfIterations);
 
-		System.out.println("IterativeWorkerThread Destroyed.");
-	}
-
-	private boolean isWorkerThreadRunning() {
-		if(workerThread != null && worker != null && !workerThread.stopToKillThread)
-			return !worker.isInterrupted();
-		return false;
+		workerThread = iterWorkerThread;
 	}
 
 	// GETTERS AND SETTERS
 
 	public boolean isRunning() {
-		return running;
-	}
-
-	public void setRunning(boolean running) {
-		this.running = running;
+		return workerThread != null && !workerThread.isThreadStopping() && !workerThread.isInterrupted();
 	}
 
 	public Runnable getCallback() {

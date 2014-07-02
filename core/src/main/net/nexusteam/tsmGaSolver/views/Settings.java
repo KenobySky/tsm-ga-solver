@@ -137,10 +137,8 @@ public class Settings extends Table {
 			waypointQuantity.setTextFieldListener(new TextFieldListener() {
 				@Override
 				public void keyTyped(TextField textField, char c) {
-					if(textField.getText().equals("1")) {
-						textField.setText("2");
-					}
-					prefs.putString(WAYPOINT_QUANTITY, numerize(textField.getText()));
+					String num = String.valueOf(Math.max(Integer.parseInt(numerize(textField.getText())), 2));
+					prefs.putString(WAYPOINT_QUANTITY, num);
 				}
 			});
 
@@ -284,7 +282,8 @@ public class Settings extends Table {
 			// TODO put some benchmark settings here
 		}
 
-		add(algorithmSettings);
+		add(algorithmSettings).uniformX();
+		add(benchmarkSettings).uniformX();
 	}
 
 }
