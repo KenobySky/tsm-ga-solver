@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
@@ -86,6 +88,7 @@ public class Samples extends Table {
 			String sample = Samples.this.samples.getSelected();
 			if(sample == null || sample.isEmpty()) {
 				showBenchmarkInfo(null);
+				benchmarks.setItems("no sample selected");
 				return;
 			}
 			@SuppressWarnings("unchecked")
@@ -96,13 +99,13 @@ public class Samples extends Table {
 			benchmarks.setItems(benchmarkNames);
 			benchmarkNames.clear();
 			Pools.free(benchmarkNames);
-			showBenchmarkInfo(benchmarks.getItems().first());
+			showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().first() : null);
 		}
 
 		public void showBenchmarkInfo(String name) {
 			if(name == null || name.isEmpty()) {
-				currentBenchmarkName.setText("-");
-				infoLabel.setText("Please select a benchmark from the left.");
+				currentBenchmarkName.setText("");
+				infoLabel.setText("Please select a benchmark.");
 				return;
 			}
 			currentBenchmarkName.setText(name);
@@ -130,6 +133,12 @@ public class Samples extends Table {
 		notification.button("OK");
 
 		samples = new SelectBox<>(skin);
+		samples.addListener(new ChangeListener() {
+			@Override
+			public void changed(ChangeEvent event, Actor actor) {
+				benchmarks.updateBenchmarks();
+			}
+		});
 
 		final TextField name = new TextField("", skin);
 		name.setMessageText("new name");

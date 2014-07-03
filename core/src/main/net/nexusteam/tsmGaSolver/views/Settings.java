@@ -19,7 +19,7 @@ public class Settings extends Table {
 
 	public static final Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
 
-	public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", CUT_LENGTH = "cut length", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", MATING_PERCENTAGE = "mating percentage", ADD_WAYPOINTS_MANUALLY = "add waypoints manually";
+	public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", CUT_LENGTH = "cut length", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", MATING_PERCENTAGE = "mating percentage", STEP_MANUALLY = "step manually", STEP_ITERATIONS = "step iterations";
 
 	/** @see #isNumeric(char) */
 	public static final TextFieldFilter numericFilter = new TextFieldFilter() {
@@ -54,6 +54,7 @@ public class Settings extends Table {
 		put(FAVORED_POPULATION_PERCENTAGE, .75f, override);
 		put(CUT_LENGTH, 10, override);
 		put(MINIMUM_NON_CHANGE_GENERATIONS, 50, override);
+		put(STEP_ITERATIONS, 10, override);
 
 		// doesn't have any effect yet
 
@@ -62,7 +63,7 @@ public class Settings extends Table {
 
 		// gui settings
 
-		put(ADD_WAYPOINTS_MANUALLY, false, override);
+		put(STEP_MANUALLY, false, override);
 	}
 
 	/** @param key the key
@@ -94,7 +95,10 @@ public class Settings extends Table {
 		valueContainer.pack();
 		Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
 
-			{ showOn(Type.touchDown); }
+			{
+				showOn(Type.touchDown);
+				hideNotOn(Type.touchDown);
+			}
 
 			Actor actor;
 
@@ -238,13 +242,24 @@ public class Settings extends Table {
 			}
 		});
 
-		// add waypoints manually
-		final CheckBox addWaypointsManually = new CheckBox(" Add Waypoints Manually", skin);
-		addWaypointsManually.setChecked(prefs.getBoolean(ADD_WAYPOINTS_MANUALLY));
-		addWaypointsManually.addListener(new ChangeListener() {
+		// step manually
+		final CheckBox stepManually = new CheckBox(" step manually", skin);
+		stepManually.setChecked(prefs.getBoolean(STEP_MANUALLY));
+		stepManually.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				prefs.putBoolean(ADD_WAYPOINTS_MANUALLY, addWaypointsManually.isChecked());
+				prefs.putBoolean(STEP_MANUALLY, stepManually.isChecked());
+			}
+		});
+
+		TextField stepIterations = new TextField(prefs.getString(STEP_ITERATIONS), skin);
+		stepIterations.setMessageText("Generations per step");
+		stepIterations.setTextFieldFilter(numericFilter);
+		stepIterations.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				int iterations = Integer.parseInt(numerize(textField.getText()));
+				prefs.putInteger(STEP_ITERATIONS, Math.max(1, iterations));
 			}
 		});
 
@@ -266,7 +281,8 @@ public class Settings extends Table {
 		add(minimumNonChangeGenerations).fill().row();
 		add(matingPercentageLabel).fill();
 		add(matingPercentage).fill().row();
-		add(addWaypointsManually).colspan(2).fill();
+		add(stepManually).fill();
+		add(stepIterations).fill();
 	}
 
 }

@@ -95,17 +95,10 @@ public class Controller {
 
 	/** starts the normal mode */
 	public void start() {
-		start(-1);
-	}
-
-	/** @param numberOfIterations The number of iterations for iterative mode. Set to 0 or smaller for normal mode. */
-	public void start(int numberOfIterations) {
 		if(isRunning())
 			throw new IllegalStateException("Can't start: Algorithm is already running");
 
-		generation_count = 0;
-
-		workerThread = numberOfIterations <= 0 ? new WorkerThread(this) : new IterativeWorkerThread(this, numberOfIterations);
+		workerThread = new WorkerThread(this);
 		workerThread.start();
 	}
 
@@ -138,19 +131,14 @@ public class Controller {
 	// ITERATIVE METHODS BELOW
 	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	/** Step The WorkerThreadIterative Mode */
+	/** steps/starts the iterative mode */
 	public void step(int numberOfIterations) {
 		if(isRunning())
 			stop();
+		assert workerThread == null; // workerThread should be null here because we stopped it if it was running
 
-		IterativeWorkerThread iterWorkerThread = workerThread instanceof IterativeWorkerThread ? (IterativeWorkerThread) workerThread : null;
-
-		if(iterWorkerThread == null)
-			iterWorkerThread = new IterativeWorkerThread(this, numberOfIterations);
-		else if(iterWorkerThread.awaitsUserInput())
-			iterWorkerThread.changeNumberOfIterations(numberOfIterations);
-
-		workerThread = iterWorkerThread;
+		workerThread = new IterativeWorkerThread(this, numberOfIterations);
+		workerThread.start();
 	}
 
 	// GETTERS AND SETTERS

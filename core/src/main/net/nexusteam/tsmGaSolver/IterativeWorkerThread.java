@@ -60,10 +60,11 @@ public class IterativeWorkerThread extends WorkerThread {
 			controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
 			Gdx.app.log(getClass().getSimpleName() + "\"" + getName() + "\"", "All iterations complete. Click \"step\" to restart.");
 			awaitsUserInput = true;
+			controller.solutionFound();
 		} else
 			System.out.println("Thread stopped! Consequences may be unpredictable results.");
 		controller.status = "Halted thread! Thread currently stopped at generation " + controller.generation_count;
-	}// END OF *IF* STOP THREAD
+	}
 
 	/** Changes the Number of Iterations */
 	public void changeNumberOfIterations(int iterations) {

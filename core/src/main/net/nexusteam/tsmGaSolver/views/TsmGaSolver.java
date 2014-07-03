@@ -70,18 +70,22 @@ public class TsmGaSolver extends ApplicationAdapter {
 		status2 = new Label("[current optimum]", skin, "status");
 		status2.setAlignment(Align.center);
 
-		final TextButton action = new TextButton("Start", skin);
+		final TextButton action = new TextButton(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start", skin);
 		action.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				if(action.isDisabled())
 					return;
+				boolean stepManually = Settings.prefs.getBoolean(Settings.STEP_MANUALLY);
 				if(!controller.isRunning()) {
 					controller.initialize(bounds.width, bounds.height);
-					controller.start();
+					if(stepManually)
+						controller.step(Settings.prefs.getInteger(Settings.STEP_ITERATIONS));
+					else
+						controller.start();
 					action.setText("Stop");
 				} else {
-					action.setText("Start");
+					action.setText(stepManually ? "Step" : "Start");
 					controller.stop();
 				}
 			}
@@ -108,6 +112,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 							if(currentWaypointQuantity != waypointQuantity)
 								populate(waypointQuantity);
 
+							action.setText(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start");
 							action.setDisabled(false);
 						}
 					};
@@ -206,7 +211,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 		controller = new Controller(this, bounds.width, bounds.height, new Runnable() {
 			@Override
 			public void run() {
-				action.setText("Start");
+				action.setText(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start");
 				samples.updateSamples();
 			}
 		});
