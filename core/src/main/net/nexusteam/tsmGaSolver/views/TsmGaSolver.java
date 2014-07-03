@@ -207,6 +207,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 			@Override
 			public void run() {
 				action.setText("Start");
+				samples.updateSamples();
 			}
 		});
 	}

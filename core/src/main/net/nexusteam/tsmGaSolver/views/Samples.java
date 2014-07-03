@@ -84,6 +84,10 @@ public class Samples extends Table {
 
 		public void updateBenchmarks() {
 			String sample = Samples.this.samples.getSelected();
+			if(sample == null || sample.isEmpty()) {
+				showBenchmarkInfo(null);
+				return;
+			}
 			@SuppressWarnings("unchecked")
 			Array<String> benchmarkNames = Pools.obtain(Array.class);
 			benchmarkNames.clear();
@@ -92,13 +96,14 @@ public class Samples extends Table {
 			benchmarks.setItems(benchmarkNames);
 			benchmarkNames.clear();
 			Pools.free(benchmarkNames);
-			showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().first() : null);
+			showBenchmarkInfo(benchmarks.getItems().first());
 		}
 
 		public void showBenchmarkInfo(String name) {
 			if(name == null || name.isEmpty()) {
 				currentBenchmarkName.setText("-");
 				infoLabel.setText("Please select a benchmark from the left.");
+				return;
 			}
 			currentBenchmarkName.setText(name);
 			String sample = Samples.this.samples.getSelected();
@@ -158,8 +163,9 @@ public class Samples extends Table {
 		delete.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
-				FileHandle file = Sample.SAMPLE_DIR.child(samples.getSelected());
-				if(file.exists()) {
+				String sample = samples.getSelected();
+				FileHandle file;
+				if(sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
 					if(!file.deleteDirectory()) {
 						message.setText("Failed to delete sample: " + file.nameWithoutExtension());
 						notification.show(getStage());
@@ -168,7 +174,7 @@ public class Samples extends Table {
 						pack();
 					}
 				} else {
-					message.setText("Sample " + file.nameWithoutExtension() + " does not exist");
+					message.setText("Sample " + sample + " does not exist");
 					notification.show(getStage());
 				}
 			}
