@@ -1,33 +1,25 @@
-
 package net.nexusteam.tsmGaSolver.desktop;
 
+import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
+import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import net.dermetfan.utils.ArrayUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.badlogic.gdx.math.MathUtils;
-
 public class DesktopLauncher {
 
-	public static void main (String[] args) {
-
+	public static void main(String[] args) {
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.width = 1024;
 		cfg.height = 768;
-		cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 0.6 Alpha";
+		cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 1.0";
 
 		new LwjglApplication(new TsmGaSolver(), cfg);
 
-		if (ArrayUtils.contains(args, "--reset", false)) {
+		if(ArrayUtils.contains(args, "--reset", false)) {
 			Settings.reset(true);
 			Settings.prefs.flush();
 		}
-		
-	
 	}
-
-	
 
 }
