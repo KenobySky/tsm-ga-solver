@@ -297,6 +297,11 @@ public class TsmGaSolver extends ApplicationAdapter {
 		return waypoints;
 	}
 
+	/** @return the {@link #optimum} */
+	public IntArray getOptimum() {
+		return optimum;
+	}
+
 	/** @return the {@link #controller} */
 	public Controller getController() {
 		return controller;

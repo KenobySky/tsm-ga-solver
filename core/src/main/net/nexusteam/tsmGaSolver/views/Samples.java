@@ -177,6 +177,7 @@ public class Samples extends Table {
 					Array<Vector2> waypoints = solver.getWaypoints();
 					waypoints.clear();
 					waypoints.addAll(sample.waypoints);
+					solver.getOptimum().clear();
 					benchmarks.updateBenchmarks();
 					Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
 				} else {

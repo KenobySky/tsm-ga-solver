@@ -1,5 +1,8 @@
 package net.nexusteam.tsmGaSolver.tools;
 
+import java.time.Instant;
+import java.util.Date;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
@@ -15,16 +18,16 @@ public class Benchmark {
 	}
 
 	private String sample;
-	private float iterations;
+	private int iterations;
 	private float cost;
-	private float waypoint_quantity;
-	private float chromosome_quantity;
+	private int waypoint_quantity;
+	private int chromosome_quantity;
 	private float mutation_percentage;
 	private float mutation_quantity;
 	private float mating_population_percentage;
 	private float favored_populating_percentage;
 	private float cut_length;
-	private float minimum_non_change_generations;
+	private int minimum_non_change_generations;
 	private long start_time;
 	private long end_time;
 
@@ -91,7 +94,7 @@ public class Benchmark {
 	//		return total_spent_time;
 	//	}
 
-	public void set(float iterations, float cost, float waypoint_quantity, float chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_populating_percentage, float cut_length, float minimum_non_change_generations, float mutation_quantity) {
+	public void set(int iterations, float cost, int waypoint_quantity, int chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_populating_percentage, float cut_length, int minimum_non_change_generations, float mutation_quantity) {
 		this.iterations = iterations;
 		this.cost = cost;
 		this.waypoint_quantity = waypoint_quantity;
@@ -118,97 +121,18 @@ public class Benchmark {
 
 	@Override
 	public String toString() {
-		return new Json().prettyPrint(this);
-	}
-
-	// getters and setters
-
-	public float getIterations() {
-		return iterations;
-	}
-
-	public void setIterations(float iterations) {
-		this.iterations = iterations;
-	}
-
-	public float getCost() {
-		return cost;
-	}
-
-	public void setCost(float cost) {
-		this.cost = cost;
-	}
-
-	public float getWaypoint_quantity() {
-		return waypoint_quantity;
-	}
-
-	public void setWaypoint_quantity(float waypoint_quantity) {
-		this.waypoint_quantity = waypoint_quantity;
-	}
-
-	public float getChromosome_quantity() {
-		return chromosome_quantity;
-	}
-
-	public void setChromosome_quantity(float chromosome_quantity) {
-		this.chromosome_quantity = chromosome_quantity;
-	}
-
-	public float getMutation_percentage() {
-		return mutation_percentage;
-	}
-
-	public void setMutation_percentage(float mutation_percentage) {
-		this.mutation_percentage = mutation_percentage;
-	}
-
-	public float getMutation_quantity() {
-		return mutation_quantity;
-	}
-
-	public void setMutation_quantity(float mutation_quantity) {
-		this.mutation_quantity = mutation_quantity;
-	}
-
-	public float getMating_population_percentage() {
-		return mating_population_percentage;
-	}
-
-	public void setMating_population_percentage(float mating_population_percentage) {
-		this.mating_population_percentage = mating_population_percentage;
-	}
-
-	public float getFavored_populating_percentage() {
-		return favored_populating_percentage;
-	}
-
-	public void setFavored_populating_percentage(float favored_populating_percentage) {
-		this.favored_populating_percentage = favored_populating_percentage;
-	}
-
-	public float getCut_length() {
-		return cut_length;
-	}
-
-	public void setCut_length(float cut_length) {
-		this.cut_length = cut_length;
-	}
-
-	public float getMinimum_non_change_generations() {
-		return minimum_non_change_generations;
-	}
-
-	public void setMinimum_non_change_generations(float minimum_non_change_generations) {
-		this.minimum_non_change_generations = minimum_non_change_generations;
-	}
-
-	public long getStart_time() {
-		return start_time;
-	}
-
-	public long getEnd_time() {
-		return end_time;
+		return "Sample: " + sample + '\n' +
+				"Started: " + Date.from(Instant.ofEpochMilli(start_time)) + '\n' +
+				"Duration: " + (TimeUtils.nanosToMillis(end_time - start_time) / 1000f) + " sec\n" +
+				"Waypoints: " + waypoint_quantity + '\n' +
+				"Chromosomes: " + chromosome_quantity + '\n' +
+				"Cost: " + cost + '\n' +
+				"Cut Length: " + cut_length + '\n' +
+				"Iterations: " + iterations + '\n' +
+				"Mating Population Percentage: " + mating_population_percentage + '\n' +
+				"Mutation Percentage: " + mutation_percentage + '\n' +
+				"Mutation Quantity: " + mutation_quantity + '\n' +
+				"Minimum non-change Generations: " + minimum_non_change_generations;
 	}
 
 }

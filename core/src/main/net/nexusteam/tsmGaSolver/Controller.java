@@ -98,6 +98,8 @@ public class Controller {
 		if(isRunning())
 			throw new IllegalStateException("Can't start: Algorithm is already running");
 
+		generation_count = 0;
+
 		workerThread = new WorkerThread(this);
 		workerThread.start();
 	}
