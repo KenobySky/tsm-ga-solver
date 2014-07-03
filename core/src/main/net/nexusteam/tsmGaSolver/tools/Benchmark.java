@@ -25,7 +25,7 @@ public class Benchmark {
 	private float mutation_percentage;
 	private float mutation_quantity;
 	private float mating_population_percentage;
-	private float favored_populating_percentage;
+	private float favored_population_percentage;
 	private float cut_length;
 	private int minimum_non_change_generations;
 	private long start_time;
@@ -94,14 +94,14 @@ public class Benchmark {
 	//		return total_spent_time;
 	//	}
 
-	public void set(int iterations, float cost, int waypoint_quantity, int chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_populating_percentage, float cut_length, int minimum_non_change_generations, float mutation_quantity) {
+	public void set(int iterations, float cost, int waypoint_quantity, int chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_population_percentage, float cut_length, int minimum_non_change_generations, float mutation_quantity) {
 		this.iterations = iterations;
 		this.cost = cost;
 		this.waypoint_quantity = waypoint_quantity;
 		this.chromosome_quantity = chromosome_quantity;
 		this.mutation_percentage = mutation_percentage;
 		this.mating_population_percentage = mating_population_percentage;
-		this.favored_populating_percentage = favored_populating_percentage;
+		this.favored_population_percentage = favored_population_percentage;
 		this.cut_length = cut_length;
 		this.minimum_non_change_generations = minimum_non_change_generations;
 		this.mutation_quantity = mutation_quantity;
@@ -130,6 +130,7 @@ public class Benchmark {
 				"Cut Length: " + cut_length + '\n' +
 				"Iterations: " + iterations + '\n' +
 				"Mating Population Percentage: " + mating_population_percentage + '\n' +
+				"Favored Population Percentage: " + favored_population_percentage + '\n' +
 				"Mutation Percentage: " + mutation_percentage + '\n' +
 				"Mutation Quantity: " + mutation_quantity + '\n' +
 				"Minimum non-change Generations: " + minimum_non_change_generations;
