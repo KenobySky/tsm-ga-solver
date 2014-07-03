@@ -215,8 +215,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 			@Override
 			public void run() {
 				action.setText(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start");
-				if(!Settings.prefs.getBoolean(Settings.BENCHMARK_AUTOMATICALLY))
-					samples.getBenchmarks().getActive().setChecked(false);
+				samples.getBenchmarks().getActive().setChecked(false);
 				samples.updateSamples();
 			}
 		});
