@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SplitPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
@@ -43,11 +44,13 @@ public class Samples extends Table {
 		private final FilenameFilter benchmarkFileFilter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return !name.equalsIgnoreCase("sample.json");
+				return !name.equalsIgnoreCase(Sample.FILENAME);
 			}
 		};
 		private SelectBox<String> benchmarks;
 		private Label currentBenchmarkName, infoLabel;
+		/** if checked, the next run should be benchmarked */
+		private CheckBox active;
 
 		public Benchmarks() {
 			Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
@@ -56,16 +59,37 @@ public class Samples extends Table {
 
 			{ // controls
 				benchmarks = new SelectBox<>(skin);
-				TextButton rename = new TextButton("rename", skin);
 				TextButton delete = new TextButton("delete", skin);
-				TextField name = new TextField("", skin);
+				delete.addListener(new ClickListener() {
+					@Override
+					public void clicked(InputEvent event, float x, float y) {
+						Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
+						updateBenchmarks();
+					}
+				});
+				TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
 				name.setMessageText("new name");
-				CheckBox active = new CheckBox(" Benchmark this run", skin);
+				name.setTextFieldListener(new TextFieldListener() {
+					@Override
+					public void keyTyped(TextField textField, char c) {
+						Settings.prefs.putString(Settings.NEW_BENCHMARK_NAME, textField.getText());
+					}
+				});
+				active = new CheckBox(" Benchmark this run", skin);
+				active.setChecked(Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN));
+				active.addListener(new ChangeListener() {
+					@Override
+					public void changed(ChangeEvent event, Actor actor) {
+						if(active.isDisabled())
+							return;
+						Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
+					}
+				});
 
 				controls.defaults().colspan(2).fillX();
 				controls.add(benchmarks).row();
-				controls.add(rename).colspan(1);
-				controls.add(delete).colspan(1).row();
+				controls.add(delete).row();
+				controls.add("New Benchmark:").row();
 				controls.add(name).row();
 				controls.add(active);
 				controls.pack();
@@ -89,8 +113,11 @@ public class Samples extends Table {
 			if(sample == null || sample.isEmpty()) {
 				showBenchmarkInfo(null);
 				benchmarks.setItems("no sample selected");
+				Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, false); // we cannot create benchmarks without a sample
+				active.setDisabled(true);
 				return;
 			}
+			active.setDisabled(false);
 			@SuppressWarnings("unchecked")
 			Array<String> benchmarkNames = Pools.obtain(Array.class);
 			benchmarkNames.clear();
@@ -115,6 +142,11 @@ public class Samples extends Table {
 			infoLabel.setText(benchmark.toString());
 		}
 
+		/** @return the {@link #active} */
+		public CheckBox getActive() {
+			return active;
+		}
+
 	}
 
 	private Benchmarks benchmarks = new Benchmarks();
@@ -136,23 +168,8 @@ public class Samples extends Table {
 		samples.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				benchmarks.updateBenchmarks();
-			}
-		});
-
-		final TextField name = new TextField("", skin);
-		name.setMessageText("new name");
-
-		updateSamples();
-
-		Button load = new TextButton("load", skin);
-		load.addListener(new ClickListener() {
-			Json json = new Json();
-
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
 				FileHandle file = Sample.fileOf(samples.getSelected());
-				Sample sample = json.fromJson(Sample.class, file);
+				Sample sample = new Json().fromJson(Sample.class, file);
 				if(sample != null) {
 					TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
 					if(solver.getController().isRunning())
@@ -161,10 +178,27 @@ public class Samples extends Table {
 					waypoints.clear();
 					waypoints.addAll(sample.waypoints);
 					benchmarks.updateBenchmarks();
+					Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
 				} else {
 					message.setText("Failed to load sample " + file.nameWithoutExtension());
 					notification.show(getStage());
 				}
+				benchmarks.updateBenchmarks();
+			}
+		});
+		updateSamples();
+		if(Settings.prefs.contains(Settings.CURRENT_SAMPLE)) {
+			String settingsCurrentSample = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
+			if(samples.getItems().contains(settingsCurrentSample, false))
+				samples.setSelected(settingsCurrentSample);
+		}
+
+		final TextField name = new TextField("", skin);
+		name.setMessageText("new name");
+		name.setTextFieldListener(new TextFieldListener() {
+			@Override
+			public void keyTyped(TextField textField, char c) {
+				Settings.prefs.putString(Settings.NEW_SAMPLE_NAME, textField.getText());
 			}
 		});
 
@@ -189,7 +223,7 @@ public class Samples extends Table {
 			}
 		});
 
-		Button save = new TextButton("save as new sample", skin);
+		Button save = new TextButton("save", skin);
 		save.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -209,6 +243,8 @@ public class Samples extends Table {
 								if(object instanceof Boolean && (Boolean) object) {
 									new Sample(waypoints).save(name.getText());
 									updateSamples();
+									samples.setSelected(name.getText());
+									Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
 								}
 								hide();
 							}
@@ -217,6 +253,8 @@ public class Samples extends Table {
 					} else {
 						new Sample(waypoints).save(name.getText());
 						updateSamples();
+						samples.setSelected(name.getText());
+						Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
 					}
 				} else {
 					message.setText("Please enter a name");
@@ -225,11 +263,12 @@ public class Samples extends Table {
 			}
 		});
 
-		add(samples).fillX().colspan(2).row();
-		add(load).fillX();
+		defaults().colspan(2);
+		add(samples).fillX().row();
 		add(delete).fillX().row();
-		add(name).fillX().colspan(2).row();
-		add(save).colspan(2).fillX().row();
+		add("New Sample:").row();
+		add(name).fillX().row();
+		add(save).fillX().row();
 	}
 
 	public void updateSamples() {
@@ -245,6 +284,10 @@ public class Samples extends Table {
 
 	public Benchmarks getBenchmarks() {
 		return benchmarks;
+	}
+
+	public SelectBox<String> getSamples() {
+		return samples;
 	}
 
 }

@@ -1,9 +1,8 @@
 package net.nexusteam.tsmGaSolver;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.TimeUtils;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
-import net.nexusteam.tsmGaSolver.tools.Sample;
+import net.nexusteam.tsmGaSolver.views.Settings;
 
 /** @author Andre Vinicius Lopes */
 public class WorkerThread extends Thread {
@@ -18,10 +17,10 @@ public class WorkerThread extends Thread {
 
 	public WorkerThread(Controller instance) {
 		controller = instance;
-		Sample sample = new Sample(controller.view.getWaypoints());
-		String sampleName = String.valueOf(TimeUtils.millis()); // TODO let user decide sample name
-		sample.save(sampleName);// TODO let user decide if a sample should be saved
-		benchmark = new Benchmark(sampleName);// TODO let user decide if a benchmark should be made
+		if(Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN)) {
+			String sampleName = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
+			benchmark = new Benchmark(sampleName);
+		}
 	}
 
 	@Override
@@ -33,7 +32,8 @@ public class WorkerThread extends Thread {
 
 			controller.status = "Current cost: " + controller.getTopChromosome().getCost();
 			controller.view.update();
-			benchmark.start();
+			if(benchmark != null)
+				benchmark.start();
 
 			while(countSame < controller.minimum_non_change_generations) {
 				if(!stopToKillThread) {
@@ -64,9 +64,11 @@ public class WorkerThread extends Thread {
 				}
 			}
 
-			benchmark.end();
-			benchmark.set(controller.generation_count, (float) controller.getTopChromosome().getCost(), controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length, controller.minimum_non_change_generations, controller.genetic.getTimesMutated());
-			benchmark.save(String.valueOf(TimeUtils.millis())); // TODO custom name
+			if(benchmark != null) {
+				benchmark.end();
+				benchmark.set(controller.generation_count, (float) controller.getTopChromosome().getCost(), controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length, controller.minimum_non_change_generations, controller.genetic.getTimesMutated());
+				benchmark.save(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME));
+			}
 
 			controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
 			controller.view.update();

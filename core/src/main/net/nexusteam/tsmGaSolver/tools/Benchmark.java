@@ -6,12 +6,12 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class Benchmark {
 
-	public FileHandle fileOf(String name) {
-		return Sample.SAMPLE_DIR.child(sample).child(name + ".json");
+	public static Benchmark load(String sample, String name) {
+		return new Json().fromJson(Benchmark.class, Sample.fileOf(sample).sibling(name + ".json"));
 	}
 
-	public boolean exists(String name) {
-		return fileOf(name).exists();
+	public static FileHandle fileOf(String sample, String name) {
+		return Sample.fileOf(sample).sibling(name + ".json");
 	}
 
 	private String sample;
@@ -25,7 +25,6 @@ public class Benchmark {
 	private float favored_populating_percentage;
 	private float cut_length;
 	private float minimum_non_change_generations;
-
 	private long start_time;
 	private long end_time;
 
@@ -38,25 +37,20 @@ public class Benchmark {
 		this.sample = sample;
 	}
 
+	public FileHandle fileOf(String name) {
+		return Sample.SAMPLE_DIR.child(sample).child(name + ".json");
+	}
+
+	public boolean exists(String name) {
+		return fileOf(name).exists();
+	}
+
 	public void start() {
 		start_time = TimeUtils.nanoTime();
 	}
 
 	public void end() {
 		end_time = TimeUtils.nanoTime();
-	}
-
-	public void set(float iterations, float cost, float waypoint_quantity, float chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_populating_percentage, float cut_length, float minimum_non_change_generations, float mutation_quantity) {
-		this.iterations = iterations;
-		this.cost = cost;
-		this.waypoint_quantity = waypoint_quantity;
-		this.chromosome_quantity = chromosome_quantity;
-		this.mutation_percentage = mutation_percentage;
-		this.mating_population_percentage = mating_population_percentage;
-		this.favored_populating_percentage = favored_populating_percentage;
-		this.cut_length = cut_length;
-		this.minimum_non_change_generations = minimum_non_change_generations;
-		this.mutation_quantity = mutation_quantity;
 	}
 
 	// TODO discuss when/how this is supposed to be used and if it makes sense to put this here
@@ -97,8 +91,17 @@ public class Benchmark {
 	//		return total_spent_time;
 	//	}
 
-	public static Benchmark load(String sample, String name) {
-		return new Json().fromJson(Benchmark.class, Sample.fileOf(sample).sibling(name + ".json"));
+	public void set(float iterations, float cost, float waypoint_quantity, float chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_populating_percentage, float cut_length, float minimum_non_change_generations, float mutation_quantity) {
+		this.iterations = iterations;
+		this.cost = cost;
+		this.waypoint_quantity = waypoint_quantity;
+		this.chromosome_quantity = chromosome_quantity;
+		this.mutation_percentage = mutation_percentage;
+		this.mating_population_percentage = mating_population_percentage;
+		this.favored_populating_percentage = favored_populating_percentage;
+		this.cut_length = cut_length;
+		this.minimum_non_change_generations = minimum_non_change_generations;
+		this.mutation_quantity = mutation_quantity;
 	}
 
 	public void save(String name) {

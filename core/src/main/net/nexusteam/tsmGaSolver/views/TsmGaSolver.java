@@ -78,6 +78,9 @@ public class TsmGaSolver extends ApplicationAdapter {
 					return;
 				boolean stepManually = Settings.prefs.getBoolean(Settings.STEP_MANUALLY);
 				if(!controller.isRunning()) {
+					String currentSample = samples.getSamples().getSelected();
+					if(currentSample != null && !currentSample.isEmpty())
+						Settings.prefs.putString(Settings.CURRENT_SAMPLE, currentSample); // IMPORTANT. If CURRENT_SAMPLE is not set, the WorkerThread cannot create a new Benchmark!
 					controller.initialize(bounds.width, bounds.height);
 					if(stepManually)
 						controller.step(Settings.prefs.getInteger(Settings.STEP_ITERATIONS));
@@ -212,6 +215,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 			@Override
 			public void run() {
 				action.setText(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start");
+				if(!Settings.prefs.getBoolean(Settings.BENCHMARK_AUTOMATICALLY))
+					samples.getBenchmarks().getActive().setChecked(false);
 				samples.updateSamples();
 			}
 		});

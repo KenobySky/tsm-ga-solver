@@ -12,9 +12,10 @@ import com.badlogic.gdx.utils.Json;
 public class Sample {
 
 	public static final FileHandle SAMPLE_DIR = Gdx.files.isLocalStorageAvailable() ? Gdx.files.local("samples") : Gdx.files.external("TSM-GA-Solver").child("samples");
+	public static final String FILENAME = "sample.json";
 
 	public static FileHandle fileOf(String name) {
-		return SAMPLE_DIR.child(name).child("sample.json");
+		return SAMPLE_DIR.child(name).child(FILENAME);
 	}
 
 	public static boolean exists(String name) {
