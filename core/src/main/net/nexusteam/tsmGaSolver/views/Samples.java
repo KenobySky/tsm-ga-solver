@@ -58,7 +58,7 @@ public class Samples extends Table {
 			Table controls = new Table(skin), info = new Table(skin);
 
 			{ // controls
-				benchmarks = new SelectBox<>(skin);
+				benchmarks = new SelectBox<String>(skin);
 				TextButton delete = new TextButton("delete", skin);
 				delete.addListener(new ClickListener() {
 					@Override
@@ -164,7 +164,7 @@ public class Samples extends Table {
 		notification.text(message);
 		notification.button("OK");
 
-		samples = new SelectBox<>(skin);
+		samples = new SelectBox<String>(skin);
 		samples.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
