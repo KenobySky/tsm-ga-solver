@@ -141,7 +141,7 @@ public class Settings extends Table {
                 super.show(e);
                 Vector2 tmp = Pools.obtain(Vector2.class);
                 actor.localToStageCoordinates(tmp.set(0, 0));
-                popup.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+                getPopup().setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
                 Pools.free(tmp);
                 return false;
             }

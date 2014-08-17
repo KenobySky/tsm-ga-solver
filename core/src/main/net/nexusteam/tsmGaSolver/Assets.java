@@ -9,7 +9,7 @@ public abstract class Assets {
 
 	public static final AnnotationAssetManager manager = new AnnotationAssetManager();
 
-	@Asset(type = Skin.class)
+	@Asset(Skin.class)
 	public static final String uiskin = "assets/uiskin.json";
 
 }
