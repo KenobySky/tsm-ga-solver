@@ -185,7 +185,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
             {
                 window.setResizable(true);
-                Button close = new TextButton("close", skin);
+                Button close = new TextButton("Close", skin);
                 close.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {

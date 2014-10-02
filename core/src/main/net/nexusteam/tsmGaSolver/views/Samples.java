@@ -1,8 +1,5 @@
 package net.nexusteam.tsmGaSolver.views;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
@@ -25,270 +22,295 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
+import java.io.File;
+import java.io.FilenameFilter;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
 
-/** @author dermetfan */
+/**
+ * @author dermetfan
+ */
 public class Samples extends Table {
 
-	public static void findSampleNames(Array<String> fill) {
-		fill.clear();
-		for(FileHandle file : Sample.SAMPLE_DIR.list())
-			fill.add(file.nameWithoutExtension());
-	}
+    public static void findSampleNames(Array<String> fill) {
+        fill.clear();
+        for (FileHandle file : Sample.SAMPLE_DIR.list()) {
+            fill.add(file.nameWithoutExtension());
+        }
+    }
 
-	/** @author dermetfan */
-	public class Benchmarks extends Table {
+    /**
+     * @author dermetfan
+     */
+    public class Benchmarks extends Table {
 
-		private final FilenameFilter benchmarkFileFilter = new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return !name.equalsIgnoreCase(Sample.FILENAME);
-			}
-		};
-		private SelectBox<String> benchmarks;
-		private Label currentBenchmarkName, infoLabel;
-		/** if checked, the next run should be benchmarked */
-		private CheckBox active;
+        private final FilenameFilter benchmarkFileFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return !name.equalsIgnoreCase(Sample.FILENAME);
+            }
+        };
+        private SelectBox<String> benchmarks;
+        private Label currentBenchmarkName, infoLabel;
+        /**
+         * if checked, the next run should be benchmarked
+         */
+        private CheckBox active;
 
-		public Benchmarks() {
-			Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
+        public Benchmarks() {
+            Skin skin = Assets.manager.get(Assets.uiskin, Skin.class);
 
-			Table controls = new Table(skin), info = new Table(skin);
+            Table controls = new Table(skin), info = new Table(skin);
 
-			{ // controls
-				benchmarks = new SelectBox<String>(skin);
-				TextButton delete = new TextButton("delete", skin);
-				delete.addListener(new ClickListener() {
-					@Override
-					public void clicked(InputEvent event, float x, float y) {
-						Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
-						updateBenchmarks();
-					}
-				});
-				TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
-				name.setMessageText("new name");
-				name.setTextFieldListener(new TextFieldListener() {
-					@Override
-					public void keyTyped(TextField textField, char c) {
-						Settings.prefs.putString(Settings.NEW_BENCHMARK_NAME, textField.getText());
-					}
-				});
-				active = new CheckBox(" Benchmark this run", skin);
-				active.setChecked(Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN));
-				active.addListener(new ChangeListener() {
-					@Override
-					public void changed(ChangeEvent event, Actor actor) {
-						if(active.isDisabled())
-							return;
-						Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
-					}
-				});
+            { // controls
+                benchmarks = new SelectBox<String>(skin);
+                TextButton delete = new TextButton("delete", skin);
+                delete.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
+                        updateBenchmarks();
+                    }
+                });
+                TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
+                name.setMessageText("new name");
+                name.setTextFieldListener(new TextFieldListener() {
+                    @Override
+                    public void keyTyped(TextField textField, char c) {
+                        Settings.prefs.putString(Settings.NEW_BENCHMARK_NAME, textField.getText());
+                    }
+                });
+                active = new CheckBox(" Benchmark this run", skin);
+                active.setChecked(Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN));
+                active.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        if (active.isDisabled()) {
+                            return;
+                        }
+                        Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
+                    }
+                });
 
-				controls.defaults().colspan(2).fillX();
-				controls.add(benchmarks).row();
-				controls.add(delete).row();
-				controls.add("New Benchmark:").row();
-				controls.add(name).row();
-				controls.add(active);
-				controls.pack();
-			}
+                controls.defaults().colspan(2).fillX();
+                controls.add(benchmarks).row();
+                controls.add(delete).row();
+                controls.add("New Benchmark:").row();
+                controls.add(name).row();
+                controls.add(active);
+                controls.pack();
+            }
 
-			{ // info
-				currentBenchmarkName = new Label("[benchmarks benchmark]", skin);
-				infoLabel = new Label("[info]", skin);
+            { // info
+                currentBenchmarkName = new Label("[benchmarks benchmark]", skin);
+                infoLabel = new Label("[info]", skin);
 
-				info.add(currentBenchmarkName).row();
-				info.add(new ScrollPane(infoLabel)).row();
-				info.pack();
-			}
+                info.add(currentBenchmarkName).row();
+                info.add(new ScrollPane(infoLabel)).row();
+                info.pack();
+            }
 
-			add(new SplitPane(controls, info, false, skin)).expand().fill();
-			pack();
-		}
+            add(new SplitPane(controls, info, false, skin)).expand().fill();
 
-		public void updateBenchmarks() {
-			String sample = Samples.this.samples.getSelected();
-			if(sample == null || sample.isEmpty()) {
-				showBenchmarkInfo(null);
-				benchmarks.setItems("no sample selected");
-				Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, false); // we cannot create benchmarks without a sample
-				active.setDisabled(true);
-				return;
-			}
-			active.setDisabled(false);
-			@SuppressWarnings("unchecked")
-			Array<String> benchmarkNames = Pools.obtain(Array.class);
-			benchmarkNames.clear();
-			for(FileHandle benchmark : Sample.fileOf(sample).parent().list(benchmarkFileFilter))
-				benchmarkNames.add(benchmark.nameWithoutExtension());
-			benchmarks.setItems(benchmarkNames);
-			benchmarkNames.clear();
-			Pools.free(benchmarkNames);
-			showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().first() : null);
-		}
+            benchmarks.getList().addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    int selectedIndex = benchmarks.getList().getSelectedIndex();
+                    showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().get(selectedIndex) : null);
+                }
+            });
 
-		public void showBenchmarkInfo(String name) {
-			if(name == null || name.isEmpty()) {
-				currentBenchmarkName.setText("");
-				infoLabel.setText("Please select a benchmark.");
-				return;
-			}
-			currentBenchmarkName.setText(name);
-			String sample = Samples.this.samples.getSelected();
-			benchmarks.setSelected(name);
-			Benchmark benchmark = Benchmark.load(sample, name);
-			infoLabel.setText(benchmark.toString());
-		}
+            pack();
+        }
 
-		/** @return the {@link #active} */
-		public CheckBox getActive() {
-			return active;
-		}
+        public void updateBenchmarks() {
+            String sample = Samples.this.samples.getSelected();
+            if (sample == null || sample.isEmpty()) {
+                showBenchmarkInfo(null);
+                benchmarks.setItems("No sample selected");
+                Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, false); // we cannot create benchmarks without a sample
+                active.setDisabled(true);
+                return;
+            }
+            active.setDisabled(false);
+            @SuppressWarnings("unchecked")
+            Array<String> benchmarkNames = Pools.obtain(Array.class);
+            benchmarkNames.clear();
+            for (FileHandle benchmark : Sample.fileOf(sample).parent().list(benchmarkFileFilter)) {
+                benchmarkNames.add(benchmark.nameWithoutExtension());
+            }
+            benchmarks.setItems(benchmarkNames);
+            benchmarkNames.clear();
+            Pools.free(benchmarkNames);
 
-	}
+            showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().first() : null);
+        }
 
-	private Benchmarks benchmarks = new Benchmarks();
-	private SelectBox<String> samples;
+        public void showBenchmarkInfo(String name) {
+            if (name == null || name.isEmpty()) {
+                currentBenchmarkName.setText("");
+                infoLabel.setText("Please select a benchmark.");
+                return;
+            }
+            currentBenchmarkName.setText(name);
+            String sample = Samples.this.samples.getSelected();
+            benchmarks.setSelected(name);
+            Benchmark benchmark = Benchmark.load(sample, name);
+            infoLabel.setText(benchmark.toString());
+        }
 
-	public Samples() {
-		this(Assets.manager.get(Assets.uiskin, Skin.class));
-	}
+        /**
+         * @return the {@link #active}
+         */
+        public CheckBox getActive() {
+            return active;
+        }
 
-	public Samples(final Skin skin) {
-		setSkin(skin);
+    }
 
-		final Dialog notification = new Dialog("Message", skin);
-		final Label message = new Label("", skin);
-		notification.text(message);
-		notification.button("OK");
+    private Benchmarks benchmarks = new Benchmarks();
+    private SelectBox<String> samples;
 
-		samples = new SelectBox<String>(skin);
-		samples.addListener(new ChangeListener() {
-			@Override
-			public void changed(ChangeEvent event, Actor actor) {
-				FileHandle file = Sample.fileOf(samples.getSelected());
-				Sample sample = new Json().fromJson(Sample.class, file);
-				if(sample != null) {
-					TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
-					if(solver.getController().isRunning())
-						solver.getController().stop();
-					Array<Vector2> waypoints = solver.getWaypoints();
-					waypoints.clear();
-					waypoints.addAll(sample.waypoints);
-					solver.getOptimum().clear();
-					benchmarks.updateBenchmarks();
-					Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
-				} else {
-					message.setText("Failed to load sample " + file.nameWithoutExtension());
-					notification.show(getStage());
-				}
-				benchmarks.updateBenchmarks();
-			}
-		});
-		updateSamples();
-		if(Settings.prefs.contains(Settings.CURRENT_SAMPLE)) {
-			String settingsCurrentSample = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
-			if(samples.getItems().contains(settingsCurrentSample, false))
-				samples.setSelected(settingsCurrentSample);
-		}
+    public Samples() {
+        this(Assets.manager.get(Assets.uiskin, Skin.class));
+    }
 
-		final TextField name = new TextField("", skin);
-		name.setMessageText("new name");
-		name.setTextFieldListener(new TextFieldListener() {
-			@Override
-			public void keyTyped(TextField textField, char c) {
-				Settings.prefs.putString(Settings.NEW_SAMPLE_NAME, textField.getText());
-			}
-		});
+    public Samples(final Skin skin) {
+        setSkin(skin);
 
-		Button delete = new TextButton("delete", skin);
-		delete.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				String sample = samples.getSelected();
-				FileHandle file;
-				if(sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
-					if(!file.deleteDirectory()) {
-						message.setText("Failed to delete sample: " + file.nameWithoutExtension());
-						notification.show(getStage());
-					} else {
-						updateSamples();
-						pack();
-					}
-				} else {
-					message.setText("Sample " + sample + " does not exist");
-					notification.show(getStage());
-				}
-			}
-		});
+        final Dialog notification = new Dialog("Message", skin);
+        final Label message = new Label("", skin);
+        notification.text(message);
+        notification.button("OK");
 
-		Button save = new TextButton("save", skin);
-		save.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				if(!name.getText().isEmpty()) {
-					final Array<Vector2> waypoints = ((TsmGaSolver) Gdx.app.getApplicationListener()).getWaypoints();
-					FileHandle file = Sample.fileOf(name.getText());
-					if(file.exists()) {
-						Dialog overrideDialog = new Dialog("Sample " + name.getText() + " already exists", skin) {
-							{
-								text("Override?").row().colspan(2);
-								button("Yes", true);
-								button("No", false);
-							}
+        samples = new SelectBox<String>(skin);
+        samples.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                FileHandle file = Sample.fileOf(samples.getSelected());
+                Sample sample = new Json().fromJson(Sample.class, file);
+                if (sample != null) {
+                    TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
+                    if (solver.getController().isRunning()) {
+                        solver.getController().stop();
+                    }
+                    Array<Vector2> waypoints = solver.getWaypoints();
+                    waypoints.clear();
+                    waypoints.addAll(sample.waypoints);
+                    solver.getOptimum().clear();
+                    benchmarks.updateBenchmarks();
+                    Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
+                } else {
+                    message.setText("Failed to load sample " + file.nameWithoutExtension());
+                    notification.show(getStage());
+                }
+                benchmarks.updateBenchmarks();
+            }
+        });
+        updateSamples();
+        if (Settings.prefs.contains(Settings.CURRENT_SAMPLE)) {
+            String settingsCurrentSample = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
+            if (samples.getItems().contains(settingsCurrentSample, false)) {
+                samples.setSelected(settingsCurrentSample);
+            }
+        }
 
-							@Override
-							protected void result(Object object) {
-								if(object instanceof Boolean && (Boolean) object) {
-									new Sample(waypoints).save(name.getText());
-									updateSamples();
-									samples.setSelected(name.getText());
-									Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
-								}
-								hide();
-							}
-						};
-						overrideDialog.show(getStage());
-					} else {
-						new Sample(waypoints).save(name.getText());
-						updateSamples();
-						samples.setSelected(name.getText());
-						Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
-					}
-				} else {
-					message.setText("Please enter a name");
-					notification.show(getStage());
-				}
-			}
-		});
+        final TextField name = new TextField("", skin);
+        name.setMessageText("new name");
+        name.setTextFieldListener(new TextFieldListener() {
+            @Override
+            public void keyTyped(TextField textField, char c) {
+                Settings.prefs.putString(Settings.NEW_SAMPLE_NAME, textField.getText());
+            }
+        });
 
-		defaults().colspan(2);
-		add(samples).fillX().row();
-		add(delete).fillX().row();
-		add("New Sample:").row();
-		add(name).fillX().row();
-		add(save).fillX().row();
-	}
+        Button delete = new TextButton("delete", skin);
+        delete.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                String sample = samples.getSelected();
+                FileHandle file;
+                if (sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
+                    if (!file.deleteDirectory()) {
+                        message.setText("Failed to delete sample: " + file.nameWithoutExtension());
+                        notification.show(getStage());
+                    } else {
+                        updateSamples();
+                        pack();
+                    }
+                } else {
+                    message.setText("Sample " + sample + " does not exist");
+                    notification.show(getStage());
+                }
+            }
+        });
 
-	public void updateSamples() {
-		@SuppressWarnings("unchecked")
-		Array<String> sampleNames = Pools.obtain(Array.class);
-		findSampleNames(sampleNames);
-		sampleNames.sort();
-		samples.setItems(sampleNames);
-		sampleNames.clear();
-		Pools.free(sampleNames);
-		benchmarks.updateBenchmarks();
-	}
+        Button save = new TextButton("save", skin);
+        save.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (!name.getText().isEmpty()) {
+                    final Array<Vector2> waypoints = ((TsmGaSolver) Gdx.app.getApplicationListener()).getWaypoints();
+                    FileHandle file = Sample.fileOf(name.getText());
+                    if (file.exists()) {
+                        Dialog overrideDialog = new Dialog("Sample " + name.getText() + " already exists", skin) {
+                            {
+                                text("Override?").row().colspan(2);
+                                button("Yes", true);
+                                button("No", false);
+                            }
 
-	public Benchmarks getBenchmarks() {
-		return benchmarks;
-	}
+                            @Override
+                            protected void result(Object object) {
+                                if (object instanceof Boolean && (Boolean) object) {
+                                    new Sample(waypoints).save(name.getText());
+                                    updateSamples();
+                                    samples.setSelected(name.getText());
+                                    Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
+                                }
+                                hide();
+                            }
+                        };
+                        overrideDialog.show(getStage());
+                    } else {
+                        new Sample(waypoints).save(name.getText());
+                        updateSamples();
+                        samples.setSelected(name.getText());
+                        Settings.prefs.putString(Settings.CURRENT_SAMPLE, name.getText());
+                    }
+                } else {
+                    message.setText("Please enter a name");
+                    notification.show(getStage());
+                }
+            }
+        });
 
-	public SelectBox<String> getSamples() {
-		return samples;
-	}
+        defaults().colspan(2);
+        add(samples).fillX().row();
+        add(delete).fillX().row();
+        add("New Sample:").row();
+        add(name).fillX().row();
+        add(save).fillX().row();
+    }
+
+    public void updateSamples() {
+        @SuppressWarnings("unchecked")
+        Array<String> sampleNames = Pools.obtain(Array.class);
+        findSampleNames(sampleNames);
+        sampleNames.sort();
+        samples.setItems(sampleNames);
+        sampleNames.clear();
+        Pools.free(sampleNames);
+        benchmarks.updateBenchmarks();
+    }
+
+    public Benchmarks getBenchmarks() {
+        return benchmarks;
+    }
+
+    public SelectBox<String> getSamples() {
+        return samples;
+    }
 
 }

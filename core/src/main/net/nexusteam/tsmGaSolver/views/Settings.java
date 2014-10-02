@@ -27,7 +27,7 @@ public class Settings extends Table {
 
     public static final Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
 
-    public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", CUT_LENGTH = "cut length", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", MATING_PERCENTAGE = "mating percentage", STEP_MANUALLY = "step manually", STEP_ITERATIONS = "step iterations", CURRENT_SAMPLE = "current_sample", NEW_SAMPLE_NAME = "new sample name", NEW_BENCHMARK_NAME = "new benchmark name", BENCHMARK_THIS_RUN = "benchmark this run";
+    public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", CUT_LENGTH = "cut length", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", STEP_MANUALLY = "step manually", STEP_ITERATIONS = "step iterations", CURRENT_SAMPLE = "current_sample", NEW_SAMPLE_NAME = "new sample name", NEW_BENCHMARK_NAME = "new benchmark name", BENCHMARK_THIS_RUN = "benchmark this run";
 
     /**
      * @see #isNumeric(char)
@@ -73,11 +73,10 @@ public class Settings extends Table {
         put(MINIMUM_NON_CHANGE_GENERATIONS, 50, override);
         put(STEP_ITERATIONS, 10, override);
 
-		// doesn't have any effect yet
+        // doesn't have any effect yet
         put(MAXIMUM_GENERATIONS, 5000, override);
-        put(MATING_PERCENTAGE, .8f, override); // TODO remove if this is the same as MATING_POPULATION_PERCENTAGE
 
-		// gui settings
+        // gui settings
         put(STEP_MANUALLY, false, override);
     }
 
@@ -253,20 +252,6 @@ public class Settings extends Table {
             }
         });
 
-        // mating percentage
-        Label matingPercentageLabel = new Label("Mating Percentage", skin);
-        final Slider matingPercentage = new Slider(0, 1, .01f, false, skin);
-        matingPercentage.setAnimateDuration(.1f);
-        matingPercentage.setValue(prefs.getFloat(MATING_PERCENTAGE));
-        matingPercentage.addListener(valueTooltip);
-        matingPercentage.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                // matingPercentage.setValue(MathUtils.ceilPositive(matingPercentage.getValue()));
-                prefs.putFloat(MATING_PERCENTAGE, matingPercentage.getValue());
-            }
-        });
-
         // step manually
         final CheckBox stepManually = new CheckBox(" step manually", skin);
         stepManually.setChecked(prefs.getBoolean(STEP_MANUALLY));
@@ -304,8 +289,6 @@ public class Settings extends Table {
         add(maximumGenerations).fill().row();
         add(minimumNonChangeGenerationsLabel).fill();
         add(minimumNonChangeGenerations).fill().row();
-        add(matingPercentageLabel).fill();
-        add(matingPercentage).fill().row();
         add(stepManually).fill();
         add(stepIterations).fill();
     }
