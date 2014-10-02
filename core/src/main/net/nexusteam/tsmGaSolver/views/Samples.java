@@ -69,8 +69,13 @@ public class Samples extends Table {
                 delete.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
-                        updateBenchmarks();
+                        try {
+                            Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
+                            updateBenchmarks();
+                        } catch (Exception ex) {
+
+                        }
+
                     }
                 });
                 TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
@@ -116,8 +121,12 @@ public class Samples extends Table {
             benchmarks.getList().addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    int selectedIndex = benchmarks.getList().getSelectedIndex();
-                    showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().get(selectedIndex) : null);
+                    if (benchmarks != null) {
+                        if (benchmarks.getItems().size > 1) {
+                            int selectedIndex = benchmarks.getList().getSelectedIndex();
+                            showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().get(selectedIndex) : null);
+                        }
+                    }
                 }
             });
 
