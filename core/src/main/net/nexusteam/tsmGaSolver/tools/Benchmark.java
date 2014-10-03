@@ -1,10 +1,11 @@
 package net.nexusteam.tsmGaSolver.tools;
 
+import java.time.Instant;
+import java.util.Date;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.time.Instant;
-import java.util.Date;
 
 public class Benchmark {
 
@@ -52,11 +53,11 @@ public class Benchmark {
     }
 
     public void start() {
-        start_time = TimeUtils.nanoTime();
+        start_time = TimeUtils.millis();
     }
 
     public void end() {
-        end_time = TimeUtils.nanoTime();
+        end_time = TimeUtils.millis();
     }
 
     public void set(int iterations, float cost, int waypoint_quantity, int chromosome_quantity, float mutation_percentage, float mating_population_percentage, float favored_population_percentage, float cut_length, int minimum_non_change_generations, float mutation_quantity) {
