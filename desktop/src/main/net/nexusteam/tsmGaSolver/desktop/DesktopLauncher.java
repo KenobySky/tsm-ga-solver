@@ -8,18 +8,18 @@ import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
 public class DesktopLauncher {
 
-	public static void main(String[] args) {
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-		cfg.width = 1024;
-		cfg.height = 768;
-		cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 1.0";
+    public static void main(String[] args) {
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.width = 1024;
+        cfg.height = 768;
+        cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 1.0";
 
-		new LwjglApplication(new TsmGaSolver(), cfg);
+        LwjglApplication lwjglApplication = new LwjglApplication(new TsmGaSolver(), cfg);
 
-		if(ArrayUtils.contains(args, "--reset", false)) {
-			Settings.reset(true);
-			Settings.prefs.flush();
-		}
-	}
+        if (ArrayUtils.contains(args, "--reset", false)) {
+            Settings.reset(true);
+            Settings.prefs.flush();
+        }
+    }
 
 }
