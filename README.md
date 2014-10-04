@@ -52,7 +52,7 @@ The benchmark is only saved after the solution is calculated.It will save the fo
 * Mutation quantity
 * Minimum non-change generations
 
-![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/2634418079-Nova%20Imagem%20de%20Bitmap.jpg)
+![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/2563788321-Nova%20Imagem%20de%20Bitmap.jpg)
 
 
 ### How do I get set up? ###
