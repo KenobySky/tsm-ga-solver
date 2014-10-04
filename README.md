@@ -22,7 +22,7 @@ To make the program the more didatic as possible, the following parameters of th
 
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
 
-![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/96409790-Nova%20Imagem%20de%20Bitmap.jpg)
+![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1237400943-Nova%20Imagem%20de%20Bitmap.jpg)
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
 In the right, there is the following buttons :
