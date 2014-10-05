@@ -44,6 +44,7 @@ public class Settings extends Table {
     }
 
     /**
+     * @param c
      * @return if the given char represents a numeric value
      */
     public static boolean isNumeric(char c) {
@@ -74,7 +75,7 @@ public class Settings extends Table {
         put(STEP_ITERATIONS, 10, override);
 
         // doesn't have any effect yet
-        put(MAXIMUM_GENERATIONS, 5000, override);
+        put(MAXIMUM_GENERATIONS,0, override);
 
         // gui settings
         put(STEP_MANUALLY, false, override);
@@ -107,6 +108,7 @@ public class Settings extends Table {
      * {@link com.badlogic.gdx.scenes.scene2d.ui.Table}
      */
     public Settings() {
+
         Skin skin = Assets.manager.get(Assets.uiskin);
 
         // value tooltip
@@ -114,8 +116,8 @@ public class Settings extends Table {
         final Container<Label> valueContainer = new Container<Label>(valueLabel);
         valueContainer.setBackground(valueLabel.getStyle().background);
         valueContainer.pack();
-        Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
 
+        Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
             {
                 showOn(Type.touchDown);
                 hideNotOn(Type.touchDown);

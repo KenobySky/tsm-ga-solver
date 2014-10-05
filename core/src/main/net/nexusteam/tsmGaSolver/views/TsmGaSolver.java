@@ -107,7 +107,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
             {
                 final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
-                Button close = new TextButton("close", skin);
+                Button close = new TextButton("Close", skin);
                 close.addListener(new ClickListener() {
                     Runnable showRunnable = new Runnable() {
                         @Override

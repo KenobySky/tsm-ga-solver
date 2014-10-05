@@ -234,22 +234,32 @@ public class Samples extends Table {
             }
         });
 
-        Button delete = new TextButton("delete", skin);
+        Button delete = new TextButton("Delete", skin);
         delete.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 String sample = samples.getSelected();
                 FileHandle file;
                 if (sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
+
                     if (!file.deleteDirectory()) {
-                        message.setText("Failed to delete sample: " + file.nameWithoutExtension());
+                        if (file.extension().equalsIgnoreCase("null")) {
+                            message.setText("Failed to delete sample!");
+                        } else {
+                            message.setText("Failed to delete sample: " + file.nameWithoutExtension());
+                        }
                         notification.show(getStage());
                     } else {
                         updateSamples();
                         pack();
                     }
+
                 } else {
-                    message.setText("Sample " + sample + " does not exist");
+                    if (sample != null && !sample.equalsIgnoreCase("null")) {
+                        message.setText("Sample " + sample + " does not exist");
+                    } else {
+                        message.setText("Sample does not exist");
+                    }
                     notification.show(getStage());
                 }
             }
@@ -296,7 +306,7 @@ public class Samples extends Table {
         });
 
         defaults().colspan(2);
-        add(samples).fillX().row();
+        add(samples).fillX();
         add(delete).fillX().row();
         add("New Sample:").row();
         add(name).fillX().row();

@@ -3,7 +3,7 @@ package net.nexusteam.tsmGaSolver.ann;
 
 import com.badlogic.gdx.math.Vector2;
 
-/** represents a waypoint of the salesman
+/** Represents a waypoint of the salesman
  * @author Andre V Lopes */
 @SuppressWarnings("serial")
 public class Waypoint extends Vector2 {

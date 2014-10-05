@@ -1,15 +1,16 @@
 package net.nexusteam.tsmGaSolver.tools;
 
-import java.time.Instant;
-import java.util.Date;
-
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
+import java.time.Instant;
+import java.util.Date;
 
 public class Benchmark {
 
     public static Benchmark load(String sample, String name) {
+        
+        
         return new Json().fromJson(Benchmark.class, Sample.fileOf(sample).sibling(name + ".json"));
     }
 
