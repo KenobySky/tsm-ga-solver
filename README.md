@@ -30,6 +30,7 @@ In the right, there is the following buttons :
 * Benchmark
 
 Its  possible to save Samples to be used in benchmarks.
+
 ![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1790321101-Nova%20Imagem%20de%20Bitmap.jpg)
 
 
