@@ -60,7 +60,7 @@ public class Settings extends Table {
     }
 
     /**
-     * resets the prefs to the default values
+     * Resets the prefs to the default values
      *
      * @param override if values should be set even though they already exist
      */
@@ -74,10 +74,9 @@ public class Settings extends Table {
         put(MINIMUM_NON_CHANGE_GENERATIONS, 50, override);
         put(STEP_ITERATIONS, 10, override);
 
-        // doesn't have any effect yet
-        put(MAXIMUM_GENERATIONS,0, override);
+        put(MAXIMUM_GENERATIONS, 0, override);
 
-        // gui settings
+        //GUI settings
         put(STEP_MANUALLY, false, override);
     }
 
@@ -111,7 +110,7 @@ public class Settings extends Table {
 
         Skin skin = Assets.manager.get(Assets.uiskin);
 
-        // value tooltip
+        //Value ToolTip
         final Label valueLabel = new Label("", skin, "status");
         final Container<Label> valueContainer = new Container<Label>(valueLabel);
         valueContainer.setBackground(valueLabel.getStyle().background);
@@ -175,27 +174,29 @@ public class Settings extends Table {
         // mutation percentage
         Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
 
-        final Slider mutationPercentage = new Slider(0, 1, 0.01f, false, skin);
+        final Slider mutationPercentage = new Slider(0, 1, .05000f, false, skin);
+        
         mutationPercentage.setAnimateDuration(.1f);
         mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
         mutationPercentage.addListener(valueTooltip);
         mutationPercentage.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+
                 prefs.putFloat(MUTATION_PERCENTAGE, mutationPercentage.getValue());
             }
         });
 
         // mating population percentage
         Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
-        final Slider matingPopulationPercentage = new Slider(0, 1, .01f, false, skin);
+        final Slider matingPopulationPercentage = new Slider(0, 1, .05000f, false, skin);
         matingPopulationPercentage.setAnimateDuration(.1f);
         matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
         matingPopulationPercentage.addListener(valueTooltip);
 
         // favored population percentage
         Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
-        final Slider favoredPopulationPercentage = new Slider(0, 1, .01f, false, skin);
+        final Slider favoredPopulationPercentage = new Slider(0, 1, .05000f, false, skin);
         favoredPopulationPercentage.setAnimateDuration(.1f);
         favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
         favoredPopulationPercentage.addListener(valueTooltip);
@@ -236,6 +237,7 @@ public class Settings extends Table {
         Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
         TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
         maximumGenerations.setTextFieldFilter(numericFilter);
+        maximumGenerations.addListener(getToolTip("Use '0' to unlimited iterations", skin));
         maximumGenerations.setTextFieldListener(new TextFieldListener() {
             @Override
             public void keyTyped(TextField textField, char c) {
@@ -243,7 +245,7 @@ public class Settings extends Table {
             }
         });
 
-        // minimum non-change generations
+        //Minimum non-change generations
         Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
         TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
         minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
@@ -293,6 +295,46 @@ public class Settings extends Table {
         add(minimumNonChangeGenerations).fill().row();
         add(stepManually).fill();
         add(stepIterations).fill();
+    }
+
+    public Tooltip<Container> getToolTip(final String tip, Skin skin) {
+        //Value ToolTip
+        final Label valueLabel = new Label(tip, skin, "status");
+        final Container<Label> valueContainer = new Container<Label>(valueLabel);
+        valueContainer.setBackground(valueLabel.getStyle().background);
+        valueContainer.pack();
+
+        Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer) {
+            {
+                showOn(Type.touchDown);
+                hideNotOn(Type.touchDown);
+            }
+
+            Actor actor;
+
+            @Override
+            public boolean handle(Event e) {
+                super.handle(e);
+                actor = e.getListenerActor();
+
+                valueLabel.setText(tip);
+
+                return false;
+            }
+
+            @Override
+            public boolean show(Event e) {
+                super.show(e);
+                Vector2 tmp = Pools.obtain(Vector2.class);
+                actor.localToStageCoordinates(tmp.set(0, 0));
+                popup.setPosition(tmp.x + actor.getWidth() / 4 + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+                Pools.free(tmp);
+                return false;
+            }
+
+        };
+
+        return valueTooltip;
     }
 
 }

@@ -181,8 +181,8 @@ public class TsmGaSolver extends ApplicationAdapter {
 
         final Button benchmarks = new TextButton("Benchmarks", skin);
         benchmarks.addListener(new ClickListener() {
+           
             Window window = new Window("Benchmarks", skin);
-
             {
                 window.setResizable(true);
                 Button close = new TextButton("Close", skin);
@@ -192,6 +192,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                         window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.removeActor()));
                     }
                 });
+                
                 window.add(samples.getBenchmarks()).expand().fill().row();
                 window.add(close).expandX().fillX();
                 window.setColor(1, 1, 1, 0);
