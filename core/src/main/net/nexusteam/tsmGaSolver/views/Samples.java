@@ -1,5 +1,8 @@
 package net.nexusteam.tsmGaSolver.views;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
@@ -22,8 +25,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
-import java.io.File;
-import java.io.FilenameFilter;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -35,9 +36,9 @@ public class Samples extends Table {
 
     public static void findSampleNames(Array<String> fill) {
         fill.clear();
-        for (FileHandle file : Sample.SAMPLE_DIR.list()) {
-            fill.add(file.nameWithoutExtension());
-        }
+        for (FileHandle sample : Sample.SAMPLE_DIR.list())
+			if(sample.isDirectory() && sample.child(Sample.FILENAME).exists())
+				fill.add(sample.name());
     }
 
     /**
@@ -69,13 +70,8 @@ public class Samples extends Table {
                 delete.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        try {
-                            Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
-                            updateBenchmarks();
-                        } catch (Exception ex) {
-
-                        }
-
+						Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
+						updateBenchmarks();
                     }
                 });
                 TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
@@ -99,9 +95,9 @@ public class Samples extends Table {
                 });
 
                 controls.defaults().colspan(2).fillX();
-                controls.add(benchmarks).row();
-                controls.add(delete).row();
-                controls.add("New Benchmark:").row();
+                controls.add(benchmarks).colspan(1);
+                controls.add(delete).colspan(1).row();
+                controls.add("New Benchmark:").center().fill(false).row();
                 controls.add(name).row();
                 controls.add(active);
                 controls.pack();
@@ -306,8 +302,8 @@ public class Samples extends Table {
         });
 
         defaults().colspan(2);
-        add(samples).fillX();
-        add(delete).fillX().row();
+        add(samples).fillX().colspan(1);
+        add(delete).fillX().colspan(1).row();
         add("New Sample:").row();
         add(name).fillX().row();
         add(save).fillX().row();
