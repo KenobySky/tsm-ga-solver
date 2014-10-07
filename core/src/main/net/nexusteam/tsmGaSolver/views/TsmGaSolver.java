@@ -138,7 +138,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                 window.add(new Settings()).fill().row();
                 window.add(close).fill();
                 window.pack();
-                window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+                window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
                 window.setColor(1, 1, 1, 0);
             }
 
@@ -201,7 +201,7 @@ public class TsmGaSolver extends ApplicationAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 window.pack();
-                window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+				window.setPosition(stage.getWidth() / 2 - window.getWidth() / 2, stage.getHeight() / 2 - window.getHeight() / 2);
                 stage.addActor(window);
                 window.addAction(Actions.fadeIn(0.4f));
             }

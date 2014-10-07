@@ -58,10 +58,10 @@ default: { background: default-pane, knob: default-round-large }
 com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 default: { minus: tree-minus, plus: tree-plus, selection: default-select-selection }
 },
-net.dermetfan.utils.libgdx.scene2d.ui.ListFileChooser$Style: {
+net.dermetfan.gdx.scenes.scene2d.ui.ListFileChooser$Style: {
 	default: { pathFieldStyle: default, contentsStyle: default, space: 10, contentsPaneStyle: default, buttonStyles: default-textButton }
 },
-net.dermetfan.utils.libgdx.scene2d.ui.TreeFileChooser$Style: {
+net.dermetfan.gdx.scenes.scene2d.ui.TreeFileChooser$Style: {
 	default: { treeStyle: default, selectButtonStyle: default-textButton, cancelButtonStyle: default-textButton, labelStyle: default }
 }
 }

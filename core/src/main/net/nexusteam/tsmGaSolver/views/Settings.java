@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Pools;
-import net.dermetfan.utils.libgdx.scene2d.ui.Tooltip;
+import net.dermetfan.gdx.scenes.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
 
 /**
@@ -141,7 +141,7 @@ public class Settings extends Table {
                 super.show(e);
                 Vector2 tmp = Pools.obtain(Vector2.class);
                 actor.localToStageCoordinates(tmp.set(0, 0));
-                popup.setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+                getPopup().setPosition(tmp.x + actor.getWidth() + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
                 Pools.free(tmp);
                 return false;
             }
@@ -327,7 +327,7 @@ public class Settings extends Table {
                 super.show(e);
                 Vector2 tmp = Pools.obtain(Vector2.class);
                 actor.localToStageCoordinates(tmp.set(0, 0));
-                popup.setPosition(tmp.x + actor.getWidth() / 4 + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
+                getPopup().setPosition(tmp.x + actor.getWidth() / 4 + valueLabel.getWidth() / 2 + 5, tmp.y + actor.getHeight() / 2);
                 Pools.free(tmp);
                 return false;
             }
