@@ -193,22 +193,24 @@ public class Samples extends Table {
         samples.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                FileHandle file = Sample.fileOf(samples.getSelected());
-                Sample sample = new Json().fromJson(Sample.class, file);
-                if (sample != null) {
-                    TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
-                    if (solver.getController().isRunning()) {
-                        solver.getController().stop();
+                if(samples.getSelected() != null) {
+                    FileHandle file = Sample.fileOf(samples.getSelected());
+                    Sample sample = new Json().fromJson(Sample.class, file);
+                    if(sample != null) {
+                        TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
+                        if(solver.getController().isRunning()) {
+                            solver.getController().stop();
+                        }
+                        Array<Vector2> waypoints = solver.getWaypoints();
+                        waypoints.clear();
+                        waypoints.addAll(sample.waypoints);
+                        solver.getOptimum().clear();
+                        benchmarks.updateBenchmarks();
+                        Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
+                    } else {
+                        message.setText("Failed to load sample " + file.nameWithoutExtension());
+                        notification.show(getStage());
                     }
-                    Array<Vector2> waypoints = solver.getWaypoints();
-                    waypoints.clear();
-                    waypoints.addAll(sample.waypoints);
-                    solver.getOptimum().clear();
-                    benchmarks.updateBenchmarks();
-                    Settings.prefs.putString(Settings.CURRENT_SAMPLE, samples.getSelected());
-                } else {
-                    message.setText("Failed to load sample " + file.nameWithoutExtension());
-                    notification.show(getStage());
                 }
                 benchmarks.updateBenchmarks();
             }
