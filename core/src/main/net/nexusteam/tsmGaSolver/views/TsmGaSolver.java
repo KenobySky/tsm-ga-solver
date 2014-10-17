@@ -104,12 +104,12 @@ public class TsmGaSolver extends ApplicationAdapter {
         Button settings = new TextButton("Settings", skin);
         settings.addListener(new ClickListener() {
             Window window = new Window("Settings", skin);
+            int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
 
             {
-                final int currentWaypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
                 Button close = new TextButton("Close", skin);
                 close.addListener(new ClickListener() {
-                    Runnable showRunnable = new Runnable() {
+                    Runnable onClose = new Runnable() {
                         @Override
                         public void run() {
                             Settings.prefs.flush();
@@ -121,6 +121,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                             // repopulate if necessary
                             int waypointQuantity = Settings.prefs.getInteger(Settings.WAYPOINT_QUANTITY);
                             if (currentWaypointQuantity != waypointQuantity) {
+                                currentWaypointQuantity = waypointQuantity;
                                 populate(waypointQuantity);
                             }
 
@@ -132,14 +133,14 @@ public class TsmGaSolver extends ApplicationAdapter {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         stage.setKeyboardFocus(null); // user can still click in a text field during fade-out, but this is good enough
-                        window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.hide(), Actions.run(showRunnable)));
+                        window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.hide(), Actions.run(onClose)));
                     }
                 });
 
                 window.add(new Settings()).fill().row();
                 window.add(close).fill();
                 window.pack();
-                window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2,Align.center);
+                window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2, Align.center);
                 window.setColor(1, 1, 1, 0);
             }
 
