@@ -30,8 +30,7 @@ public class WorkerThread extends Thread {
     public WorkerThread(Controller instance) {
         controller = instance;
         if (Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN)) {
-            String sampleName = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
-            benchmark = new Benchmark(sampleName);
+            benchmark = new Benchmark();
         }
     }
 
@@ -94,7 +93,7 @@ public class WorkerThread extends Thread {
             if (benchmark != null) {
                 benchmark.end();
                 benchmark.set(controller.generation_count, (float) controller.getTopChromosome().getCost(), controller.waypoints.length, controller.chromosome_quantity, controller.mutation_percentage, controller.mating_population_percentage, controller.favored_population_percentage, controller.cut_length, controller.minimum_non_change_generations, controller.genetic.getTimesMutated());
-                benchmark.save(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME));
+                benchmark.save(Settings.prefs.getString(Settings.CURRENT_SAMPLE), Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME));
             }
 
             controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";

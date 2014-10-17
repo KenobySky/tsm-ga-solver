@@ -9,16 +9,13 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class Benchmark {
 
     public static Benchmark load(String sample, String name) {
-        
-        
-        return new Json().fromJson(Benchmark.class, Sample.fileOf(sample).sibling(name + ".json"));
+        return new Json().fromJson(Benchmark.class, fileOf(sample, name));
     }
 
     public static FileHandle fileOf(String sample, String name) {
         return Sample.fileOf(sample).sibling(name + ".json");
     }
 
-    private String sample;
     private int iterations;
     private float cost;
     private int waypoint_quantity;
@@ -36,21 +33,6 @@ public class Benchmark {
      * constructor for serialization
      */
     public Benchmark() {
-    }
-
-    public Benchmark(String sample) {
-        if (!Sample.exists(sample)) {
-            throw new IllegalArgumentException("Sample " + sample + " does not exist");
-        }
-        this.sample = sample;
-    }
-
-    public FileHandle fileOf(String name) {
-        return Sample.SAMPLE_DIR.child(sample).child(name + ".json");
-    }
-
-    public boolean exists(String name) {
-        return fileOf(name).exists();
     }
 
     public void start() {
@@ -74,23 +56,13 @@ public class Benchmark {
         this.mutation_quantity = mutation_quantity;
     }
 
-    public void save(String name) {
-        fileOf(name).writeString(new Json().toJson(this), false);
-    }
-
-    public String findAvailableName(String sampleName) {
-        FileHandle file = fileOf(sampleName);
-        int num = 1;
-        while (file.exists()) {
-            file = fileOf(sampleName + '-' + String.valueOf(num++));
-        }
-        return file.name();
+    public void save(String sample, String name) {
+        fileOf(sample, name).writeString(new Json().toJson(this), false);
     }
 
     @Override
     public String toString() {
-        return "Sample: " + sample + '\n'
-                + "Started: " + new Date(start_time) + '\n'
+        return "Started: " + new Date(start_time) + '\n'
                 + "Duration: " + ((end_time - start_time) / 1000f) + " sec\n"
                 + "Waypoints: " + waypoint_quantity + '\n'
                 + "Chromosomes: " + chromosome_quantity + '\n'
