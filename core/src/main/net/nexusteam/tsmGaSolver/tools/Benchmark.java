@@ -1,10 +1,11 @@
 package net.nexusteam.tsmGaSolver.tools;
 
+import java.time.Instant;
+import java.util.Date;
+
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.TimeUtils;
-import java.time.Instant;
-import java.util.Date;
 
 public class Benchmark {
 
@@ -91,7 +92,7 @@ public class Benchmark {
     public String toString() {
         return "Sample: " + sample + '\n'
                 + "Started: " + Date.from(Instant.ofEpochMilli(start_time)) + '\n'
-                + "Duration: " + (TimeUtils.nanosToMillis(end_time - start_time) / 1000f) + " sec\n"
+                + "Duration: " + ((end_time - start_time) / 1000f) + " sec\n"
                 + "Waypoints: " + waypoint_quantity + '\n'
                 + "Chromosomes: " + chromosome_quantity + '\n'
                 + "Cost: " + cost + '\n'
