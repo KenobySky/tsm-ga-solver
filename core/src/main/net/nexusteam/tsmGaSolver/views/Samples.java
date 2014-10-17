@@ -70,8 +70,10 @@ public class Samples extends Table {
                 delete.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-						Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
-						updateBenchmarks();
+                        if(Samples.this.samples.getSelected() != null) {
+                            Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
+                            updateBenchmarks();
+                        }
                     }
                 });
                 TextField name = new TextField(Settings.prefs.getString(Settings.NEW_BENCHMARK_NAME), skin);
