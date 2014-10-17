@@ -79,6 +79,8 @@ public class Settings extends Table {
 
 		//GUI settings
 		put(STEP_MANUALLY, false, override);
+
+		prefs.flush(); // necessary on android
 	}
 
 	/**
