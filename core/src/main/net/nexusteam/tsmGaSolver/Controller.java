@@ -6,8 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
-import net.nexusteam.tsmGaSolver.ann.Waypoint;
-import net.nexusteam.tsmGaSolver.tools.RandomUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
 import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
@@ -66,7 +64,7 @@ public class Controller {
     /**
      * List of WayPoints
      */
-    protected Waypoint[] waypoints;
+    protected Vector2[] waypoints;
 
     /**
      * an optional solutionFound
@@ -115,12 +113,7 @@ public class Controller {
     public void initialize(float usable_Width, float usable_Height) {
         configure();
         Array<Vector2> viewWaypoints = view.getWaypoints();
-        waypoints = new Waypoint[viewWaypoints.size];
-
-        for (int i = 0; i < waypoints.length; i++) {
-            Vector2 point = viewWaypoints.get(i);
-            waypoints[i] = new Waypoint(point.x, point.y, String.valueOf(RandomUtils.getRandomLetter()));
-        }
+        waypoints = viewWaypoints.toArray(Vector2.class);
 
         cut_length = chromosome_quantity / 5; // FIXME https://bitbucket.org/dermetfan/tsm-ga-solver/issue/2/some-settings-cause-calculate-cost-to-give remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
 

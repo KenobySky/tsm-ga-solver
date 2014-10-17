@@ -1,5 +1,6 @@
 package net.nexusteam.tsmGaSolver.ann;
 
+import com.badlogic.gdx.math.Vector2;
 import net.JeffHeatonCode.Chromosome;
 import net.JeffHeatonCode.NeuralNetworkError;
 
@@ -8,9 +9,9 @@ import net.JeffHeatonCode.NeuralNetworkError;
  */
 public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
 
-    protected Waypoint[] path;
+    protected Vector2[] path;
 
-    public TSPChromosome(final TSPGeneticAlgorithm owner, final Waypoint path[]) {
+    public TSPChromosome(final TSPGeneticAlgorithm owner, final Vector2 path[]) {
         setGeneticAlgorithm(owner);
         this.path = path;
 
@@ -75,7 +76,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
     }
 
     //2Opt Methods
-    private Waypoint[] optSwap(Integer genes[], int i, int k) {
+    private Vector2[] optSwap(Integer genes[], int i, int k) {
 
         Integer auxGenes[] = new Integer[genes.length];
         //Step 1
@@ -107,7 +108,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
         //   2. A ==> B ==> C ==> (G ==> F ==> E ==> D)
         // 3. A ==> B ==> C ==> G ==> F ==> E ==> D (==> H ==> A)
 		//
-        Waypoint[] auxPath = new Waypoint[auxGenes.length];
+        Vector2[] auxPath = new Vector2[auxGenes.length];
         for (int g = 0; g < auxGenes.length; g++) {
             auxPath[g] = getPath()[auxGenes[g]];
         }
@@ -188,7 +189,7 @@ public class TSPChromosome extends Chromosome<Integer, TSPGeneticAlgorithm> {
     /**
      * @return the {@link #path}
      */
-    public Waypoint[] getPath() {
+    public Vector2[] getPath() {
         return path;
     }
 
