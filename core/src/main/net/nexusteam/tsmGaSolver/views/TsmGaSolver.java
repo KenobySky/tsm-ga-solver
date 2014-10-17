@@ -131,14 +131,15 @@ public class TsmGaSolver extends ApplicationAdapter {
 
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.run(showRunnable)));
+                        stage.setKeyboardFocus(null); // user can still click in a text field during fade-out, but this is good enough
+                        window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.hide(), Actions.run(showRunnable)));
                     }
                 });
 
                 window.add(new Settings()).fill().row();
                 window.add(close).fill();
                 window.pack();
-                 window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2,Align.center);
+                window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2,Align.center);
                 window.setColor(1, 1, 1, 0);
             }
 
@@ -146,6 +147,7 @@ public class TsmGaSolver extends ApplicationAdapter {
             public void clicked(InputEvent event, float x, float y) {
                 if (!controller.isRunning()) {
                     stage.addActor(window);
+                    window.addAction(Actions.show());
                     window.addAction(Actions.fadeIn(0.4f));
                     action.setDisabled(true);
                 }
@@ -181,7 +183,7 @@ public class TsmGaSolver extends ApplicationAdapter {
 
         final Button benchmarks = new TextButton("Benchmarks", skin);
         benchmarks.addListener(new ClickListener() {
-           
+
             Window window = new Window("Benchmarks", skin);
             {
                 window.setResizable(true);
@@ -192,7 +194,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                         window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.removeActor()));
                     }
                 });
-                
+
                 window.add(samples.getBenchmarks()).expand().fill().row();
                 window.add(close).expandX().fillX();
                 window.setColor(1, 1, 1, 0);
