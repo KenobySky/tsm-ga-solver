@@ -152,7 +152,7 @@ public class Settings extends Table {
 
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
-		TextField waypointQuantity = new TextField(prefs.getString(WAYPOINT_QUANTITY), skin);
+		TextField waypointQuantity = new TextField(String.valueOf(prefs.getInteger(WAYPOINT_QUANTITY)), skin);
 		waypointQuantity.setTextFieldFilter(numericFilter);
 		waypointQuantity.setTextFieldListener(new TextFieldListener() {
 			@Override
@@ -164,12 +164,12 @@ public class Settings extends Table {
 
 		// chromosome quantity
 		Label chromosomeQuantityLabel = new Label("Chromosomes", skin);
-		TextField chromosomeQuantity = new TextField(prefs.getString(CHROMOSOME_QUANTITY), skin);
+		TextField chromosomeQuantity = new TextField(String.valueOf(prefs.getInteger(CHROMOSOME_QUANTITY)), skin);
 		chromosomeQuantity.setTextFieldFilter(numericFilter);
 		chromosomeQuantity.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(CHROMOSOME_QUANTITY, numerize(textField.getText()));
+				prefs.putInteger(CHROMOSOME_QUANTITY, Integer.parseInt(numerize(textField.getText())));
 			}
 		});
 
@@ -223,18 +223,18 @@ public class Settings extends Table {
 
 		// cut length
 		Label cutLengthLabel = new Label("Cut Length", skin);
-		TextField cutLength = new TextField(prefs.getString(CUT_LENGTH), skin);
+		TextField cutLength = new TextField(String.valueOf(prefs.getInteger(CUT_LENGTH)), skin);
 		cutLength.setTextFieldFilter(numericFilter);
 		cutLength.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(CUT_LENGTH, numerize(textField.getText()));
+				prefs.putInteger(CUT_LENGTH, Integer.parseInt(numerize(textField.getText())));
 			}
 		});
 
 		// maximum generations
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
-		TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
+		TextField maximumGenerations = new TextField(String.valueOf(prefs.getInteger(MAXIMUM_GENERATIONS)), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
         maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
 			@Override
@@ -247,18 +247,18 @@ public class Settings extends Table {
 		maximumGenerations.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MAXIMUM_GENERATIONS, numerize(textField.getText()));
+				prefs.putInteger(MAXIMUM_GENERATIONS, Integer.parseInt(numerize(textField.getText())));
 			}
 		});
 
 		//Minimum non-change generations
 		Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
-		TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
+		TextField minimumNonChangeGenerations = new TextField(String.valueOf(prefs.getInteger(MINIMUM_NON_CHANGE_GENERATIONS)), skin);
 		minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
 		minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				prefs.putString(MINIMUM_NON_CHANGE_GENERATIONS, numerize(textField.getText()));
+				prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, Integer.parseInt(numerize(textField.getText())));
 			}
 		});
 
@@ -272,7 +272,7 @@ public class Settings extends Table {
 			}
 		});
 
-		TextField stepIterations = new TextField(prefs.getString(STEP_ITERATIONS), skin);
+		TextField stepIterations = new TextField(String.valueOf(prefs.getInteger(STEP_ITERATIONS)), skin);
 		stepIterations.setMessageText("Generations per step");
 		stepIterations.setTextFieldFilter(numericFilter);
 		stepIterations.setTextFieldListener(new TextFieldListener() {
