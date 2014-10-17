@@ -157,8 +157,8 @@ public class Settings extends Table {
 		waypointQuantity.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
-				String num = String.valueOf(Math.max(Integer.parseInt(numerize(textField.getText())), 2));
-				prefs.putString(WAYPOINT_QUANTITY, num);
+				Integer num = Math.max(Integer.parseInt(numerize(textField.getText())), 2);
+				prefs.putInteger(WAYPOINT_QUANTITY, num);
 			}
 		});
 

@@ -230,6 +230,8 @@ public class TsmGaSolver extends ApplicationAdapter {
                 samples.updateSamples();
             }
         });
+
+        samples.updateSamples();
     }
 
     @Override

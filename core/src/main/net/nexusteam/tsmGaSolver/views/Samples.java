@@ -213,7 +213,6 @@ public class Samples extends Table {
                 benchmarks.updateBenchmarks();
             }
         });
-        updateSamples();
         if (Settings.prefs.contains(Settings.CURRENT_SAMPLE)) {
             String settingsCurrentSample = Settings.prefs.getString(Settings.CURRENT_SAMPLE);
             if (samples.getItems().contains(settingsCurrentSample, false)) {
