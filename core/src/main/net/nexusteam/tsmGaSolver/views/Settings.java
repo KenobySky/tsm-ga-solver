@@ -148,6 +148,7 @@ public class Settings extends Table {
 		valueTooltip.showOn(Type.touchDown);
 		valueTooltip.showOn(Type.touchDragged);
 		valueTooltip.hideNotOn(Type.touchDown);
+		valueTooltip.hideNotOn(Type.mouseMoved);
 
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
@@ -235,7 +236,7 @@ public class Settings extends Table {
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
 		TextField maximumGenerations = new TextField(prefs.getString(MAXIMUM_GENERATIONS), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
-        maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin)) {
+        maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
 			@Override
 			public boolean show(Event event) {
 				if(getPopup().getStage() != event.getStage())
@@ -253,7 +254,6 @@ public class Settings extends Table {
 		//Minimum non-change generations
 		Label minimumNonChangeGenerationsLabel = new Label("Mininum non-change Generations", skin);
 		TextField minimumNonChangeGenerations = new TextField(prefs.getString(MINIMUM_NON_CHANGE_GENERATIONS), skin);
-		minimumNonChangeGenerations.addListener(valueTooltip);
 		minimumNonChangeGenerations.setTextFieldFilter(numericFilter);
 		minimumNonChangeGenerations.setTextFieldListener(new TextFieldListener() {
 			@Override
