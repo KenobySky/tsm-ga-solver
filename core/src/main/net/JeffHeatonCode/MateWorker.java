@@ -21,15 +21,15 @@ import java.util.concurrent.Callable;
  * 
  * @author Jeff Heaton
  * @version 2.1 */
-public class MateWorker<CHROMOSME_TYPE extends Chromosome<?, ?>> implements Callable<Integer> {
+public class MateWorker<CHROMOSOME_TYPE extends Chromosome<?, ?>> implements Callable<Integer> {
 
-	private final CHROMOSME_TYPE mother;
-	private final CHROMOSME_TYPE father;
-	private final CHROMOSME_TYPE child1;
-	private final CHROMOSME_TYPE child2;
+	private final CHROMOSOME_TYPE mother;
+	private final CHROMOSOME_TYPE father;
+	private final CHROMOSOME_TYPE child1;
+	private final CHROMOSOME_TYPE child2;
 
-	public MateWorker (final CHROMOSME_TYPE mother, final CHROMOSME_TYPE father, final CHROMOSME_TYPE child1,
-		final CHROMOSME_TYPE child2) {
+	public MateWorker (final CHROMOSOME_TYPE mother, final CHROMOSOME_TYPE father, final CHROMOSOME_TYPE child1,
+		final CHROMOSOME_TYPE child2) {
 		this.mother = mother;
 		this.father = father;
 		this.child1 = child1;
