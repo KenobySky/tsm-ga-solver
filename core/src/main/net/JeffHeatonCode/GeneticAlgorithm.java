@@ -117,7 +117,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 
 		final int countToMate = (int)(getPopulationSize() * getPercentToMate());
 		final int offspringCount = countToMate * 2;
-		int offspringIndex = getPopulationSize() - offspringCount;
+		int offspringIndex = Math.abs(getPopulationSize() - offspringCount);
 		final int matingPopulationSize = (int)(getPopulationSize() * getMatingPopulation());
 
 		final Collection<Callable<Integer>> tasks = new ArrayList<Callable<Integer>>();
@@ -128,8 +128,8 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 			final CHROMOSOME_TYPE mother = this.chromosomes[i];
 			final int fatherInt = (int)(Math.random() * matingPopulationSize);
 			final CHROMOSOME_TYPE father = this.chromosomes[fatherInt];
-			final CHROMOSOME_TYPE child1 = this.chromosomes[offspringIndex];
-			final CHROMOSOME_TYPE child2 = this.chromosomes[offspringIndex + 1];
+			final CHROMOSOME_TYPE child1 = this.chromosomes[offspringIndex % chromosomes.length];
+			final CHROMOSOME_TYPE child2 = this.chromosomes[(offspringIndex + 1) % chromosomes.length];
 
 			final MateWorker<CHROMOSOME_TYPE> worker = new MateWorker<CHROMOSOME_TYPE>(mother, father, child1, child2);
 
@@ -211,7 +211,7 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
 		this.preventRepeat = preventRepeat;
 	}
 
-	public void sortChromosomes () {
+	public synchronized void sortChromosomes () {
 		try {
 
 			Arrays.sort(this.chromosomes);
