@@ -1,14 +1,17 @@
 package net.nexusteam.tsmGaSolver.views;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -16,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import net.dermetfan.gdx.scenes.scene2d.Scene2DUtils;
 import net.dermetfan.gdx.scenes.scene2d.ui.PositionedPopup.Position;
 import net.dermetfan.gdx.scenes.scene2d.ui.Tooltip;
@@ -110,7 +114,6 @@ public class Settings extends Table {
 	 * {@link com.badlogic.gdx.scenes.scene2d.ui.Table}
 	 */
 	public Settings() {
-
 		Skin skin = Assets.manager.get(Assets.uiskin);
 
 		//Value ToolTip
@@ -177,7 +180,8 @@ public class Settings extends Table {
 
 		// mutation percentage
 		Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
-		final Slider mutationPercentage = new Slider(0, 1, .05000f, false, skin);
+		final Slider mutationPercentage = new Slider(0, 1, .0000001f, false, skin);
+		mutationPercentageLabel.addListener(new NewValueListener(mutationPercentage));
 		mutationPercentage.setAnimateDuration(.1f);
 		mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
 		mutationPercentage.addListener(valueTooltip);
@@ -190,14 +194,16 @@ public class Settings extends Table {
 
 		// mating population percentage
 		Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
-		final Slider matingPopulationPercentage = new Slider(0, 1, .05000f, false, skin);
+		final Slider matingPopulationPercentage = new Slider(0, 1, .0000001f, false, skin);
+		matingPopulationPercentageLabel.addListener(new NewValueListener(matingPopulationPercentage));
 		matingPopulationPercentage.setAnimateDuration(.1f);
 		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
 		matingPopulationPercentage.addListener(valueTooltip);
 
 		// favored population percentage
 		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
-		final Slider favoredPopulationPercentage = new Slider(0, 1, .05000f, false, skin);
+		final Slider favoredPopulationPercentage = new Slider(0, 1, .0000001f, false, skin);
+		favoredPopulationPercentageLabel.addListener(new NewValueListener(favoredPopulationPercentage));
 		favoredPopulationPercentage.setAnimateDuration(.1f);
 		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
 		favoredPopulationPercentage.addListener(valueTooltip);
@@ -303,6 +309,33 @@ public class Settings extends Table {
 		add(minimumNonChangeGenerations).fill().row();
 		add(stepManually).fill();
 		add(stepIterations).fill();
+	}
+
+	private static class NewValueListener extends ClickListener {
+
+		private final TextInputListener listener = new TextInputListener() {
+			@Override
+			public void input(String text) {
+				text = text.trim().replaceAll("[\\D&&[^\\.]]+", ""); // remove all non-digits except the dot
+				text = text.replaceAll("\\.{2,}", "."); // replace multiple dots with one dot
+				target.setValue(Float.parseFloat(text) / 100);
+			}
+
+			@Override
+			public void canceled() {}
+		};
+
+		private ProgressBar target;
+
+		public NewValueListener(ProgressBar target) {
+			this.target = target;
+		}
+
+		@Override
+		public void clicked(InputEvent event, float x, float y) {
+			Gdx.input.getPlaceholderTextInput(listener, "new value", String.valueOf(target.getValue() * 100));
+		}
+
 	}
 
 }
