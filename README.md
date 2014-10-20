@@ -22,6 +22,7 @@ The number of waypoints is the quantity of cities that is inserted in the map.Th
 
 Below the map, there is two labels which shows the current status and the current optimum cost.  
 On the right, there are the following buttons:
+
 * Start
 * Samples
 * Settings
