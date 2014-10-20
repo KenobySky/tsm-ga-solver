@@ -1,6 +1,8 @@
 package net.nexusteam.tsmGaSolver.views;
 
+import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputEvent.Type;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -41,6 +44,11 @@ public class Settings extends Table {
 		@Override
 		public boolean acceptChar(TextField textField, char c) {
 			return isNumeric(c);
+		}
+	}, decimalFilter = new TextFieldFilter() {
+		@Override
+		public boolean acceptChar(TextField textField, char c) {
+			return numericFilter.acceptChar(textField, c) || c == '.';
 		}
 	};
 
@@ -181,7 +189,7 @@ public class Settings extends Table {
 		// mutation percentage
 		Label mutationPercentageLabel = new Label("Mutation Percentage", skin);
 		final Slider mutationPercentage = new Slider(0, 1, .0000001f, false, skin);
-		mutationPercentageLabel.addListener(new NewValueListener(mutationPercentage));
+		mutationPercentageLabel.addListener(new NewValueListener(mutationPercentage, skin));
 		mutationPercentage.setAnimateDuration(.1f);
 		mutationPercentage.setValue(prefs.getFloat(MUTATION_PERCENTAGE));
 		mutationPercentage.addListener(valueTooltip);
@@ -195,7 +203,7 @@ public class Settings extends Table {
 		// mating population percentage
 		Label matingPopulationPercentageLabel = new Label("Mating Population Percentage", skin);
 		final Slider matingPopulationPercentage = new Slider(0, 1, .0000001f, false, skin);
-		matingPopulationPercentageLabel.addListener(new NewValueListener(matingPopulationPercentage));
+		matingPopulationPercentageLabel.addListener(new NewValueListener(matingPopulationPercentage, skin));
 		matingPopulationPercentage.setAnimateDuration(.1f);
 		matingPopulationPercentage.setValue(prefs.getFloat(MATING_POPULATION_PERCENTAGE));
 		matingPopulationPercentage.addListener(valueTooltip);
@@ -203,7 +211,7 @@ public class Settings extends Table {
 		// favored population percentage
 		Label favoredPopulationPercentageLabel = new Label("Favored Population Percentage", skin);
 		final Slider favoredPopulationPercentage = new Slider(0, 1, .0000001f, false, skin);
-		favoredPopulationPercentageLabel.addListener(new NewValueListener(favoredPopulationPercentage));
+		favoredPopulationPercentageLabel.addListener(new NewValueListener(favoredPopulationPercentage, skin));
 		favoredPopulationPercentage.setAnimateDuration(.1f);
 		favoredPopulationPercentage.setValue(prefs.getFloat(FAVORED_POPULATION_PERCENTAGE));
 		favoredPopulationPercentage.addListener(valueTooltip);
@@ -313,12 +321,14 @@ public class Settings extends Table {
 
 	private static class NewValueListener extends ClickListener {
 
+		private final Dialog newValueDialog;
+		private final TextField newValueDialogInput;
+
+		/** for Android, iOS, WebGL, Applet */
 		private final TextInputListener listener = new TextInputListener() {
 			@Override
 			public void input(String text) {
-				text = text.trim().replaceAll("[\\D&&[^\\.]]+", ""); // remove all non-digits except the dot
-				text = text.replaceAll("\\.{2,}", "."); // replace multiple dots with one dot
-				target.setValue(Float.parseFloat(text) / 100);
+				apply(text);
 			}
 
 			@Override
@@ -327,13 +337,47 @@ public class Settings extends Table {
 
 		private ProgressBar target;
 
-		public NewValueListener(ProgressBar target) {
+		public NewValueListener(ProgressBar target, final Skin skin) {
 			this.target = target;
+
+			newValueDialogInput = new TextField("", skin);
+			newValueDialogInput.setTextFieldFilter(decimalFilter);
+
+			newValueDialog = new Dialog("new value", skin) {
+				{
+					getContentTable().add(newValueDialogInput);
+					button("OK", true);
+					button("cancel");
+					key(Keys.ENTER, true);
+					key(Keys.ESCAPE, null);
+				}
+
+				@Override
+				protected void result(Object object) {
+					if(object != null && (Boolean) object)
+						apply(newValueDialogInput.getText());
+				}
+			};
 		}
 
 		@Override
 		public void clicked(InputEvent event, float x, float y) {
-			Gdx.input.getPlaceholderTextInput(listener, "new value", String.valueOf(target.getValue() * 100));
+			String current = String.valueOf(target.getValue() * 100);
+			if(Gdx.app.getType() == ApplicationType.Desktop) {
+				newValueDialogInput.setText("");
+				newValueDialogInput.setMessageText(current);
+				newValueDialog.show(target.getStage());
+			} else
+				Gdx.input.getPlaceholderTextInput(listener, "new value", current);
+		}
+
+		private void apply(String text) {
+			if(text == null || text.isEmpty())
+				return;
+			text = text.trim().replaceAll("[\\D&&[^\\.]]+", ""); // remove all non-digits except the dot
+			text = text.replaceAll("\\.{2,}", "."); // replace multiple dots with one dot
+			text = numerize(text);
+			target.setValue(Float.parseFloat(text) / 100);
 		}
 
 	}
