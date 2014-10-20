@@ -50,7 +50,7 @@ public class WorkerThread extends Thread {
             while (countSame < controller.minimum_non_change_generations) {
                 if (!stopToKillThread) {
                     controller.generation_count++;
-                    controller.status = "Generation: " + controller.generation_count + " - Cost: " + controller.getTopChromosome().getCost() + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
+                    controller.status = "Generation: " + controller.generation_count + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
 
                     try {
                         controller.genetic.iteration();
