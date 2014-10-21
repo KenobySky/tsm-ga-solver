@@ -17,9 +17,12 @@ To make the program the more didatic as possible, the following parameters of th
 7. Maximum generations
 8. Minimum non-change generations
 9. Step Manually checkbox
+
 ![Settings.png](https://bitbucket.org/repo/egL9o4/images/1786806396-Settings.png)
 
+
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
+
 
 ![mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2266976735-mainscreen.png)
 
