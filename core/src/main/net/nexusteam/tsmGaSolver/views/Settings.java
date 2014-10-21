@@ -35,7 +35,7 @@ public class Settings extends Table {
 
 	public static final Preferences prefs = Gdx.app.getPreferences("TSM-GA-Solver");
 
-	public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", CUT_LENGTH = "cut length", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", STEP_MANUALLY = "step manually", STEP_ITERATIONS = "step iterations", CURRENT_SAMPLE = "current_sample", NEW_SAMPLE_NAME = "new sample name", NEW_BENCHMARK_NAME = "new benchmark name", BENCHMARK_THIS_RUN = "benchmark this run";
+	public static final String WAYPOINT_QUANTITY = "waypoint quantity", CHROMOSOME_QUANTITY = "chromosome quantity", MUTATION_PERCENTAGE = "mutation percentage", MATING_POPULATION_PERCENTAGE = "mating population percentage", FAVORED_POPULATION_PERCENTAGE = "favored population percentage", MAXIMUM_GENERATIONS = "maximum generations", MINIMUM_NON_CHANGE_GENERATIONS = "minimum non-change generations", STEP_MANUALLY = "step manually", STEP_ITERATIONS = "step iterations", CURRENT_SAMPLE = "current_sample", NEW_SAMPLE_NAME = "new sample name", NEW_BENCHMARK_NAME = "new benchmark name", BENCHMARK_THIS_RUN = "benchmark this run";
 
 	/**
 	 * @see #isNumeric(char)
@@ -83,10 +83,8 @@ public class Settings extends Table {
 		put(MUTATION_PERCENTAGE, .1f, override);
 		put(MATING_POPULATION_PERCENTAGE, .25f, override);
 		put(FAVORED_POPULATION_PERCENTAGE, .75f, override);
-		put(CUT_LENGTH, 10, override);
 		put(MINIMUM_NON_CHANGE_GENERATIONS, 50, override);
 		put(STEP_ITERATIONS, 10, override);
-
 		put(MAXIMUM_GENERATIONS, 0, override);
 
 		//GUI settings
@@ -152,8 +150,9 @@ public class Settings extends Table {
 
 			@Override
 			public boolean show(Event event) {
-				if(getPopup().getStage() != event.getStage())
-					event.getStage().addActor(getPopup());
+				if(getPopup().getStage() != event.getStage()) {
+                                    event.getStage().addActor(getPopup());
+                                }
 				getPopup().pack();
 				return super.show(event);
 			}
@@ -237,26 +236,18 @@ public class Settings extends Table {
 			}
 		});
 
-		// cut length
-		Label cutLengthLabel = new Label("Cut Length", skin);
-		TextField cutLength = new TextField(String.valueOf(prefs.getInteger(CUT_LENGTH)), skin);
-		cutLength.setTextFieldFilter(numericFilter);
-		cutLength.setTextFieldListener(new TextFieldListener() {
-			@Override
-			public void keyTyped(TextField textField, char c) {
-				prefs.putInteger(CUT_LENGTH, Integer.parseInt(numerize(textField.getText())));
-			}
-		});
+		
 
 		// maximum generations
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
 		TextField maximumGenerations = new TextField(String.valueOf(prefs.getInteger(MAXIMUM_GENERATIONS)), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
-        maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
+                maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
 			@Override
 			public boolean show(Event event) {
-				if(getPopup().getStage() != event.getStage())
-					event.getStage().addActor(getPopup());
+				if(getPopup().getStage() != event.getStage()) {
+                                    event.getStage().addActor(getPopup());
+                                }
 				return super.show(event);
 			}
 		});
@@ -278,6 +269,16 @@ public class Settings extends Table {
 			}
 		});
 
+                minimumNonChangeGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
+			@Override
+			public boolean show(Event event) {
+				if(getPopup().getStage() != event.getStage()) {
+                                    event.getStage().addActor(getPopup());
+                                }
+				return super.show(event);
+			}
+		});
+                
 		// step manually
 		final CheckBox stepManually = new CheckBox(" step manually", skin);
 		stepManually.setChecked(prefs.getBoolean(STEP_MANUALLY));
@@ -309,11 +310,9 @@ public class Settings extends Table {
 		add(matingPopulationPercentage).fill().row();
 		add(favoredPopulationPercentageLabel).fill();
 		add(favoredPopulationPercentage).fill().row();
-		add(cutLengthLabel).fill();
-		add(cutLength).fill().row();
 		add(maximumGenerationsLabel).fill();
 		add(maximumGenerations).fill().row();
-		add(minimumNonChangeGenerationsLabel).fill();
+		add(minimumNonChangeGenerationsLabel).fill().padRight(5);
 		add(minimumNonChangeGenerations).fill().row();
 		add(stepManually).fill();
 		add(stepIterations).fill();

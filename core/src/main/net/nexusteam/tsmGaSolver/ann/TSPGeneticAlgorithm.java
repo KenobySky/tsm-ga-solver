@@ -8,7 +8,7 @@ import net.JeffHeatonCode.NeuralNetworkError;
 /** @author Andre Vinícius Lopes */
 public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 
-	private int timesMutated = 0;
+	private int mutationCounter = 0;
 
 	public TSPGeneticAlgorithm (final Vector2 vector2s[], final int populationSize, final double mutationPercent,
 		final double percentToMate, final double matingPopulationPercent, final int cutLength) throws NeuralNetworkError {
@@ -29,12 +29,14 @@ public class TSPGeneticAlgorithm extends GeneticAlgorithm<TSPChromosome> {
 		sortChromosomes();
 	}
 
-	public int getTimesMutated () {
-		return timesMutated;
+        
+        
+	public int getMutationCounter () {
+		return mutationCounter;
 	}
 
 	public void incrementMutationCounter () {
-		timesMutated++;
+		mutationCounter++;
 	}
 
 }

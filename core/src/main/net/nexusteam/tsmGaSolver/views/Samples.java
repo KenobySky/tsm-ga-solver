@@ -1,8 +1,5 @@
 package net.nexusteam.tsmGaSolver.views;
 
-import java.io.File;
-import java.io.FilenameFilter;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
@@ -25,6 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
+import java.io.File;
+import java.io.FilenameFilter;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -36,9 +35,11 @@ public class Samples extends Table {
 
     public static void findSampleNames(Array<String> fill) {
         fill.clear();
-        for (FileHandle sample : Sample.SAMPLE_DIR.list())
-			if(sample.isDirectory() && sample.child(Sample.FILENAME).exists())
-				fill.add(sample.name());
+        for (FileHandle sample : Sample.SAMPLE_DIR.list()) {
+            if (sample.isDirectory() && sample.child(Sample.FILENAME).exists()) {
+                fill.add(sample.name());
+            }
+        }
     }
 
     /**
@@ -70,7 +71,7 @@ public class Samples extends Table {
                 delete.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        if(Samples.this.samples.getSelected() != null) {
+                        if (Samples.this.samples.getSelected() != null) {
                             Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
                             updateBenchmarks();
                         }
@@ -97,12 +98,13 @@ public class Samples extends Table {
                 });
 
                 controls.defaults().colspan(2).fillX();
-                controls.add(benchmarks).colspan(1);
-                controls.add(delete).colspan(1).row();
-                controls.add("New Benchmark:").center().fill(false).row();
-                controls.add(name).row();
-                controls.add(active);
+                controls.add(benchmarks).colspan(1).expandX();
+                controls.add(delete).padLeft(5).colspan(1).row().expandX();
+                controls.add("New Benchmark:").center().fill(false).row().expandX();;
+                controls.add(name).row().expandX();;
+                controls.add(active).expandX();;
                 controls.pack();
+
             }
 
             { // info
@@ -128,6 +130,7 @@ public class Samples extends Table {
                 }
             });
 
+           
             pack();
         }
 
@@ -163,8 +166,14 @@ public class Samples extends Table {
             currentBenchmarkName.setText(name);
             String sample = Samples.this.samples.getSelected();
             benchmarks.setSelected(name);
-            Benchmark benchmark = Benchmark.load(sample, name);
-            infoLabel.setText(benchmark.toString());
+            Benchmark benchmark = null;
+            try {
+                benchmark = Benchmark.load(sample, name);
+                infoLabel.setText(benchmark.toString());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         }
 
         /**
@@ -195,12 +204,12 @@ public class Samples extends Table {
         samples.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(samples.getSelected() != null) {
+                if (samples.getSelected() != null) {
                     FileHandle file = Sample.fileOf(samples.getSelected());
                     Sample sample = new Json().fromJson(Sample.class, file);
-                    if(sample != null) {
+                    if (sample != null) {
                         TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
-                        if(solver.getController().isRunning()) {
+                        if (solver.getController().isRunning()) {
                             solver.getController().stop();
                         }
                         Array<Vector2> waypoints = solver.getWaypoints();
