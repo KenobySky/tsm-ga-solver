@@ -7,7 +7,7 @@ Robin Stu
 Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didatic for students.
 Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
 
-To make the program the more didatic as possible, the following parameters of the algorithm can be changed :
+To make the program the more didatic as possible, picture 1 shows the following parameters of the algorithm that can be changed 
 
 1. Number of Waypoints
 2. Number of Chromosomes
@@ -19,12 +19,18 @@ To make the program the more didatic as possible, the following parameters of th
 9. Step Manually checkbox
 
 ![Settings.png](https://bitbucket.org/repo/egL9o4/images/1786806396-Settings.png)
+Picture 1 : Settings Window
 
 
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
-
+Picture 2 shows the mainscreen before the solution was calculated and pictue 3 shows the solution shown on screen.
 
 ![mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2266976735-mainscreen.png)
+Picture 2 : Main screen
+
+
+![solutionCalculated.png](https://bitbucket.org/repo/egL9o4/images/98117339-solutionCalculated.png)
+Picture 3 : Solution Calculated
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
 In the right, there is the following buttons :
