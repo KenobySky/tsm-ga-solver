@@ -187,8 +187,6 @@ public class TsmGaSolver extends ApplicationAdapter {
 
             Window window = new Window("Benchmarks", skin);
             {
-             
-               
                 window.setResizable(true);
                 Button close = new TextButton("Close", skin);
                 close.addListener(new ClickListener() {
@@ -199,21 +197,17 @@ public class TsmGaSolver extends ApplicationAdapter {
                 });
 
                 window.add(samples.getBenchmarks()).expand().fill().row();
-                window.add(close).width(window.getWidth()/1.5f);
+                window.add(close).width(window.getWidth() / 1.5f);
                 window.setColor(1, 1, 1, 0);
-                
-
             }
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 window.pack();
                 window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2, Align.center);
-                //window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
                 window.setWidth(stage.getWidth() / 1.8f);
-                window.setHeight(stage.getHeight()/ 1.8f);
+                window.setHeight(stage.getHeight() / 1.8f);
                 stage.addActor(window);
-                window.addAction(Actions.fadeIn(0.2f));
             }
         });
 
