@@ -6,7 +6,6 @@ Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and
 Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
 
 To make the program the more didatic as possible, the following parameters of the algorithm can be changed :
-
 1. Number of Waypoints
 2. Number of Chromosomes
 3. Mutation percentage
