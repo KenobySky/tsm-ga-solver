@@ -22,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
@@ -66,6 +67,16 @@ public class Samples extends Table {
 
             { // controls
                 benchmarks = new SelectBox<String>(skin);
+                benchmarks.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        if(hasParent()) {
+                            Actor parent = getParent();
+                            if(parent instanceof Layout)
+                                ((Layout) getParent()).pack();
+                        }
+                    }
+                });
                 TextButton delete = new TextButton("delete", skin);
                 delete.addListener(new ClickListener() {
                     @Override
@@ -196,6 +207,10 @@ public class Samples extends Table {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if(samples.getSelected() != null) {
+                    // pack parent
+                    if(hasParent() && getParent() instanceof Layout)
+                        ((Layout) getParent()).pack();
+                    // load sample
                     FileHandle file = Sample.fileOf(samples.getSelected());
                     Sample sample = new Json().fromJson(Sample.class, file);
                     if(sample != null) {
@@ -240,25 +255,17 @@ public class Samples extends Table {
                 String sample = samples.getSelected();
                 FileHandle file;
                 if (sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
-
                     if (!file.deleteDirectory()) {
-                        if (file.extension().equalsIgnoreCase("null")) {
-                            message.setText("Failed to delete sample!");
-                        } else {
-                            message.setText("Failed to delete sample: " + file.nameWithoutExtension());
-                        }
+                        message.setText("Failed to delete sample: " + file.nameWithoutExtension());
                         notification.show(getStage());
                     } else {
                         updateSamples();
                         pack();
+                        if(hasParent() && getParent() instanceof Layout)
+                            ((Layout) getParent()).pack();
                     }
-
                 } else {
-                    if (sample != null && !sample.equalsIgnoreCase("null")) {
-                        message.setText("Sample " + sample + " does not exist");
-                    } else {
-                        message.setText("Sample does not exist");
-                    }
+                    message.setText("Sample " + (sample != null ? sample + " " : "") + "does not exist");
                     notification.show(getStage());
                 }
             }
@@ -305,6 +312,7 @@ public class Samples extends Table {
         });
 
         defaults().colspan(2);
+        add(samples).fillX().row();
         add(samples).fillX().colspan(1);
         add(delete).fillX().colspan(1).row();
         add("New Sample:").row();
