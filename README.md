@@ -18,7 +18,7 @@ To make the program the more didatic as possible, picture 1 shows the following 
 8. Minimum non-change generations
 9. Step Manually checkbox
 
-![Settings.png](https://bitbucket.org/repo/egL9o4/images/1786806396-Settings.png)
+![1786806396-Settings.png](https://bitbucket.org/repo/egL9o4/images/2199362518-1786806396-Settings.png)
 Picture 1 : Settings Window
 
 
