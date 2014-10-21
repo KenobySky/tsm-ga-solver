@@ -97,7 +97,6 @@ public class Controller {
         mutation_percentage = prefs.getFloat(Settings.MUTATION_PERCENTAGE);
         mating_population_percentage = prefs.getFloat(Settings.MATING_POPULATION_PERCENTAGE);
         favored_population_percentage = prefs.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
-        cut_length = prefs.getInteger(Settings.CUT_LENGTH);
         minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
         maximum_generations = prefs.getInteger(Settings.MAXIMUM_GENERATIONS);
         

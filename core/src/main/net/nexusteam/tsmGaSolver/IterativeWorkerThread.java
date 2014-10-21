@@ -38,7 +38,7 @@ public class IterativeWorkerThread extends WorkerThread {
                 while (countSame < controller.minimum_non_change_generations) {
                     if (!isThreadStopping() && numberOfIterations > 0) {
                         controller.generation_count++;
-                        controller.status = "Generation: " + controller.generation_count + " - Mutated " + controller.genetic.getTimesMutated() + " Times";
+                        controller.status = "Generation: " + controller.generation_count + " - Mutated " + controller.genetic.getMutationCounter() + " Times";
 
                         controller.genetic.iteration();
 
@@ -59,7 +59,7 @@ public class IterativeWorkerThread extends WorkerThread {
                     }
                 }
 
-                controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getTimesMutated() + " mutations";
+                controller.status = "Solution found after " + controller.generation_count + " generations and " + controller.genetic.getMutationCounter() + " mutations";
                 controller.view.update();
                 if (controller.isRunning()) {
                     controller.stop();

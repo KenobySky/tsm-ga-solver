@@ -192,7 +192,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                 close.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        window.addAction(Actions.sequence(Actions.fadeOut(0.4f), Actions.removeActor()));
+                        window.addAction(Actions.sequence(Actions.fadeOut(0.2f), Actions.removeActor()));
                     }
                 });
 
@@ -204,8 +204,9 @@ public class TsmGaSolver extends ApplicationAdapter {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 window.pack();
-                window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2,Align.center);
-                //window.setCenterPosition(stage.getWidth() / 2, stage.getHeight() / 2);
+                window.setPosition(stage.getWidth() / 2, stage.getHeight() / 2, Align.center);
+                window.setWidth(stage.getWidth() / 1.8f);
+                window.setHeight(stage.getHeight() / 1.8f);
                 stage.addActor(window);
                 window.addAction(Actions.fadeIn(0.4f));
             }
@@ -251,7 +252,7 @@ public class TsmGaSolver extends ApplicationAdapter {
         renderer.setProjectionMatrix(viewport.getCamera().combined);
 
         // draw bounds
-        renderer.setColor(Color.WHITE);
+        renderer.setColor(Color.RED);
         renderer.begin(ShapeType.Line);
         renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
         renderer.end();
@@ -317,21 +318,21 @@ public class TsmGaSolver extends ApplicationAdapter {
     /**
      * @return the {@link #waypoints}
      */
-    public Array<Vector2> getWaypoints() {
+    public synchronized Array<Vector2> getWaypoints() {
         return waypoints;
     }
 
     /**
      * @return the {@link #optimum}
      */
-    public IntArray getOptimum() {
+    public synchronized IntArray getOptimum() {
         return optimum;
     }
 
     /**
      * @return the {@link #controller}
      */
-    public Controller getController() {
+    public synchronized Controller getController() {
         return controller;
     }
 
