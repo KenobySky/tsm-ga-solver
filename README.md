@@ -25,13 +25,13 @@ Picture 1 : Settings Window
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
 Picture 2 shows the mainscreen before the solution was calculated and pictue 3 shows the solution shown on screen.
 
-![mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2266976735-mainscreen.png)
 
+![2266976735-mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2125412026-2266976735-mainscreen.png)
 Picture 2 : Main screen
 
 
-![solutionCalculated.png](https://bitbucket.org/repo/egL9o4/images/98117339-solutionCalculated.png)
 
+![98117339-solutionCalculated.png](https://bitbucket.org/repo/egL9o4/images/2027184326-98117339-solutionCalculated.png)
 Picture 3 : Solution Calculated
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
