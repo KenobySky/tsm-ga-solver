@@ -197,7 +197,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                 });
 
                 window.add(samples.getBenchmarks()).expand().fill().row();
-                window.add(close).width(window.getWidth() / 1.5f);
+                window.add(close).expandX().fillX();
                 window.setColor(1, 1, 1, 0);
             }
 
