@@ -42,13 +42,14 @@ In the right, there is the following buttons :
 * Settings
 * Benchmark
 
-Its  possible to save Samples to be used in benchmarks.
+Its  possible to save Samples to be used in benchmarks as shown in picture 4 :
 
-![benchmakToSave.png](https://bitbucket.org/repo/egL9o4/images/784360299-benchmakToSave.png)
+![784360299-benchmakToSave.png](https://bitbucket.org/repo/egL9o4/images/2266868724-784360299-benchmakToSave.png)
+Picture 4 : Benchmark
 
 
 The benchmark function allows  the program to save the result of a solution calculated.It also saves the sample reference which makes it possible to run the same sample with different settings and compare the results, making it very didatic for students.
-The benchmark is only saved after the solution is calculated.It will save the following data , as shown in picture 4  :
+The benchmark is only saved after the solution is calculated.It will save the following data , as shown in picture 5  :
 
 * Sample name
 * Date of start
@@ -65,7 +66,7 @@ The benchmark is only saved after the solution is calculated.It will save the fo
 * Minimum non-change generations
 
 ![2660592877-BenchmarkSaved.png](https://bitbucket.org/repo/egL9o4/images/3671443975-2660592877-BenchmarkSaved.png)
-Picture 4 : Benchmark saved
+Picture 5 : Benchmark saved
 
 ### How do I get set up? ###
 
