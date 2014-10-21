@@ -208,6 +208,7 @@ public class TsmGaSolver extends ApplicationAdapter {
                 window.setWidth(stage.getWidth() / 1.8f);
                 window.setHeight(stage.getHeight() / 1.8f);
                 stage.addActor(window);
+                window.addAction(Actions.fadeIn(0.4f));
             }
         });
 
