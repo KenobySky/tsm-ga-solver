@@ -26,10 +26,12 @@ The number of waypoints is the quantity of cities that is inserted in the map.Th
 Picture 2 shows the mainscreen before the solution was calculated and pictue 3 shows the solution shown on screen.
 
 ![mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2266976735-mainscreen.png)
+
 Picture 2 : Main screen
 
 
 ![solutionCalculated.png](https://bitbucket.org/repo/egL9o4/images/98117339-solutionCalculated.png)
+
 Picture 3 : Solution Calculated
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
