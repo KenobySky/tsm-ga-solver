@@ -2,8 +2,10 @@ package net.nexusteam.tsmGaSolver.views;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Event;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -24,6 +26,7 @@ import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
 import java.io.File;
 import java.io.FilenameFilter;
+import net.dermetfan.gdx.scenes.scene2d.ui.Tooltip;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -96,13 +99,29 @@ public class Samples extends Table {
                         Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
                     }
                 });
+                
+                Label benchmarkRunInfo = new Label("Warning : \n A sample must be created to enable this", skin);
+                benchmarkRunInfo.setFontScaleX(1/1.15f);
+                benchmarkRunInfo.setColor(Color.RED);
+                
+                active.addListener(new Tooltip<Label>(new Label("A sample is needed \n to be activated!", skin, "status")) {
+                    @Override
+                    public boolean show(Event event) {
+
+                        if (getPopup().getStage() != event.getStage()) {
+                            event.getStage().addActor(getPopup());
+                        }
+                        return super.show(event);
+                    }
+                });
 
                 controls.defaults().colspan(2).fillX();
                 controls.add(benchmarks).colspan(1).expandX();
                 controls.add(delete).padLeft(5).colspan(1).row().expandX();
                 controls.add("New Benchmark:").center().fill(false).row().expandX();;
-                controls.add(name).row().expandX();;
-                controls.add(active).expandX();;
+                controls.add(name).row().expandX();
+                controls.add(active).expandX().padTop(10).left().row();
+                controls.add(benchmarkRunInfo);
                 controls.pack();
 
             }
@@ -130,7 +149,6 @@ public class Samples extends Table {
                 }
             });
 
-           
             pack();
         }
 
