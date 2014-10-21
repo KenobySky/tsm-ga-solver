@@ -1,5 +1,8 @@
 package net.nexusteam.tsmGaSolver.views;
 
+import java.io.File;
+import java.io.FilenameFilter;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
@@ -19,11 +22,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
-import java.io.File;
-import java.io.FilenameFilter;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -35,11 +37,9 @@ public class Samples extends Table {
 
     public static void findSampleNames(Array<String> fill) {
         fill.clear();
-        for (FileHandle sample : Sample.SAMPLE_DIR.list()) {
-            if (sample.isDirectory() && sample.child(Sample.FILENAME).exists()) {
-                fill.add(sample.name());
-            }
-        }
+        for (FileHandle sample : Sample.SAMPLE_DIR.list())
+			if(sample.isDirectory() && sample.child(Sample.FILENAME).exists())
+				fill.add(sample.name());
     }
 
     /**
@@ -67,11 +67,21 @@ public class Samples extends Table {
 
             { // controls
                 benchmarks = new SelectBox<String>(skin);
+                benchmarks.addListener(new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent event, Actor actor) {
+                        if(hasParent()) {
+                            Actor parent = getParent();
+                            if(parent instanceof Layout)
+                                ((Layout) getParent()).pack();
+                        }
+                    }
+                });
                 TextButton delete = new TextButton("delete", skin);
                 delete.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        if (Samples.this.samples.getSelected() != null) {
+                        if(Samples.this.samples.getSelected() != null) {
                             Benchmark.fileOf(Samples.this.samples.getSelected(), benchmarks.getSelected()).delete();
                             updateBenchmarks();
                         }
@@ -104,7 +114,6 @@ public class Samples extends Table {
                 controls.add(name).row().expandX();;
                 controls.add(active).expandX();;
                 controls.pack();
-
             }
 
             { // info
@@ -130,7 +139,6 @@ public class Samples extends Table {
                 }
             });
 
-           
             pack();
         }
 
@@ -166,14 +174,8 @@ public class Samples extends Table {
             currentBenchmarkName.setText(name);
             String sample = Samples.this.samples.getSelected();
             benchmarks.setSelected(name);
-            Benchmark benchmark = null;
-            try {
-                benchmark = Benchmark.load(sample, name);
-                infoLabel.setText(benchmark.toString());
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
+            Benchmark benchmark = Benchmark.load(sample, name);
+            infoLabel.setText(benchmark.toString());
         }
 
         /**
@@ -204,12 +206,16 @@ public class Samples extends Table {
         samples.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (samples.getSelected() != null) {
+                if(samples.getSelected() != null) {
+                    // pack parent
+                    if(hasParent() && getParent() instanceof Layout)
+                        ((Layout) getParent()).pack();
+                    // load sample
                     FileHandle file = Sample.fileOf(samples.getSelected());
                     Sample sample = new Json().fromJson(Sample.class, file);
-                    if (sample != null) {
+                    if(sample != null) {
                         TsmGaSolver solver = (TsmGaSolver) Gdx.app.getApplicationListener();
-                        if (solver.getController().isRunning()) {
+                        if(solver.getController().isRunning()) {
                             solver.getController().stop();
                         }
                         Array<Vector2> waypoints = solver.getWaypoints();
@@ -249,25 +255,17 @@ public class Samples extends Table {
                 String sample = samples.getSelected();
                 FileHandle file;
                 if (sample != null && !sample.isEmpty() && (file = Sample.SAMPLE_DIR.child(sample)).exists()) {
-
                     if (!file.deleteDirectory()) {
-                        if (file.extension().equalsIgnoreCase("null")) {
-                            message.setText("Failed to delete sample!");
-                        } else {
-                            message.setText("Failed to delete sample: " + file.nameWithoutExtension());
-                        }
+                        message.setText("Failed to delete sample: " + file.nameWithoutExtension());
                         notification.show(getStage());
                     } else {
                         updateSamples();
                         pack();
+                        if(hasParent() && getParent() instanceof Layout)
+                            ((Layout) getParent()).pack();
                     }
-
                 } else {
-                    if (sample != null && !sample.equalsIgnoreCase("null")) {
-                        message.setText("Sample " + sample + " does not exist");
-                    } else {
-                        message.setText("Sample does not exist");
-                    }
+                    message.setText("Sample " + (sample != null ? sample + " " : "") + "does not exist");
                     notification.show(getStage());
                 }
             }

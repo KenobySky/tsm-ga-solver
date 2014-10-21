@@ -1,8 +1,6 @@
-**Traveling salesman Solver with Genetic Algorithm and Libgdx** 
+# Traveling salesman Solver with Genetic Algorithm and Libgdx #
 
-Authors : 
-André V Lopes
-Robin Stu
+*Authors: André V Lopes and Robin Stumm*
 
 Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didatic for students.
 Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
@@ -22,8 +20,9 @@ The number of waypoints is the quantity of cities that is inserted in the map.Th
 
 ![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1237400943-Nova%20Imagem%20de%20Bitmap.jpg)
 
-Below the map, there is two labels which shows the current status and the current optimum cost.
-In the right, there is the following buttons :
+Below the map, there is two labels which shows the current status and the current optimum cost.  
+On the right, there are the following buttons:
+
 * Start
 * Samples
 * Settings
@@ -33,15 +32,13 @@ Its  possible to save Samples to be used in benchmarks.
 
 ![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1790321101-Nova%20Imagem%20de%20Bitmap.jpg)
 
+With benchmarks it's possible to make the program to save the result of the solution calculated in a file. It also saves the sample reference which makes it possible to run the same sample of cities with different settings and compare the results, making it very didatic for students.  
+The benchmark is saved when a solution is calculated. It will save the following data:
 
-With benchmark its possible to make the program to save the result of the solution calculated in a file.It also saves the sample reference which makes it possible to run the same sample/city with different settings and compare the results, making it very didatic for students.
-The benchmark is only saved after the solution is calculated.It will save the following data :
-
-* Sample name
-* Date of start
+* Date and time of start
 * Duration in seconds
-* Waypoints quantity
-* Chromosomes quantity
+* Waypoint quantity
+* Chromosome quantity
 * Cost in pixels
 * Cut length
 * Iterations
@@ -52,7 +49,6 @@ The benchmark is only saved after the solution is calculated.It will save the fo
 * Minimum non-change generations
 
 ![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/2563788321-Nova%20Imagem%20de%20Bitmap.jpg)
-
 
 ### How do I get set up? ###
 
@@ -71,8 +67,7 @@ The benchmark is only saved after the solution is calculated.It will save the fo
 
 ### Who do I talk to? ###
 
-Private message André Lopes or Robin S.
-
+Private message [André Lopes](http://bitbucket.org/andrelopes1705) or [Robin Stumm](http://bitbucket.org/dermetfan).
 
 ###  SPECIAL THANKS  ###
 
