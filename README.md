@@ -5,15 +5,15 @@
 Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didatic for students.
 Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
 
-To make the program the more didatic as possible, the following parameters of the algorithm can be changed : \n
+To make the program the more didatic as possible, the following parameters of the algorithm can be changed : 
 1. Number of Waypoints
 2. Number of Chromosomes
 3. Mutation percentage
 4. Mating population percentage
 5. Favored population percentage
-7. Maximum generations
-8. Minimum non-change generations
-9. Step Manually checkbox
+6. Maximum generations
+7. Minimum non-change generations
+8. Step Manually checkbox
 
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
 
