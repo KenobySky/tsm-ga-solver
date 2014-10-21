@@ -17,10 +17,11 @@ To make the program the more didatic as possible, the following parameters of th
 7. Maximum generations
 8. Minimum non-change generations
 9. Step Manually checkbox
+![Settings.png](https://bitbucket.org/repo/egL9o4/images/1786806396-Settings.png)
 
 The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.
 
-![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1237400943-Nova%20Imagem%20de%20Bitmap.jpg)
+![mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2266976735-mainscreen.png)
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
 In the right, there is the following buttons :
@@ -31,7 +32,7 @@ In the right, there is the following buttons :
 
 Its  possible to save Samples to be used in benchmarks.
 
-![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/1790321101-Nova%20Imagem%20de%20Bitmap.jpg)
+![benchmakToSave.png](https://bitbucket.org/repo/egL9o4/images/784360299-benchmakToSave.png)
 
 
 With benchmark its possible to make the program to save the result of the solution calculated in a file.It also saves the sample reference which makes it possible to run the same sample/city with different settings and compare the results, making it very didatic for students.
@@ -51,8 +52,7 @@ The benchmark is only saved after the solution is calculated.It will save the fo
 * Mutation quantity
 * Minimum non-change generations
 
-![Nova Imagem de Bitmap.jpg](https://bitbucket.org/repo/egL9o4/images/2563788321-Nova%20Imagem%20de%20Bitmap.jpg)
-
+![BenchmarkSaved.png](https://bitbucket.org/repo/egL9o4/images/2660592877-BenchmarkSaved.png)
 
 ### How do I get set up? ###
 
