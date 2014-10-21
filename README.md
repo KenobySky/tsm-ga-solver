@@ -37,6 +37,7 @@ Picture 2 shows the mainscreen before the solution was calculated and pictue 3 s
 
 Below the map, there is two labels which shows the current status and the current optimum cost.
 In the right, there is the following buttons :
+
 * Start
 * Samples
 * Settings
