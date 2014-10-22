@@ -3,7 +3,9 @@
 *Authors: André V Lopes and Robin Stumm*
 
 Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didactic for students.
-Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
+Its possible to see the algorithm running, save samples, make benchmarks.
+
+This Project runs on desktop devices with java installed and Android 2.2+ with OpenGL 2.0+ capabilities.
 
 To make the program as didactic as possible, picture 1 shows the following parameters of the algorithm that can be changed:
 
