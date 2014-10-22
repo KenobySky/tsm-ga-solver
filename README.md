@@ -22,17 +22,21 @@ The number of waypoints is the quantity of cities that is inserted into the map.
 
 ![1786806396-Settings.png](https://bitbucket.org/repo/egL9o4/images/2199362518-1786806396-Settings.png)
 
-*Picture 1: Settings Window*
+*Picture 1: settings*
 
-Picture 2 shows the main screen before the solution was calculated and picture 3 shows the solution displayed on screen.
+---
+
+This picture shows the main screen before the solution was calculated and picture 3 shows the solution displayed on screen.
 
 ![2266976735-mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2125412026-2266976735-mainscreen.png)
 
-*Picture 2: Main screen*
+*Picture 2: main screen*
+
+---
 
 ![98117339-solutionCalculated.png](https://bitbucket.org/repo/egL9o4/images/2027184326-98117339-solutionCalculated.png)
 
-*Picture 3: Solution Calculated*
+*Picture 3: calculated solution*
 
 Below the map there are two labels displaying the current status and optimum cost. On the right there are the following buttons:
 
@@ -41,7 +45,7 @@ Below the map there are two labels displaying the current status and optimum cos
 * Settings
 * Benchmark
 
-Once you saved a sample you can take benchmarks of it (see picture 4):
+You can benchmark a sample once you saved it:
 
 ![784360299-benchmakToSave.png](https://bitbucket.org/repo/egL9o4/images/2266868724-784360299-benchmakToSave.png)
 
@@ -65,7 +69,7 @@ The benchmark is saved when a solution is calculated. It will save the following
 
 ![2660592877-BenchmarkSaved.png](https://bitbucket.org/repo/egL9o4/images/3671443975-2660592877-BenchmarkSaved.png)
 
-*Picture5 : Benchmark saved*
+*Picture5  benchmark saved*
 
 ### How do I get set up? ###
 
