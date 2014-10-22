@@ -23,7 +23,7 @@ The number of waypoints is the quantity of cities that is inserted in the map. T
 *Picture 1: Settings Window*
 
 The number of way points is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.  
-Picture 2 shows the main screen before the solution was calculated and pictue 3 shows the solution displayed on screen.
+Picture 2 shows the main screen before the solution was calculated and picture 3 shows the solution displayed on screen.
 
 ![2266976735-mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2125412026-2266976735-mainscreen.png)
 
