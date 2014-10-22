@@ -81,7 +81,7 @@ gradlew.bat :desktop:run
 
 The executable jar can be found in `desktop/build/libs/`. You can rebuild it any time without running the application using `gradlew.bat :desktop:build`.
 
-If you do want to install Mercurial you can also [download](https://bitbucket.org/andrelopes1705/tsm-ga-solver/downloads) the repository normally.
+If you do not want to install Mercurial you can also [download](https://bitbucket.org/andrelopes1705/tsm-ga-solver/downloads) the repository normally.
 
 ### Contribution guidelines ###
 
