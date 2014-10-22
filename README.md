@@ -2,10 +2,10 @@
 
 *Authors: André V Lopes and Robin Stumm*
 
-Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didatic for students.
+Using Mr Jeff Heaton Book, we used the code of the genetic algorithm chapter and changed the view to libGDX and made it more didactic for students.
 Its possible to see the algorithm running, save samples, make benchmarks and even run it in android devices! 
 
-To make the program as didatic as possible, picture 1 shows the following parameters of the algorithm that can be changed:
+To make the program as didactic as possible, picture 1 shows the following parameters of the algorithm that can be changed:
 
 1. Number of Waypoints/Cities
 2. Number of Chromosomes
@@ -22,7 +22,7 @@ The number of waypoints is the quantity of cities that is inserted in the map. T
 
 *Picture 1: Settings Window*
 
-The number of waypoints is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.  
+The number of way points is the quantity of cities that is inserted in the map.They are represented by white dots.And they are connected by green lines during the process.  
 Picture 2 shows the main screen before the solution was calculated and pictue 3 shows the solution displayed on screen.
 
 ![2266976735-mainscreen.png](https://bitbucket.org/repo/egL9o4/images/2125412026-2266976735-mainscreen.png)
@@ -41,18 +41,18 @@ In the right, there is the following buttons :
 * Settings
 * Benchmark
 
-Once you saved a sample, you can take benchmarks of it (as shown in picture 4):
+Once you saved a sample, you can create benchmarks with it (as shown in picture 4):
 
 ![784360299-benchmakToSave.png](https://bitbucket.org/repo/egL9o4/images/2266868724-784360299-benchmakToSave.png)
 
 *Picture 4: Benchmark*
 
-With benchmarks it's possible to make the program to save the result of the solution calculated in a file. It also saves the sample reference which makes it possible to run the same sample of cities with different settings and compare the results, making it very didatic for students.  
+With benchmarks it's possible to make the program to save the result of the solution calculated in a file. It also saves the sample reference which makes it possible to run the same sample of cities with different settings and compare the results, making it easier for students to notice the differences between different settings.
 The benchmark is saved when a solution is calculated. It will save the following data, as can be seen in picture 5:
 
 * Date and time of start
 * Duration in seconds
-* Waypoint quantity
+* Way point quantity
 * Chromosome quantity
 * Cost in pixels
 * Cut length
