@@ -21,11 +21,23 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldFilter;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import net.dermetfan.gdx.scenes.scene2d.Scene2DUtils;
-import net.dermetfan.gdx.scenes.scene2d.ui.PositionedPopup.Position;
-import net.dermetfan.gdx.scenes.scene2d.ui.Tooltip;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.AlignedOffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.BehaviorMultiplexer;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.FadeBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.OffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PointerPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior.Adapter;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior.Position;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionMultiplexer;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.TooltipBehavior;
 import net.nexusteam.tsmGaSolver.Assets;
 
 /**
@@ -117,7 +129,7 @@ public class Settings extends Table {
 
 	/**
 	 * adds the settings widgets to the given
-	 * {@link com.badlogic.gdx.scenes.scene2d.ui.Table}
+	 * {@link Table}
 	 */
 	public Settings() {
 		Skin skin = Assets.manager.get(Assets.uiskin);
@@ -128,39 +140,48 @@ public class Settings extends Table {
 		valueContainer.setBackground(valueLabel.getStyle().background);
 		valueContainer.pack();
 
-		Tooltip<Container> valueTooltip = new Tooltip<Container>(valueContainer, new Position() {
+		Behavior addToStageBehavior = new Behavior.Adapter() {
 			@Override
-			public Vector2 apply(Event event) {
+			public boolean show(Event event, Popup popup) {
+				if(popup.getPopup().getStage() != event.getStage())
+					event.getStage().addActor(popup.getPopup());
+				return super.show(event, popup);
+			}
+		};
+
+		TooltipBehavior tooltipBehavior = new TooltipBehavior();
+		tooltipBehavior.showOn(Type.touchDown);
+		tooltipBehavior.showOn(Type.touchDragged);
+		tooltipBehavior.hideNotOn(Type.touchDown);
+		tooltipBehavior.hideNotOn(Type.mouseMoved);
+		Popup<Container> valueTooltip = new Popup<Container>(valueContainer, new BehaviorMultiplexer(tooltipBehavior, addToStageBehavior, new PositionBehavior(new Position() {
+			@Override
+			public void apply(Event event, Actor popup) {
 				Actor target = event.getTarget();
 				Vector2 pos = Scene2DUtils.positionInStageCoordinates(target);
 				pos.x += target.getWidth();
-				return pos;
+				popup.setPosition(pos.x, pos.y);
 			}
-		}) {
+		}), new Adapter() {
 			@Override
-			public boolean handle(Event e) {
-				super.handle(e);
-				Actor actor = e.getListenerActor();
+			public Reaction handle(Event event, Popup popup) {
+				Actor actor = event.getListenerActor();
 				if (actor instanceof Slider) {
 					valueLabel.setText(String.valueOf(((Slider) actor).getValue() * 100));
-					getPopup().pack();
+					if(popup.getPopup() instanceof Layout)
+						((Layout) popup.getPopup()).pack();
 				}
-				return false;
+				return super.handle(event, popup);
 			}
 
 			@Override
-			public boolean show(Event event) {
-				if(getPopup().getStage() != event.getStage()) {
-                                    event.getStage().addActor(getPopup());
-                                }
-				getPopup().pack();
-				return super.show(event);
+			public boolean show(Event event, Popup popup) {
+				if(popup.getPopup() instanceof Layout)
+					((Layout) popup.getPopup()).pack();
+				return super.show(event, popup);
 			}
-		};
-		valueTooltip.showOn(Type.touchDown);
-		valueTooltip.showOn(Type.touchDragged);
-		valueTooltip.hideNotOn(Type.touchDown);
-		valueTooltip.hideNotOn(Type.mouseMoved);
+		}, new FadeBehavior()));
+		addListener(valueTooltip); // TODO ?
 
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
@@ -236,21 +257,11 @@ public class Settings extends Table {
 			}
 		});
 
-		
-
 		// maximum generations
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
 		TextField maximumGenerations = new TextField(String.valueOf(prefs.getInteger(MAXIMUM_GENERATIONS)), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
-                maximumGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
-			@Override
-			public boolean show(Event event) {
-				if(getPopup().getStage() != event.getStage()) {
-                                    event.getStage().addActor(getPopup());
-                                }
-				return super.show(event);
-			}
-		});
+		maximumGenerations.addListener(new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new BehaviorMultiplexer(new TooltipBehavior(), addToStageBehavior, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10))), new FadeBehavior())));
 		maximumGenerations.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
@@ -269,16 +280,8 @@ public class Settings extends Table {
 			}
 		});
 
-                minimumNonChangeGenerations.addListener(new Tooltip<Label>(new Label(" 0 means no limit", skin, "status")) {
-			@Override
-			public boolean show(Event event) {
-				if(getPopup().getStage() != event.getStage()) {
-                                    event.getStage().addActor(getPopup());
-                                }
-				return super.show(event);
-			}
-		});
-                
+		minimumNonChangeGenerations.addListener(new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new BehaviorMultiplexer(new TooltipBehavior(), addToStageBehavior, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10))), new FadeBehavior())));
+
 		// step manually
 		final CheckBox stepManually = new CheckBox(" step manually", skin);
 		stepManually.setChecked(prefs.getBoolean(STEP_MANUALLY));

@@ -21,13 +21,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
-import net.dermetfan.gdx.scenes.scene2d.ui.Tooltip;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.AlignedOffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.BehaviorMultiplexer;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.OffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PointerPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionMultiplexer;
+import net.dermetfan.gdx.scenes.scene2d.ui.popup.TooltipBehavior;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -108,20 +117,21 @@ public class Samples extends Table {
                         Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
                     }
                 });
-                active.addListener(new Tooltip<Label>(new Label("Cannot take a benchmark with no associated sample", skin, "status")) {
-                    { setShowDelay(.25f); }
-
+                Popup<Label> activeTooltip = new Popup<Label>(new Label("Cannot take a benchmark with no associated sample", skin, "status"), new BehaviorMultiplexer(new Behavior.Adapter() {
                     @Override
-                    public boolean show(Event event) {
-                        if(!active.isDisabled()) {
-                            return false;
-                        }
-                        if (getPopup().getStage() != event.getStage()) {
-                            event.getStage().addActor(getPopup());
-                        }
-                        return super.show(event);
+                    public Reaction handle(Event event, Popup popup) {
+                        return active.isDisabled() ? Reaction.Handle : null;
                     }
-                });
+                }, new TooltipBehavior(.25f, 0), new Behavior.Adapter() {
+                    @Override
+                    public boolean show(Event event, Popup popup) { // TODO replace with addToStageBehavior
+                        if(event.getStage() != popup.getPopup().getStage())
+                            event.getStage().addActor(popup.getPopup());
+                        return super.show(event, popup);
+                    }
+                }, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10)))));
+                active.addListener(activeTooltip);
+
 
                 controls.defaults().colspan(2).fillX();
                 controls.add(benchmarks).colspan(1).expandX();
