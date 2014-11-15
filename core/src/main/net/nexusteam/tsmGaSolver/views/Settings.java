@@ -25,19 +25,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
+import net.dermetfan.gdx.scenes.scene2d.EventMultiplexer;
 import net.dermetfan.gdx.scenes.scene2d.Scene2DUtils;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.AlignedOffsetPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.BehaviorMultiplexer;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.FadeBehavior;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.OffsetPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PointerPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior.Adapter;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior.Position;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionMultiplexer;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.TooltipBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.AddToStageBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Behavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Behavior.Adapter;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.FadeBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.AlignedOffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.OffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.PointerPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.Position;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Reaction;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.TooltipBehavior;
 import net.nexusteam.tsmGaSolver.Assets;
 
 /**
@@ -134,27 +135,31 @@ public class Settings extends Table {
 	public Settings() {
 		Skin skin = Assets.manager.get(Assets.uiskin);
 
+		final EventMultiplexer tooltipHider = new EventMultiplexer();
+		Behavior addTooltipHiderBehavior = new Behavior.Adapter() {
+			boolean added;
+			@Override
+			public Reaction handle(Event event, Popup popup) {
+				if(!added) {
+					event.getStage().addListener(tooltipHider);
+					added = true;
+				}
+				return null;
+			}
+		};
+
 		//Value ToolTip
 		final Label valueLabel = new Label("", skin, "status");
 		final Container<Label> valueContainer = new Container<Label>(valueLabel);
 		valueContainer.setBackground(valueLabel.getStyle().background);
 		valueContainer.pack();
 
-		Behavior addToStageBehavior = new Behavior.Adapter() {
-			@Override
-			public boolean show(Event event, Popup popup) {
-				if(popup.getPopup().getStage() != event.getStage())
-					event.getStage().addActor(popup.getPopup());
-				return super.show(event, popup);
-			}
-		};
-
-		TooltipBehavior tooltipBehavior = new TooltipBehavior();
-		tooltipBehavior.showOn(Type.touchDown);
-		tooltipBehavior.showOn(Type.touchDragged);
-		tooltipBehavior.hideNotOn(Type.touchDown);
-		tooltipBehavior.hideNotOn(Type.mouseMoved);
-		Popup<Container> valueTooltip = new Popup<Container>(valueContainer, new BehaviorMultiplexer(tooltipBehavior, addToStageBehavior, new PositionBehavior(new Position() {
+		TooltipBehavior valueTooltipBehavior = new TooltipBehavior();
+		valueTooltipBehavior.showOn(Type.touchDown);
+		valueTooltipBehavior.showOn(Type.touchDragged);
+		valueTooltipBehavior.hideNotOn(Type.touchDown);
+		valueTooltipBehavior.hideNotOn(Type.mouseMoved);
+		Popup<Container> valueTooltip = new Popup<Container>(valueContainer, valueTooltipBehavior, new AddToStageBehavior(), addTooltipHiderBehavior, new PositionBehavior(new Position() {
 			@Override
 			public void apply(Event event, Actor popup) {
 				Actor target = event.getTarget();
@@ -180,8 +185,8 @@ public class Settings extends Table {
 					((Layout) popup.getPopup()).pack();
 				return super.show(event, popup);
 			}
-		}, new FadeBehavior()));
-		addListener(valueTooltip); // TODO ?
+		}, new FadeBehavior());
+		tooltipHider.add(valueTooltip);
 
 		// waypoint quantity
 		Label waypointQuantityLabel = new Label("Waypoints", skin);
@@ -261,7 +266,9 @@ public class Settings extends Table {
 		Label maximumGenerationsLabel = new Label("Maximum Generations", skin);
 		TextField maximumGenerations = new TextField(String.valueOf(prefs.getInteger(MAXIMUM_GENERATIONS)), skin);
 		maximumGenerations.setTextFieldFilter(numericFilter);
-		maximumGenerations.addListener(new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new BehaviorMultiplexer(new TooltipBehavior(), addToStageBehavior, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10))), new FadeBehavior())));
+		Popup<Label> maximumGenerationsTooltip = new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new TooltipBehavior(), new AddToStageBehavior(), addTooltipHiderBehavior, new PositionBehavior(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10)), new FadeBehavior());
+		tooltipHider.add(maximumGenerationsTooltip);
+		maximumGenerations.addListener(maximumGenerationsTooltip);
 		maximumGenerations.setTextFieldListener(new TextFieldListener() {
 			@Override
 			public void keyTyped(TextField textField, char c) {
@@ -279,8 +286,9 @@ public class Settings extends Table {
 				prefs.putInteger(MINIMUM_NON_CHANGE_GENERATIONS, Integer.parseInt(numerize(textField.getText())));
 			}
 		});
-
-		minimumNonChangeGenerations.addListener(new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new BehaviorMultiplexer(new TooltipBehavior(), addToStageBehavior, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10))), new FadeBehavior())));
+		Popup<Label> minimumNonChangeGenerationsTooltip = new Popup<Label>(new Label(" 0 means no limit", skin, "status"), new TooltipBehavior(), new AddToStageBehavior(), addTooltipHiderBehavior, new PositionBehavior(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10)), new FadeBehavior());
+		tooltipHider.add(minimumNonChangeGenerationsTooltip);
+		minimumNonChangeGenerations.addListener(minimumNonChangeGenerationsTooltip);
 
 		// step manually
 		final CheckBox stepManually = new CheckBox(" step manually", skin);

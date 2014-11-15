@@ -28,15 +28,16 @@ import com.badlogic.gdx.scenes.scene2d.utils.Layout;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.Pools;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.AlignedOffsetPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.BehaviorMultiplexer;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.OffsetPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PointerPosition;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.Popup.Behavior;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionBehavior;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.PositionMultiplexer;
-import net.dermetfan.gdx.scenes.scene2d.ui.popup.TooltipBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.AddToStageBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Behavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.FadeBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.AlignedOffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.OffsetPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.PointerPosition;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Reaction;
+import net.dermetfan.gdx.scenes.scene2d.ui.Popup.TooltipBehavior;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
@@ -107,7 +108,7 @@ public class Samples extends Table {
                     }
                 });
                 active = new CheckBox(" Benchmark this run", skin);
-                active.setChecked(Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN));
+                active.setChecked(samples.getSelected() != null && Settings.prefs.getBoolean(Settings.BENCHMARK_THIS_RUN));
                 active.addListener(new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
@@ -117,21 +118,16 @@ public class Samples extends Table {
                         Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, active.isChecked());
                     }
                 });
-                Popup<Label> activeTooltip = new Popup<Label>(new Label("Cannot take a benchmark with no associated sample", skin, "status"), new BehaviorMultiplexer(new Behavior.Adapter() {
+                Popup<Label> activeTooltip = new Popup<Label>(new Label("Cannot take a benchmark with no associated sample", skin, "status"), new Behavior.Adapter() {
+                    TooltipBehavior behavior = new TooltipBehavior(.25f, 0);
                     @Override
                     public Reaction handle(Event event, Popup popup) {
-                        return active.isDisabled() ? Reaction.Handle : null;
+                        return !active.isDisabled() ? Reaction.None : behavior.handle(event, popup);
                     }
-                }, new TooltipBehavior(.25f, 0), new Behavior.Adapter() {
-                    @Override
-                    public boolean show(Event event, Popup popup) { // TODO replace with addToStageBehavior
-                        if(event.getStage() != popup.getPopup().getStage())
-                            event.getStage().addActor(popup.getPopup());
-                        return super.show(event, popup);
-                    }
-                }, new PositionBehavior(new PositionMultiplexer(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10)))));
+                }, new AddToStageBehavior(), new PositionBehavior(new PointerPosition(), new AlignedOffsetPosition(Align.topLeft), new OffsetPosition(7, -10)), new FadeBehavior());
                 active.addListener(activeTooltip);
-
+                active.getLabel().addListener(activeTooltip);
+                active.getImage().addListener(activeTooltip);
 
                 controls.defaults().colspan(2).fillX();
                 controls.add(benchmarks).colspan(1).expandX();
@@ -156,8 +152,8 @@ public class Samples extends Table {
             benchmarks.getList().addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    if (benchmarks != null) {
-                        if (benchmarks.getItems().size > 1) {
+                    if(benchmarks != null) {
+                        if(benchmarks.getItems().size > 1) {
                             int selectedIndex = benchmarks.getList().getSelectedIndex();
                             showBenchmarkInfo(benchmarks.getItems().size > 0 ? benchmarks.getItems().get(selectedIndex) : null);
                         }
@@ -170,10 +166,11 @@ public class Samples extends Table {
 
         public void updateBenchmarks() {
             String sample = Samples.this.samples.getSelected();
-            if (sample == null || sample.isEmpty()) {
+            if (Samples.this.samples.getSelectedIndex() < 0) {
                 showBenchmarkInfo(null);
                 benchmarks.setItems("No sample selected");
                 Settings.prefs.putBoolean(Settings.BENCHMARK_THIS_RUN, false); // we cannot create benchmarks without a sample
+                active.setChecked(false);
                 active.setDisabled(true);
                 return;
             }
@@ -213,7 +210,7 @@ public class Samples extends Table {
 
     }
 
-    private Benchmarks benchmarks = new Benchmarks();
+    private Benchmarks benchmarks;
     private SelectBox<String> samples;
 
     public Samples() {
@@ -343,6 +340,8 @@ public class Samples extends Table {
         add("New Sample:").row();
         add(name).fillX().row();
         add(save).fillX().row();
+
+        benchmarks = new Benchmarks();
     }
 
     public void updateSamples() {
