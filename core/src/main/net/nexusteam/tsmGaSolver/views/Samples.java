@@ -21,7 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Align;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Layout;
@@ -131,9 +131,9 @@ public class Samples extends Table {
 
                 controls.defaults().colspan(2).fillX();
                 controls.add(benchmarks).colspan(1).expandX();
-                controls.add(delete).padLeft(5).colspan(1).row().expandX();
-                controls.add("New Benchmark:").center().fill(false).row().expandX();
-                controls.add(name).row().expandX();
+                controls.add(delete).padLeft(5).colspan(1).getTable().row().expandX();
+                controls.add("New Benchmark:").center().fill(false).getTable().row().expandX();
+                controls.add(name).getTable().row().expandX();
                 controls.add(active).expandX();
                 controls.pack();
             }
