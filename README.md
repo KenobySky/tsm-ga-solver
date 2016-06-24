@@ -87,6 +87,9 @@ The executable jar can be found in `desktop/build/libs/`. You can rebuild it any
 
 If you do not want to install Mercurial you can also [download](https://bitbucket.org/andrelopes1705/tsm-ga-solver/downloads) the repository normally.
 
+
+Be sure to read  https://github.com/libgdx/libgdx/wiki/Gradle-and-Intellij-IDEA for extra instructions!
+
 ### Contribution guidelines ###
 
 * Writing tests
