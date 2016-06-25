@@ -7,7 +7,6 @@ import com.badlogic.gdx.utils.Array;
 import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
 import net.nexusteam.tsmGaSolver.ann.TSPGeneticAlgorithm;
 import net.nexusteam.tsmGaSolver.views.Settings;
-import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
 
 /**
  * @author Andre Vinícius Lopes

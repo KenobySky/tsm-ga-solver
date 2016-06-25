@@ -4,7 +4,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import net.dermetfan.utils.ArrayUtils;
 import net.nexusteam.tsmGaSolver.views.Settings;
-import net.nexusteam.tsmGaSolver.views.TsmGaSolver;
+import net.nexusteam.tsmGaSolver.TsmGaSolver;
 
 public class DesktopLauncher {
 

@@ -1,4 +1,4 @@
-package net.nexusteam.tsmGaSolver.views;
+package net.nexusteam.tsmGaSolver;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -28,6 +28,8 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import net.nexusteam.tsmGaSolver.Assets;
 import net.nexusteam.tsmGaSolver.Controller;
 import net.nexusteam.tsmGaSolver.ann.TSPChromosome;
+import net.nexusteam.tsmGaSolver.views.Samples;
+import net.nexusteam.tsmGaSolver.views.Settings;
 
 /**
  * @author dermetfan

@@ -39,6 +39,7 @@ import net.dermetfan.gdx.scenes.scene2d.ui.Popup.PositionBehavior.PointerPositio
 import net.dermetfan.gdx.scenes.scene2d.ui.Popup.Reaction;
 import net.dermetfan.gdx.scenes.scene2d.ui.Popup.TooltipBehavior;
 import net.nexusteam.tsmGaSolver.Assets;
+import net.nexusteam.tsmGaSolver.TsmGaSolver;
 import net.nexusteam.tsmGaSolver.tools.Benchmark;
 import net.nexusteam.tsmGaSolver.tools.Sample;
 
