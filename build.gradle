@@ -20,10 +20,6 @@ allprojects {
         appName = 'TSM-GA-Solver'
         gdxVersion = '1.9.3'
         gdxUtilsVersion = '0.13.3'
-        roboVMVersion = '2.1.0'
-        box2DLightsVersion = '1.4'
-        ashleyVersion = '1.7.0'
-        aiVersion = '1.8.0'
     }
 
     repositories {
@@ -36,7 +32,6 @@ allprojects {
 
 project(':desktop') {
     apply plugin: 'java'
-
 
     dependencies {
         compile project(':core')
@@ -64,7 +59,6 @@ project(':android') {
 project(':core') {
     apply plugin: 'java'
 
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
@@ -74,7 +68,6 @@ project(':core') {
 project(':html') {
     apply plugin: 'gwt'
     apply plugin: 'war'
-
 
     dependencies {
         compile project(':core')
