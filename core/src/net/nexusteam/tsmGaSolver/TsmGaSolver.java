@@ -83,21 +83,21 @@ public class TsmGaSolver extends ApplicationAdapter {
                 if (action.isDisabled()) {
                     return;
                 }
-                boolean stepManually = Settings.prefs.getBoolean(Settings.STEP_MANUALLY);
+
                 if (!controller.isRunning()) {
                     String currentSample = samples.getSamples().getSelected();
+
                     if (currentSample != null && !currentSample.isEmpty()) {
                         Settings.prefs.putString(Settings.CURRENT_SAMPLE, currentSample); // IMPORTANT. If CURRENT_SAMPLE is not set, the WorkerThread cannot create a new Benchmark!
                     }
+
                     controller.initialize(bounds.width, bounds.height);
-                    if (stepManually) {
-                        controller.step(Settings.prefs.getInteger(Settings.STEP_ITERATIONS));
-                    } else {
-                        controller.start();
-                    }
+
+                    controller.start();
                     action.setText("Stop");
-                } else {
-                    action.setText(stepManually ? "Step" : "Start");
+
+                } else if (controller.isRunning()) {
+                    action.setText(Settings.prefs.getBoolean(Settings.STEP_MANUALLY) ? "Step" : "Start");
                     controller.stop();
                 }
             }
@@ -188,6 +188,7 @@ public class TsmGaSolver extends ApplicationAdapter {
         benchmarks.addListener(new ClickListener() {
 
             Window window = new Window("Benchmarks", skin);
+
             {
                 window.setResizable(true);
                 Button close = new TextButton("Close", skin);
@@ -276,6 +277,10 @@ public class TsmGaSolver extends ApplicationAdapter {
         renderer.end();
 
         stage.draw();
+
+        if (controller.isRunning()) {
+            controller.step();
+        }
     }
 
     private void populate(int count) {

@@ -51,7 +51,7 @@ public class Controller {
     /**
      * The Reference to the Currently background worker Thread
      */
-    private WorkerThread workerThread;
+    private Worker worker;
 
     protected TSPGeneticAlgorithm genetic;
 
@@ -91,14 +91,14 @@ public class Controller {
         }
 
         Preferences prefs = Settings.prefs;
-        
+
         chromosome_quantity = prefs.getInteger(Settings.CHROMOSOME_QUANTITY);
         mutation_percentage = prefs.getFloat(Settings.MUTATION_PERCENTAGE);
         mating_population_percentage = prefs.getFloat(Settings.MATING_POPULATION_PERCENTAGE);
         favored_population_percentage = prefs.getFloat(Settings.FAVORED_POPULATION_PERCENTAGE);
         minimum_non_change_generations = prefs.getInteger(Settings.MINIMUM_NON_CHANGE_GENERATIONS);
         maximum_generations = prefs.getInteger(Settings.MAXIMUM_GENERATIONS);
-        
+
     }
 
     /**
@@ -113,7 +113,7 @@ public class Controller {
         Array<Vector2> viewWaypoints = view.getWaypoints();
         waypoints = viewWaypoints.toArray(Vector2.class);
 
-        cut_length = chromosome_quantity / 5; // FIXME https://bitbucket.org/dermetfan/tsm-ga-solver/issue/2/some-settings-cause-calculate-cost-to-give remove from Settings if this is not configurable (currently apparently needs to be chromosome_quantity / 5)
+        cut_length = chromosome_quantity / 5;
 
         genetic = new TSPGeneticAlgorithm(waypoints, chromosome_quantity, mutation_percentage, mating_population_percentage, favored_population_percentage, cut_length);
     }
@@ -122,31 +122,34 @@ public class Controller {
      * starts the normal mode
      */
     public void start() {
-        if (isRunning()) {
-            throw new IllegalStateException("Can't start: Algorithm is already running");
-        }
 
         generation_count = 0;
 
-        workerThread = new WorkerThread(this);
-        workerThread.start();
+        worker = new Worker(this);
+
+        System.out.println("Controller.java -> start()");
+    }
+
+    public void step() {
+        worker.run();
     }
 
     /**
      * Stops The Full Mode
      */
     public void stop() {
+        System.out.println("Controller.java -> stop()");
+
         if (!isRunning()) {
             throw new IllegalStateException("Can't stop: Algorithm is not running");
         }
         try {
-            if (workerThread != null && !workerThread.isThreadStopping()) {
-                workerThread.stopToKillThread();
-                workerThread.interrupt();
-                workerThread = null;
+            if (worker != null && !worker.isWorkerStopping()) {
+                worker.stopWorker();
+                worker = null;
             }
         } catch (Exception ex) {
-            Gdx.app.error(getClass().getName(), "WorkerThread \"" + workerThread.getName() + "\" could not be stopped", ex);
+            Gdx.app.error(getClass().getName(), "Worker \"" + "\" could not be stopped", ex);
         }
     }
 
@@ -154,6 +157,9 @@ public class Controller {
      * Runs the {@link #callback} if any.
      */
     public void solutionFound() {
+
+        System.out.println("Solution Found!");
+
         if (callback != null) {
             callback.run();
         }
@@ -161,29 +167,6 @@ public class Controller {
 
     public TSPChromosome getTopChromosome() {
         return genetic.getChromosome(0);
-    }
-
-	// ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    // ITERATIVE METHODS BELOW
-    // ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    /**
-     * steps/starts the iterative mode
-     *
-     * @param numberOfIterations
-     */
-    public void step(int numberOfIterations) {
-        if (isRunning()) {
-            stop();
-        }
-        assert workerThread == null; // workerThread should be null here because we stopped it if it was running
-
-        workerThread = new IterativeWorkerThread(this, numberOfIterations);
-        workerThread.start();
-    }
-
-	// GETTERS AND SETTERS
-    public boolean isRunning() {
-        return workerThread != null && !workerThread.isThreadStopping() && !workerThread.isInterrupted() && workerThread.isAlive();
     }
 
     public Runnable getCallback() {
@@ -194,4 +177,18 @@ public class Controller {
         this.callback = callback;
     }
 
+    public boolean isWorkerStopping() {
+        return worker.isWorkerStopping();
+    }
+
+    public boolean isRunning() {
+        if (worker == null) {
+            return false;
+        } else if (worker.isWorkerStopping() == true) {
+            return false;
+        }
+
+        return true;
+
+    }
 }
