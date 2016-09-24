@@ -12,7 +12,7 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.width = 1024;
         cfg.height = 768;
-        cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 1.2.1 ";
+        cfg.title = "Traveling Salesman Problem - Genetic Algorithm Solver 1.2.2 ";
 
         LwjglApplication lwjglApplication = new LwjglApplication(new TsmGaSolver(), cfg);
 
